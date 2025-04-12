@@ -35,7 +35,7 @@ authenticator = stauth.Authenticate(
 )
 
 # 🔐 Show login widget
-login_result = authenticator.login('Login', location='main')
+login_result = authenticator.login(form_name='Login', location='main')
 
 if login_result is not None:
     name, auth_status, username = login_result
