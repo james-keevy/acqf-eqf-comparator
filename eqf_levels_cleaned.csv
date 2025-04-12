@@ -1,0 +1,25 @@
+﻿Level,Domain,Descriptor
+1,Knowledge,Basic general knowledge.
+1,Skills,Basic skills required to carry out simple tasks.
+1,Autonomy and Responsibility,Work or study under direct supervision in a structured context.
+2,Knowledge,Basic factual knowledge of a field of work or study.
+2,Skills,Basic cognitive and practical skills required to use relevant information to carry out tasks and to solve routine problems using simple rules and tools.
+2,Autonomy and Responsibility,Work or study under supervision with some autonomy.
+3,Knowledge,Knowledge of facts principles processes and general concepts in a field of work or study.
+3,Skills,A range of cognitive and practical skills required to accomplish tasks and solve problems by selecting and applying basic methods tools materials and information.
+3,Autonomy and Responsibility,Take responsibility for completion of tasks in work or study adapt own behaviour to circumstances in solving problems.
+4,Knowledge,Factual and theoretical knowledge in broad contexts within a field of work or study.
+4,Skills,A range of cognitive and practical skills required to generate solutions to specific problems in a field of work or study.
+4,Autonomy and Responsibility,Exercise self-management within the guidelines of work or study contexts that are usually predictable but subject to change supervise the routine work of others taking some responsibility for the evaluation and improvement of work or study activities.
+5,Knowledge,Comprehensive specialised factual and theoretical knowledge within a field of work or study and an awareness of the boundaries of that knowledge.
+5,Skills,A comprehensive range of cognitive and practical skills required to develop creative solutions to abstract problems.
+5,Autonomy and Responsibility,Exercise management and supervision in contexts of work or study activities where there is unpredictable change review and develop performance of self and others.
+6,Knowledge,Advanced knowledge of a field of work or study involving a critical understanding of theories and principles.
+6,Skills,Advanced skills demonstrating mastery and innovation required to solve complex and unpredictable problems in a specialised field of work or study.
+"6,Autonomy and Responsibility,Manage complex technical or professional activities or projects taking responsibility for decision-making in unpredictable work or study contexts; take responsibility for managing professional development of individuals and groups."
+7,Knowledge,Highly specialised knowledge some of which is at the forefront of knowledge in a field of work or study as the basis for original thinking andor research critical awareness of knowledge issues in a field and at the interface between different fields.
+7,Skills,Specialised problem-solving skills required in research andor innovation in order to develop new knowledge and procedures and to integrate knowledge from different fields.
+"7,Autonomy and Responsibility,Manage and transform work or study contexts that are complex, unpredictable and require new strategic approaches; take responsibility for contributing to professional knowledge and practice and/or for reviewing the strategic performance of teams."
+8,Knowledge,Knowledge at the most advanced frontier of a field of work or study and at the interface between fields.
+8,Skills,The most advanced and specialised skills and techniques including synthesis and evaluation required to solve critical problems in research and or innovation and to extend and redefine existing knowledge or professional practice.
+8,Autonomy and Responsibility,Demonstrate substantial authority innovation autonomy scholarly and professional integrity and sustained commitment to the development of new ideas or processes at the forefront of work or study contexts including research.

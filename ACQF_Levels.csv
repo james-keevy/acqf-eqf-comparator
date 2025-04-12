@@ -1,0 +1,31 @@
+Level,Domain,Descriptor
+1,Knowledge,Basic general knowledge.
+1,Skills,Ability to perform simple tasks under direct supervision.
+1,Autonomy and Responsibility,Work or study under direct supervision in a structured context.
+2,Knowledge,Elementary knowledge in a specific area.
+2,Skills,Carry out tasks with limited autonomy.
+2,Autonomy and Responsibility,Work under supervision with some autonomy.
+3,Knowledge,Moderate knowledge in a field of work or study.
+3,Skills,Solve problems with guidance.
+3,Autonomy and Responsibility,Take responsibility for completion of tasks under supervision.
+4,Knowledge,Broad knowledge in a field of work or study.
+4,Skills,Apply knowledge to perform tasks independently.
+4,Autonomy and Responsibility,Exercise self-management within guidelines of work or study contexts.
+5,Knowledge,Comprehensive, specialized knowledge in a field.
+5,Skills,Exercise judgment in planning and selecting appropriate methods and tools.
+5,Autonomy and Responsibility,Supervise routine work of others taking some responsibility for the evaluation and improvement of work or study activities.
+6,Knowledge,Advanced knowledge involving a critical understanding of theories and principles.
+6,Skills,Solve complex and unpredictable problems in a specialized field.
+6,Autonomy and Responsibility,Manage complex technical or professional activities taking responsibility for decision-making in unpredictable work or study contexts.
+7,Knowledge,Highly specialized knowledge some of which is at the forefront of knowledge in a field.
+7,Skills,Develop new skills and procedures to respond to emerging knowledge and techniques.
+7,Autonomy and Responsibility,Manage and transform work or study contexts that are complex unpredictable and require new strategic approaches.
+8,Knowledge,Knowledge at the most advanced frontier of a field and at the interface between fields.
+8,Skills,Demonstrate substantial authority innovation autonomy scholarly or professional integrity and sustained commitment to the development of new ideas or processes.
+8,Autonomy and Responsibility,Lead and innovate in work or study contexts that are complex unpredictable and require new strategic approaches.
+9,Knowledge,Knowledge that contributes to the development of new ideas processes and systems at the forefront of a field.
+9,Skills,Develop and apply new skills techniques and methodologies that extend or redefine existing knowledge or professional practice.
+9,Autonomy and Responsibility,Initiate lead and manage complex work or study activities taking full responsibility for the development and strategic direction of a team or organization.
+10,Knowledge,Highly advanced complex knowledge at the forefront of a field.
+10,Skills,Mastery of skills to solve critical problems in research or innovation.
+10,Autonomy and Responsibility,Demonstrate substantial authority innovation autonomy scholarly or professional integrity.

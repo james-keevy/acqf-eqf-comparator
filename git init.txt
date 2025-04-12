@@ -1,0 +1,6 @@
+git init
+git remote add origin https://github.com/james-keevy/acqf-eqf-comparator.git
+git add acqf_eqf_ui.py
+git commit -m "Initial commit"
+git branch -M main
+git push -u origin main
