@@ -58,8 +58,8 @@ if login_result is not None:
                 api_key = st.secrets["OPENAI_API_KEY"]
                
                 # File upload widgets
-                Primary_file = st.file_uploader("Upload a primary set of level descriptors in CSV format", type="csv")
-                Secondary_file = st.file_uploader("Upload a secondary set of level descriptors in CSV format", type="csv")
+                Primary_file = st.file_uploader("Upload a primary artefact in CSV format", type="csv")
+                Secondary_file = st.file_uploader("Upload a secondary artefact in CSV format", type="csv")
 
                 # Match threshold slider
                 high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
