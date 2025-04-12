@@ -49,13 +49,13 @@ if login_result is not None:
 
                 # --- Streamlit UI ---
                 # st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
-                st.image("ascendra_logo_dark4.png", width=300)
-                st.title("Learning Outcomes Levelling")
-                st.caption("Smarter Learning Outcomes Levelling with Generative AI | by Ascendra")
+                st.image("ascendra_v5.png", width=300)
+                st.title("Comparing learning outcomes")
+                st.caption("Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts (e.g. qualifications, curricula, microcredentials, job descriptions and many others), but results should be interpreted as advisory, not definitive. The model relies on language patterns and may not capture nuanced policy or contextual differences across frameworks. It is not a substitute for expert judgement, formal benchmarking, or regulatory endorsement. Users should validate results through human review and consult official frameworks for authoritative decisions.")
 
                 # Input: OpenAI API key
                 api_key = st.secrets["OPENAI_API_KEY"]
-
+               
                 # File upload widgets
                 Primary_file = st.file_uploader("Upload a primary set of level descriptors in CSV format", type="csv")
                 Secondary_file = st.file_uploader("Upload a secondary set of level descriptors in CSV format", type="csv")
@@ -112,8 +112,14 @@ if login_result is not None:
                                 response = client.chat.completions.create(
                                     model="gpt-4o",
                                     messages=[
-                                        {"role": "system", "content": "You are an expert in qualifications frameworks and international education systems. You understand learning outcomes and domain-based comparisons."},
-                                        {"role": "user", "content": prompt}
+                                        {
+                                            "role": "system",
+                                            "content": """You are an expert in qualifications frameworks and international education systems. You understand learning outcomes and domain-based comparisons. You are able to compare the learning outcomes in different artefacts (such as level descriptors, qualifications, curricula, and job descriptions). You are well versed in the application of taxonomies, such as the revised Bloom taxonomy for knowledge, the structure of the Observed Learning Outcome (SOLO) taxonomy, and the Dreyfus model of skill acquisition."""
+                                        },
+                                        {
+                                            "role": "user",
+                                            "content": prompt
+                                        }
                                     ]
                                 )
 
@@ -160,36 +166,9 @@ if login_result is not None:
                                     
                                     from fpdf import FPDF
                                     import io
-                                    import re
                                     from datetime import datetime
-                                    import streamlit as st
                                     from fpdf.enums import XPos, YPos
 
-                                    # --- Safe multi-cell rendering ---
-                                    def safe_multicell(pdf_obj, width, height, text):
-                                        """
-                                        A failsafe wrapper around multi_cell that prevents horizontal space errors
-                                        by measuring string widths and forcing line breaks if needed.
-                                        """
-                                        if not text:
-                                            return
-
-                                        try:
-                                            words = re.split(r'(\s+)', str(text))  # Split and preserve spaces
-                                            current_line = ''
-                                            for word in words:
-                                                chunk = current_line + word
-                                                if pdf_obj.get_string_width(chunk) > pdf_obj.w - 2 * pdf_obj.l_margin:
-                                                    pdf_obj.multi_cell(width, height, current_line.strip(), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-                                                    current_line = word
-                                            else:
-                                                    current_line += word
-                                            if current_line.strip():
-                                                pdf_obj.multi_cell(width, height, current_line.strip(), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-                                        except Exception as e:
-                                            pdf_obj.multi_cell(width, height, f"[Render error: {e}]", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-
-                                    # --- Footer class ---
                                     class PDFWithFooter(FPDF):
                                         def footer(self):
                                             self.set_y(-15)
@@ -197,76 +176,99 @@ if login_result is not None:
                                             self.set_text_color(128)
                                             self.cell(0, 10, "Powered by Ascendra | Version 1.0 – April 2025", 0, 0, "C")
 
+                                    def safe_multicell(pdf_obj, width, height, text):
+                                        import re
+                                        if not text:
+                                            return
+                                        words = re.split(r'(\s+)', str(text))
+                                        current_line = ''
+                                        for word in words:
+                                            chunk = current_line + word
+                                            if pdf_obj.get_string_width(chunk) > pdf_obj.w - 2 * pdf_obj.l_margin:
+                                                pdf_obj.multi_cell(width, height, current_line.strip(), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+                                                current_line = word
+                                            else:
+                                                current_line += word
+                                        if current_line.strip():
+                                            pdf_obj.multi_cell(width, height, current_line.strip(), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
                                     # --- Create PDF ---
                                     pdf = PDFWithFooter()
                                     pdf.add_page()
 
-                                    # Load fonts
+                                    # Fonts
                                     pdf.add_font('DejaVu', '', 'DejaVuSans.ttf', uni=True)
                                     pdf.add_font('DejaVu', 'B', 'DejaVuSans-Bold.ttf', uni=True)
                                     pdf.add_font('DejaVu', 'I', 'DejaVuSans-Oblique.ttf', uni=True)
-                                    pdf.set_font("DejaVu", size=12)
+                                    pdf.set_font("DejaVu", size=8)
 
-                                    # --- Header ---
-                                    pdf.image("ascendra_logo_dark4.png", x=10, y=8, w=40)
-                                    pdf.ln(25)
-                                    safe_multicell(pdf, 0, 10, "Primary - Secondary Comparison Report")
-                                    safe_multicell(pdf, 0, 10, datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"))
+                                    # Header
+                                    pdf.image("ascendra_v5.png", x=10, y=8, w=40)
+                                    pdf.ln(45)
+                                    pdf.set_font("DejaVu", "B", 14)
+                                    safe_multicell(pdf, 0, 8, "Primary - Secondary Comparison Report")
+                                    pdf.set_font("DejaVu", "", 8)
+                                    safe_multicell(pdf, 0, 8, datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"))
                                     pdf.ln(10)
 
-                                    # --- Primary Level Info ---
+                                    # Primary Level
                                     pdf.set_font("DejaVu", "B", 12)
-                                    safe_multicell(pdf, 0, 10, f"Primary Level {selected_Primary_level}")
-                                    pdf.set_font("DejaVu", size=11)
+                                    safe_multicell(pdf, 0, 8, f"Primary Level {selected_Primary_level}")
+                                    pdf.set_font("DejaVu", "", 8)
                                     for item in Primary_levels[selected_Primary_level]:
-                                        safe_multicell(pdf, 0, 8, item)
-
-                                    # --- Secondary Level Info ---
+                                        safe_multicell(pdf, 0, 8, f"• {item}")
                                     pdf.ln(5)
+
+                                    # Secondary Level
                                     pdf.set_font("DejaVu", "B", 12)
-                                    safe_multicell(pdf, 0, 10, f"Secondary Level {selected_Secondary_level}")
-                                    pdf.set_font("DejaVu", size=11)
+                                    safe_multicell(pdf, 0, 8, f"Secondary Level {selected_Secondary_level}")
+                                    pdf.set_font("DejaVu", "", 8)
                                     for item in Secondary_levels[selected_Secondary_level]:
-                                        safe_multicell(pdf, 0, 8, item)
-
-                                    # --- Similarity Score ---
+                                        safe_multicell(pdf, 0, 8, f"• {item}")
                                     pdf.ln(5)
+
+                                    # Similarity Score
                                     if similarity_score is not None:
-                                        safe_multicell(pdf, 0, 10, f"Similarity Score: {similarity_score}/100")
+                                        pdf.set_font("DejaVu", "B", 12)
+                                        safe_multicell(pdf, 0, 8, f"Similarity Score: {similarity_score}/100")
+                                        pdf.ln(5)
 
-                                    # --- GPT Comparison Result ---
-                                    pdf.ln(5)
+                                    # GPT Result
                                     pdf.set_font("DejaVu", "B", 12)
-                                    safe_multicell(pdf, 0, 10, "GPT Comparison Result:")
-                                    pdf.set_font("DejaVu", size=11)
-                                    safe_multicell(pdf, 0, 10, result_text)
+                                    safe_multicell(pdf, 0, 8, "GPT Comparison Result:")
+                                    pdf.set_font("DejaVu", "", 8)
+                                    safe_multicell(pdf, 0, 8, result_text)
 
-                                    # --- Convert to BytesIO for Streamlit ---
+                                    # Convert to BytesIO
                                     pdf_bytes = io.BytesIO(pdf.output(dest='S'))
 
-                                    # --- Streamlit PDF Download Button ---
+                                    # PDF Download Button
                                     st.download_button(
-                                        label="📄 Download This Comparison as PDF",
+                                        label="📄 Download this comparison as PDF",
                                         data=pdf_bytes,
                                         file_name=f"Primary_Secondary_comparison_{selected_Primary_level}_{selected_Secondary_level}.pdf",
-                                        mime="application/pdf"
-                                    )
-                                
+                                        mime="application/pdf")
+                                    
+                                    # CSV Export Button
+                                    if st.session_state.get("results"):
+                                        df = pd.DataFrame(st.session_state.results)
+                                        st.download_button(
+                                            label="📥 Download comparison as CSV",
+                                            data=df.to_csv(index=False).encode("utf-8"),
+                                            file_name="Primary_Secondary_comparisons.csv",
+                                            mime="text/csv"
+                                        )
+
+                                    # Reset Button
+                                    if st.button("🔄 Run new query"):
+                                        st.session_state.results = []
+                                        st.rerun()
+                                else:
+                                    st.info("No results yet — run a comparison to enable downloading.")
+                                                                    
                             except Exception as e:
                                 st.error(f"❌ API Error: {e}")
-
-                # --- CSV Export ---
-                if st.session_state.get("results"):
-                    df = pd.DataFrame(st.session_state.results)
-                    st.download_button(
-                        label="📥 Download All Comparisons as CSV",
-                        data=df.to_csv(index=False).encode("utf-8"),
-                        file_name="Primary_Secondary_comparisons.csv",
-                        mime="text/csv"
-                    )
-                else:
-                    st.info("No results yet — run a comparison to enable downloading.")
-
+               
                 # --- Pinned footer ---
                 st.markdown("""
                 <style>
