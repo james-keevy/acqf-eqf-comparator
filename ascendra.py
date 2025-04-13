@@ -8,6 +8,7 @@ import re
 from fpdf import FPDF
 import textwrap
 import streamlit_authenticator as stauth
+from io import BytesIO
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
@@ -216,20 +217,6 @@ model of skills acquisition."""
                             for item in Secondary_levels[selected_Secondary_level]:
                                 safe_multicell(pdf, 0, 8, f"• {item}")
                             pdf.ln(5)
-
-                            # # Similarity Score                                                  
-                            # if ai_score is not None and 0 <= ai_score <= 100:
-                            #     st.write(f"**AI Similarity Score:** {ai_score}/100")
-                            #     st.progress(ai_score / 100.0)
-
-                            #     if ai_score >= high_match_threshold:
-                            #         st.success("High Match")
-                            #     elif ai_score >= 50:
-                            #         st.warning("Moderate Match")
-                            #     else:
-                            #         st.error("Low Match")
-                            # else:
-                            #     st.error("⚠️ No valid similarity score found in the response.")
 
                             # GPT Result
                             pdf.set_font("DejaVu", "B", 12)
