@@ -11,6 +11,7 @@ import streamlit_authenticator as stauth
 import fitz  # PyMuPDF
 import io
 import time
+from io import BytesIO
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
