@@ -60,28 +60,16 @@ if login_result is not None:
         Secondary_file = st.file_uploader("Upload a secondary artefact in CSV format", type="csv")
 
         # Helper function to extract text from PDF
-def extract_text_from_pdf(file):
-    text = ""
-    try:
-        with fitz.open(stream=file.read(), filetype="pdf") as doc:
-            for page in doc:
-                text += page.get_text()
-        return text
-    except Exception as e:
-        st.error(f"❌ Error reading PDF: {e}")
-        return ""
-
-# Function to extract text from PDF
-def extract_text_from_pdf(file):
-    text = ""
-    try:
-        with fitz.open(stream=file.read(), filetype="pdf") as doc:
-            for page in doc:
-                text += page.get_text()
-        return text
-    except Exception as e:
-        st.error(f"❌ Error reading PDF: {e}")
-        return ""
+        def extract_text_from_pdf(file):
+            text = ""
+            try:
+                with fitz.open(stream=file.read(), filetype="pdf") as doc:
+                    for page in doc:
+                        text += page.get_text()
+                return text
+            except Exception as e:
+                st.error(f"❌ Error reading PDF: {e}")
+                return ""
 
         # File upload widgets for CSV or PDF
         Primary_file = st.file_uploader("📥 Upload a *Primary* artefact (CSV or PDF)", type=["csv", "pdf"])
