@@ -1,9 +1,9 @@
 import streamlit as st
 import csv
+import OpenAI
 import pandas as pd
 from collections import defaultdict
-from openai 
-import OpenAI
+from openai
 from datetime import datetime
 import re
 from fpdf import FPDF
