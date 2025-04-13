@@ -159,11 +159,11 @@ if login_result is not None:
                                 comment = parsed.get("comment", "")
 
                                 # ✅ Smart cleanup — only if there's noise
-                                if "JSON Result" in comment or "{" in comment:
-                                    comment_cleaned = re.sub(r'JSON Result:.*', '', comment, flags=re.DOTALL).strip()
-                                    comment_cleaned = re.sub(r'\{.*\}', '', comment_cleaned, flags=re.DOTALL).strip()
-                                else:
-                                    comment_cleaned = comment.strip()
+
+                                comment_cleaned = comment.strip()
+                                
+                                if comment_cleaned.lower().startswith("json result"):
+                                    comment_cleaned = comment_cleaned.split(":", 1)[-1].strip()
 
                             else:
                                 st.warning("⚠️ No JSON block found in GPT output.")
