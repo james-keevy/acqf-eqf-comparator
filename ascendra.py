@@ -60,7 +60,6 @@ def parse_nqf_pdf_format(file):
         return None, None
 
 hashed_passwords = ['$2b$12$2Myv8E.J5lIbWN5aThrBDOeGthVRDw4e7j38g.fDTOmiy.VvKRCZa']
-
 credentials = {
     "usernames": {
         "ascendra": {
@@ -69,14 +68,7 @@ credentials = {
         }
     }
 }
-
-authenticator = stauth.Authenticate(
-    credentials,
-    "ascendra_cookie",
-    "abcdef",
-    cookie_expiry_days=1
-)
-
+authenticator = stauth.Authenticate(credentials, "ascendra_cookie", "abcdef", cookie_expiry_days=1)
 login_result = authenticator.login(form_name='Login', location='main')
 
 if login_result is not None:
@@ -84,19 +76,14 @@ if login_result is not None:
     if auth_status:
         authenticator.logout('Logout', location='sidebar')
         st.success(f"Welcome {name}")
-
         st.image("ascendra_v5.png", width=300)
         st.title("Comparing learning outcomes")
-        st.caption("Ascendra v1.1 is limited to CSV and PDF files")
-        st.caption("Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts...")
-
-        st.caption("Click 'Compare Levels' to generate an AI-based similarity score. The threshold below helps categorize the result.")
+        st.caption("Ascendra v1.1 supports CSV and PDF files")
+        st.caption("AI-assisted comparisons are advisory. Validate with expert review.")
 
         api_key = st.secrets["OPENAI_API_KEY"]
-
         Primary_file = st.file_uploader("Upload a primary artefact (CSV or PDF)", type=["csv", "pdf"])
         Secondary_file = st.file_uploader("Upload a secondary artefact (CSV or PDF)", type=["csv", "pdf"])
-
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
 
         if "results" not in st.session_state:
@@ -105,45 +92,35 @@ if login_result is not None:
         Primary_levels = defaultdict(dict)
         Secondary_levels = defaultdict(dict)
 
-        if Primary_file:
-            ext = Primary_file.name.split(".")[-1].lower()
-            if ext == "csv":
-                Primary_file.seek(0)
-                df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig", on_bad_lines='skip')
-            elif ext == "pdf":
-                data, csv_bytes = parse_nqf_pdf_format(Primary_file)
-                if data:
-                    csv_bytes.seek(0)
-                    df_primary = pd.read_csv(csv_bytes, encoding="utf-8-sig", on_bad_lines='skip')
+        def read_and_group(file, source):
+            ext = file.name.split(".")[-1].lower()
+            try:
+                if ext == "csv":
+                    file.seek(0)
+                    df = pd.read_csv(file, encoding="utf-8-sig", on_bad_lines='skip')
+                elif ext == "pdf":
+                    data, csv_bytes = parse_nqf_pdf_format(file)
+                    if data:
+                        csv_bytes.seek(0)
+                        df = pd.read_csv(csv_bytes, encoding="utf-8-sig", on_bad_lines='skip')
+                    else:
+                        return {}
                 else:
-                    df_primary = pd.DataFrame()
-            else:
-                df_primary = pd.DataFrame()
-
-            if not df_primary.empty:
-                grouped = df_primary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                    return {}
+                grouped = df.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                structured = defaultdict(dict)
                 for (level, domain), descriptor in grouped.items():
-                    Primary_levels[level][domain] = descriptor
+                    structured[level][domain] = descriptor
+                return structured
+            except Exception as e:
+                st.error(f"❌ Failed to parse {source} file: {e}")
+                return {}
+
+        if Primary_file:
+            Primary_levels = read_and_group(Primary_file, "Primary")
 
         if Secondary_file:
-            ext = Secondary_file.name.split(".")[-1].lower()
-            if ext == "csv":
-                Secondary_file.seek(0)
-                df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines='skip')
-            elif ext == "pdf":
-                data, csv_bytes = parse_nqf_pdf_format(Secondary_file)
-                if data:
-                    csv_bytes.seek(0)
-                    df_secondary = pd.read_csv(csv_bytes, encoding="utf-8-sig", on_bad_lines='skip')
-                else:
-                    df_secondary = pd.DataFrame()
-            else:
-                df_secondary = pd.DataFrame()
-
-            if not df_secondary.empty:
-                grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
-                for (level, domain), descriptor in grouped.items():
-                    Secondary_levels[level][domain] = descriptor
+            Secondary_levels = read_and_group(Secondary_file, "Secondary")
 
         if Primary_levels and Secondary_levels:
             selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
@@ -171,6 +148,7 @@ Add a visual depiction with one row of 10 circles sized double the height of the
 
 Do not use a heading for the visual depiction.
 """
+
                 st.session_state.comparison_prompt = prompt
                 st.rerun()
 else:
