@@ -107,18 +107,18 @@ if login_result is not None:
                         Primary_text = "\n".join(Primary_levels[selected_Primary_level])
                         Secondary_text = "\n".join(Secondary_levels[selected_Secondary_level])
 
-                prompt = f"""
-            Compare the following qualification level descriptors and assess their equivalence.
+                        prompt = f"""
+                    Compare the following qualification level descriptors and assess their equivalence.
 
-            Primary Level {selected_Primary_level}:
-            {Primary_text}
+                    Primary Level {selected_Primary_level}:
+                    {Primary_text}
 
-            Secondary Level {selected_Secondary_level}:
-            {Secondary_text}
+                    Secondary Level {selected_Secondary_level}:
+                    {Secondary_text}
 
-            Compare the descriptors. Are these levels equivalent? Highlight similarities and differences. 
-            Suggest the most appropriate Secondary level match and provide a similarity score out of 100.
-            """
+                    Compare the descriptors. Are these levels equivalent? Highlight similarities and differences. 
+                    Suggest the most appropriate Secondary level match and provide a similarity score out of 100.
+                    """
                         
                 with st.spinner("Asking GPT-4o..."):
                             try:
