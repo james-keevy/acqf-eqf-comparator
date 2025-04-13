@@ -113,9 +113,9 @@ if login_result is not None:
 
                 return structured, str(output_csv_path)
 
-            except Exception as e:
-                st.error(f"❌ Failed to parse PDF: {e}")
-                return {}, None
+            # except Exception as e:
+            #     st.error(f"❌ Failed to parse PDF: {e}")
+            #     return {}, None
 
             structured = extract_descriptors_from_pdf_text_grouped(text)
 
