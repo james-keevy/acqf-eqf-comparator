@@ -166,18 +166,6 @@ if login_result is not None:
                             st.error(f"❌ Failed to read PDF: {e}")
                             return None
 
-                        # Step 2: Use regex to extract Level → Domain → Descriptor triples
-                        pattern = r"""
-                        (?:Level[:\s-]*\s*(\d+))                              # Match Level number (e.g. Level 4, Level: 4)
-                        [\s\n\r]+                                             # Allow whitespace/newlines
-                        (?:Domain[:\s-]*)?                                    # Optional 'Domain:' label
-                        (Knowledge|Skills|Autonomy|Responsibility|Competence)  # Explicit domain match
-                        [\s\n\r]+
-                        (.+?)                                                 # Descriptor (non-greedy)
-                        (?=\n?(?:Level[:\s-]*\s*\d+|$))                       # Lookahead for next Level or EOF
-                        """
-                        matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE)
-
                         def clean_pdf_text(text):
                             # Remove lines that are just page numbers or "Page X" phrases
                             lines = text.splitlines()
@@ -188,7 +176,19 @@ if login_result is not None:
                                 if re.match(r"^\s*\d+\s*$", line):  # Standalone numbers
                                     continue
                                 clean_lines.append(line)
-                            return "\n".join(clean_lines)                     
+                            return "\n".join(clean_lines) 
+
+                        # Step 2: Use regex to extract Level → Domain → Descriptor triples
+                        pattern = r"""
+                        (?:Level[:\s-]*\s*(\d+))                              # Match Level number (e.g. Level 4, Level: 4)
+                        [\s\n\r]+                                             # Allow whitespace/newlines
+                        (?:Domain[:\s-]*)?                                    # Optional 'Domain:' label
+                        (Knowledge|Skills|Autonomy|Responsibility|Competence)  # Explicit domain match
+                        [\s\n\r]+
+                        (.+?)                                                 # Descriptor (non-greedy)
+                        (?=\n?(?:Level[:\s-]*\s*\d+|$))                       # Lookahead for next Level or EOF
+                        """
+                        matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE)                    
                         
                         if not matches:
                             st.warning("⚠️ No valid level-domain-descriptor groups found in the PDF.")
