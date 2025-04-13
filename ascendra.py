@@ -84,9 +84,42 @@ if login_result is not None:
             """
             text = ""
             uploaded_file.seek(0)  # move pointer back to beginning
-            with fitz.open(stream=uploaded_file.read(), filetype="pdf") as doc:
-                for page in doc:
-                    text += page.get_text()
+            
+            if not uploaded_file:
+                return {}, None
+
+            try:
+                uploaded_file.seek(0)  # reset pointer just in case
+                pdf_bytes = uploaded_file.read()
+                uploaded_file.seek(0)  # reset again in case needed elsewhere
+
+                # ✅ Validate file is not empty
+                if not pdf_bytes:
+                    raise ValueError("Uploaded file is empty")
+
+                # ✅ Try opening PDF
+                text = ""
+                with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
+                    for page in doc:
+                        text += page.get_text()
+
+                # ✅ Parse
+                structured = extract_descriptors_from_pdf_text_grouped(text)
+
+                # ✅ Write to CSV
+                temp_dir = tempfile.gettempdir()
+                output_csv_path = Path(temp_dir) / f"{label.lower()}_levels.csv"
+                rows = []
+                for level, domains in structured.items():
+                    for domain, descriptor in domains.items():
+                        rows.append({"Level": level, "Domain": domain, "Descriptor": descriptor})
+                pd.DataFrame(rows).to_csv(output_csv_path, index=False, encoding="utf-8-sig")
+
+                return structured, str(output_csv_path)
+
+            except Exception as e:
+                st.error(f"❌ Failed to parse PDF: {e}")
+                return {}, None
 
             structured = extract_descriptors_from_pdf_text_grouped(text)
 
