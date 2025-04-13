@@ -144,9 +144,9 @@ if login_result is not None:
         # Move PDF renders to CSV if need be
 
         elif file_ext == "pdf":
-            st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
+            st.subheader("📄 Parsing data from PDF")
 
-        Primary_levels_dict, csv_path = parse_nqf_pdf_format(Primary_file)
+        Primary_levels_dict, csv_path = parse_nqf_pdf_format(Primary_file, label="primary")
 
         if Primary_levels_dict and csv_path:
         # st.success(f"✅ Parsed {len(Primary_levels_dict)} levels from PDF.")
