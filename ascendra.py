@@ -141,7 +141,7 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                         # Extract ai_score
                         import re
-                        match = re.search(r'\b(\d{1,3})\b', gpt_output)
+                        match = re.search(r'score(?:\s*of)?\s*(\d{1,3})', gpt_output, re.IGNORECASE)
                         if match:
                             ai_score = int(match.group(1))
                         else:
