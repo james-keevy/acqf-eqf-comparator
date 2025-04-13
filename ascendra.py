@@ -10,55 +10,6 @@ import textwrap
 import streamlit_authenticator as stauth
 import fitz  # PyMuPDF
 import io
-from io import BytesIO
-
-def parse_pdf_format(uploaded_file):
-    import fitz  # PyMuPDF
-    import pandas as pd
-    from io import BytesIO
-
-    if uploaded_file is None:
-        raise ValueError("No file was uploaded.")
-
-    try:
-        file_bytes = BytesIO(uploaded_file.getvalue())  # ✅ Streamlit-safe
-
-        doc = fitz.open(stream=file_bytes, filetype="pdf")
-        extracted_data = []
-
-        for page in doc:
-            text = page.get_text("text")
-            lines = text.splitlines()
-            for line in lines:
-                if line.strip().lower().startswith("level"):
-                    extracted_data.append({
-                        "Level": line.strip(),
-                        "Domain": "TBD",
-                        "Descriptor": "..."  # placeholder
-                    })
-
-        if not extracted_data:
-            raise ValueError("No level descriptors found in PDF.")
-
-        df = pd.DataFrame(extracted_data)
-        buffer = BytesIO()
-        df.to_csv(buffer, index=False)
-        buffer.seek(0)
-
-        return extracted_data, buffer
-
-    except Exception as e:
-        raise RuntimeError(f"Error while parsing PDF: {e}")
-
-    # ✅ Save to in-memory CSV
-    csv_buffer = BytesIO()
-    df.to_csv(csv_buffer, index=False)
-    csv_buffer.seek(0)
-
-    # return extracted_data, csv_buffer
-
-# except Exception as e:
-#     raise RuntimeError(f"Error while parsing PDF: {e}")
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
@@ -105,15 +56,9 @@ if login_result is not None:
         # Input: OpenAI API key
         api_key = st.secrets["OPENAI_API_KEY"]
 
-        # # File upload widgets
-        # Primary_file = st.file_uploader(
-        #     "Upload Primary Framework (CSV or PDF)", 
-        #     type=["csv", "pdf"]
-        # )
-        # Secondary_file = st.file_uploader(
-        #     "Upload Secondary Framework (CSV or PDF)", 
-        #     type=["csv", "pdf"]
-        # )
+        # File upload widgets
+        # Primary_file = st.file_uploader("Upload a primary artefact in CSV format", type="csv")
+        # Secondary_file = st.file_uploader("Upload a secondary artefact in CSV format", type="csv")
 
         # Helper function to extract text from PDF
         def extract_text_from_pdf(file):
@@ -247,20 +192,9 @@ if login_result is not None:
                 structured.setdefault(level, {})[domain] = desc
             return structured
 
-            if Secondary_file is not None:
-                try:
-                    if Secondary_file is not None:
-                        Secondary_levels_dict, csv_path = parse_pdf_format(Secondary_file)
-                    else:
-                        st.warning("⚠️ No Secondary file uploaded.")
-                    df_secondary = pd.read_csv(csv_path)
-                    st.success("✅ PDF parsed successfully.")
-                    st.write(df_secondary)
-                except Exception as e:
-                    st.error(f"❌ PDF parsing error: {e}")
-                    st.exception(e)  # 🔍 Show full traceback in Streamlit
-            else:
-                st.warning("⚠️ Please upload a PDF file to continue.")
+        if Secondary_file:
+            try:
+                file_ext = Secondary_file.name.lower().split(".")[-1]
 
                 if file_ext == "csv":
                     df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
@@ -272,7 +206,7 @@ if login_result is not None:
                         st.warning("⚠️ Secondary CSV missing required columns.")
 
                 elif file_ext == "pdf":
-                    st.subheader("📄 Parsing data from PDF")
+                    st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
                     structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
 
                     if structured_data:
@@ -290,19 +224,26 @@ if login_result is not None:
                 elif file_ext == "pdf":
                     st.subheader("📄 Secondary PDF Detected")
 
-            if Secondary_file is not None:
-                Secondary_levels_dict, csv_path = parse_pdf_format(Secondary_file)
+            except Exception as e:
+                st.error(f"❌ Could not process Secondary file: {e}")
             else:
-                st.warning("⚠️ No Secondary file uploaded.")
+                st.warning("Unsupported file format for Secondary artefact.")
 
-            if Secondary_levels_dict and csv_path:
-                st.success(f"✅ Parsed {len(Secondary_levels_dict)} levels from PDF.")
+        # Move PDF renders to CSV if need be
+
+        elif file_ext == "pdf":
+            st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
+
+        Secondary_levels_dict, csv_path = parse_nqf_pdf_format(Secondary_file)
+
+        if Secondary_levels_dict and csv_path:
+            st.success(f"✅ Parsed {len(Secondary_levels_dict)} levels from PDF.")
 
             # ✅ Load into DataFrame like a normal CSV
             df_secondary = pd.read_csv(csv_path)
             st.session_state.df_secondary_loaded = True  # optional flag
-    else:
-        st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
+        else:
+            st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
                 
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
@@ -547,5 +488,5 @@ model of skills acquisition."""
             st.error("Incorrect username or password")
         elif auth_status is None:
             st.warning("Please enter your credentials")
-else:
-    st.error("Login form could not be rendered.")
+    else:
+        st.error("Login form could not be rendered.")
