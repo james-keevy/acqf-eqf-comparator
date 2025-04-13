@@ -194,7 +194,7 @@ if login_result is not None:
 
         Primary_levels_dict, csv_path = parse_nqf_pdf_format(Primary_file)
 
-        if Primary_level_dict and csv_path:
+        if Primary_levels_dict and csv_path:
             success_placeholder = st.empty()
             success_placeholder.success(f"✅ Parsed data from PDF.")
             # Wait for 3 seconds
