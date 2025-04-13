@@ -107,6 +107,14 @@ if login_result is not None:
 
                     Compare the descriptors. Are these levels equivalent? Highlight similarities and differences. 
                     Suggest the most appropriate Secondary level match and provide a similarity score out of 100.
+                    
+                    Return your result strictly in this JSON format:
+
+                    {
+                    "similarity_score": [number between 0 and 100],
+                    "comment": "[brief explanation of the match]"
+                    }
+
                     """
 
                 with st.spinner("Asking GPT-4o..."):
