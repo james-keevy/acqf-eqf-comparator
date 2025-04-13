@@ -9,6 +9,7 @@ import re
 from fpdf import FPDF
 import textwrap
 import streamlit_authenticator as stauth
+import json
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
@@ -136,19 +137,27 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
                         )
 
                         gpt_output = response.choices[0].message.content
-                        # gpt_output = response["choices"][0]["message"]["content"]
-                        st.write("GPT Output:", gpt_output)
+                        st.write("🧠 GPT Output:", gpt_output)
 
-                        # Extract ai_score
-                        import re
-                        match = re.search(r'score(?:\s*of)?\s*(\d{1,3})', gpt_output, re.IGNORECASE)
-                        if match:
-                            ai_score = int(match.group(1))
-                        else:
-                            ai_score = None
+                        # Try to extract ai_score from JSON
+                        ai_score = None  # Initialize
+                        try:
+                            parsed = json.loads(gpt_output)
+                            ai_score = parsed.get("similarity_score")
+                            st.success("✅ Extracted ai_score from JSON format")
+                        except json.JSONDecodeError:
+                            st.warning("⚠️ GPT did not return valid JSON. Falling back to regex...")
+
+                            # Fallback: Extract ai_score using regex
+                            match = re.search(r'score(?:\s*of)?\s*(\d{1,3})', gpt_output, re.IGNORECASE)
+                            if match:
+                                ai_score = int(match.group(1))
 
                         # DEBUG: Show extracted score
-                        st.write("Extracted ai_score:", ai_score)
+                        if ai_score is not None:
+                            st.write("🎯 Extracted ai_score:", ai_score)
+                        else:
+                            st.error("❌ No valid similarity score found in the response.")
 
                         # --------------------------------------------------------
                         
