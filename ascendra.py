@@ -137,18 +137,16 @@ if login_result is not None:
                     else:
                         st.warning("⚠️ Secondary CSV missing required columns.")
 
+
+############# PDF SECONDARY INPUT 
                 elif file_ext == "pdf":
                     Secondary_text = extract_text_from_pdf(Secondary_file)
                     Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
 
-                else:
-                    st.warning("⚠️ Unsupported file format for Secondary artefact.")
-
-            except Exception as e:
-                st.error(f"❌ Could not process Secondary file: {e}")
 
 
-############# PDF SECONDARY INPUT 
+
+
 
 
 
