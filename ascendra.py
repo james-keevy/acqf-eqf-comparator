@@ -136,15 +136,6 @@ if login_result is not None:
                         )
 
                         # # --------------------------------------------------------
-                        # # DEBUG: Show full GPT output
-                        # client = openai.OpenAI()
-
-                        # response = client.chat.completions.create(
-                        #     model="gpt-4",
-                        #     messages=[
-                        #         {"role": "user", "content": prompt}
-                        #     ]
-                        # )
 
                         gpt_output = response.choices[0].message.content
 
@@ -160,29 +151,6 @@ if login_result is not None:
                         except Exception as e:
                             st.warning("⚠️ Could not parse JSON. Falling back to regex...")
                         
-                        # Optional fallback logic
-
-                        # st.write("🧠 GPT Output:", gpt_output)
-
-                        # # Try to extract ai_score from JSON
-                        # ai_score = None  # Initialize
-                        # try:
-                        #     parsed = json.loads(gpt_output)
-                        #     ai_score = parsed.get("similarity_score")
-                        #     st.success("✅ Extracted ai_score from JSON format")
-                        # except json.JSONDecodeError:
-                        #     st.warning("⚠️ GPT did not return valid JSON. Falling back to regex...")
-
-                        #     # Fallback: Extract ai_score using regex
-                        #     match = re.search(r'score(?:\s*of)?\s*(\d{1,3})', gpt_output, re.IGNORECASE)
-                        #     if match:
-                        #         ai_score = int(match.group(1))
-
-                        # # DEBUG: Show extracted score
-
-                        # if st.checkbox("🔍 Show raw GPT output (debug only)"):
-                        #    st.code(gpt_output, language="json")
-
                         # # --------------------------------------------------------
                         
                         result_text = response.choices[0].message.content
