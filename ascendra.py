@@ -164,7 +164,6 @@ if login_result is not None:
                                 text += page.get_text()
                     except Exception as e:
                         st.error(f"❌ Failed to read PDF: {e}")
-                        return None
 
                     # Step 2: Use regex to extract Level → Domain → Descriptor triples
                     pattern = r"""
@@ -180,7 +179,6 @@ if login_result is not None:
 
                     if not matches:
                         st.warning("⚠️ No valid level-domain-descriptor groups found in the PDF.")
-                        return None
 
                     # Step 3: Clean and save to CSV
                     rows = []
