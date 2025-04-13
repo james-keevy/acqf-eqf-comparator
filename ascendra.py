@@ -178,12 +178,6 @@ if login_result is not None:
                         #         ai_score = int(match.group(1))
 
                         # # DEBUG: Show extracted score
-                        if ai_score is not None:
-                            st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
-                            st.info(comment)
-                            st.progress(ai_score / 100.0)
-                        else:
-                            st.error("❌ No valid similarity score found.")
 
                         # if st.checkbox("🔍 Show raw GPT output (debug only)"):
                         #    st.code(gpt_output, language="json")
@@ -201,6 +195,13 @@ if login_result is not None:
 
                             st.subheader(f"Comparison Result: Primary Level {selected_Primary_level} - Secondary Level {selected_Secondary_level}")
 
+                            if ai_score is not None:
+                                st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
+                                st.info(comment)
+                                st.progress(ai_score / 100.0)
+                            else:
+                                st.error("❌ No valid similarity score found.")
+                                                        
                             with st.expander("View compared descriptors"):
                                 col1, col2 = st.columns(2)
                                 with col1:
