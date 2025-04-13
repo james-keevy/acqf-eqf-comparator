@@ -14,9 +14,9 @@ import fitz  # PyMuPDF
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
-# --- PDF Parsing Helper ---
 def parse_nqf_pdf_format(file):
     def extract_text_from_pdf(file):
+        file.seek(0)
         text = ""
         with fitz.open(stream=file.read(), filetype="pdf") as doc:
             for page in doc:
@@ -59,7 +59,6 @@ def parse_nqf_pdf_format(file):
         st.error(f"❌ PDF parsing error: {e}")
         return None, None
 
-# --- Auth Setup ---
 hashed_passwords = ['$2b$12$2Myv8E.J5lIbWN5aThrBDOeGthVRDw4e7j38g.fDTOmiy.VvKRCZa']
 
 credentials = {
@@ -89,7 +88,7 @@ if login_result is not None:
         st.image("ascendra_v5.png", width=300)
         st.title("Comparing learning outcomes")
         st.caption("Ascendra v1.1 is limited to CSV and PDF files")
-        st.caption("Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts (e.g. qualifications, curricula, microcredentials, job descriptions and many others), but results should be interpreted as advisory, not definitive. The model relies on language patterns and may not capture nuanced policy or contextual differences across frameworks. It is not a substitute for expert judgement, formal benchmarking, or regulatory endorsement. Users should validate results through human review and consult official frameworks for authoritative decisions.")
+        st.caption("Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts...")
 
         st.caption("Click 'Compare Levels' to generate an AI-based similarity score. The threshold below helps categorize the result.")
 
@@ -114,7 +113,8 @@ if login_result is not None:
             elif ext == "pdf":
                 data, csv_bytes = parse_nqf_pdf_format(Primary_file)
                 if data:
-                    df_primary = pd.read_csv(csv_bytes)
+                    csv_bytes.seek(0)
+                    df_primary = pd.read_csv(csv_bytes, encoding="utf-8-sig", on_bad_lines='skip')
                 else:
                     df_primary = pd.DataFrame()
             else:
@@ -128,11 +128,13 @@ if login_result is not None:
         if Secondary_file:
             ext = Secondary_file.name.split(".")[-1].lower()
             if ext == "csv":
-                df_secondary = pd.read_csv(Secondary_file)
+                Secondary_file.seek(0)
+                df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines='skip')
             elif ext == "pdf":
                 data, csv_bytes = parse_nqf_pdf_format(Secondary_file)
                 if data:
-                    df_secondary = pd.read_csv(csv_bytes)
+                    csv_bytes.seek(0)
+                    df_secondary = pd.read_csv(csv_bytes, encoding="utf-8-sig", on_bad_lines='skip')
                 else:
                     df_secondary = pd.DataFrame()
             else:
