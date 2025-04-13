@@ -105,7 +105,11 @@ Secondary Level {selected_Secondary_level}:
 {Secondary_text}
 
 Compare the descriptors. Are these levels equivalent? Highlight similarities and differences. 
-Suggest the most appropriate Secondary level match and provide a similarity score out of 100.
+
+Suggest the most appropriate Secondary level match.
+
+Provide a similarity score out of 100. Write this as a separate score below your response.
+
 """
 
                 with st.spinner("Asking GPT-4o..."):
