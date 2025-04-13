@@ -174,20 +174,22 @@ if login_result is not None:
 
         # Move PDF renders to CSV if need be
 
-        Primary_levels_dict, csv_path = parse_nqf_pdf_format(Primary_file, label="primary")
+                Secondary_levels_dict, csv_path = parse_nqf_pdf_format(Secondary_file)
 
-        if structured_data and csv_path:
+        if selected_Primary_level_levels_dict and csv_path:
+            # st.success(f"✅ Parsed {len(Primary_levels_dict)} levels from PDF.")
             success_placeholder = st.empty()
-            success_placeholder.success("✅ Parsed data from PDF.")
+            success_placeholder.success(f"✅ Parsed data from PDF.")
+            # Wait for 3 seconds
             time.sleep(3)
+
+            # Clear the success message
             success_placeholder.empty()
 
+            # ✅ Load into DataFrame like a normal CSV
             df_primary = pd.read_csv(csv_path)
-            st.session_state.df_primary_loaded = True
-            Primary_levels = structured_data
-        else:
-            st.warning("⚠️ No structured descriptors could be extracted from the PDF.")
-       
+            st.session_state.df_primary_loaded = True  # optional flag
+      
         # ..............................end primary
 
         # --- Process Secondary File ---
