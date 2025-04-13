@@ -175,6 +175,7 @@ if login_result is not None:
       
         # --- Process Secondary File ---
         Secondary_levels = {}
+        file_ext = Secondary_file.name.split(".")[-1].lower()
 
         def extract_descriptors_from_pdf_text_grouped(text):
             """
