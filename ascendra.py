@@ -105,15 +105,15 @@ if login_result is not None:
         # Input: OpenAI API key
         api_key = st.secrets["OPENAI_API_KEY"]
 
-        # File upload widgets
-        Primary_file = st.file_uploader(
-            "Upload Primary Framework (CSV or PDF)", 
-            type=["csv", "pdf"]
-        )
-        Secondary_file = st.file_uploader(
-            "Upload Secondary Framework (CSV or PDF)", 
-            type=["csv", "pdf"]
-        )
+        # # File upload widgets
+        # Primary_file = st.file_uploader(
+        #     "Upload Primary Framework (CSV or PDF)", 
+        #     type=["csv", "pdf"]
+        # )
+        # Secondary_file = st.file_uploader(
+        #     "Upload Secondary Framework (CSV or PDF)", 
+        #     type=["csv", "pdf"]
+        # )
 
         # Helper function to extract text from PDF
         def extract_text_from_pdf(file):
@@ -126,6 +126,10 @@ if login_result is not None:
             except Exception as e:
                 st.error(f"❌ Error reading PDF: {e}")
                 return ""
+
+        # File upload widgets
+        Primary_file = st.file_uploader("📥 Upload a *Primary* artefact (CSV or PDF)", type=["csv", "pdf"])
+        Secondary_file = st.file_uploader("📥 Upload a *Secondary* artefact (CSV or PDF)", type=["csv", "pdf"])
 
         # Initialize variables
         Primary_text = ""
