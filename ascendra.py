@@ -147,8 +147,23 @@ if login_result is not None:
                 Secondary_levels = df_secondary.groupby('Level')['Description'].apply(lambda x: "\n".join(x.dropna())).to_dict()
 
             # Level selection dropdowns
-            selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
-            selected_Secondary_level = st.selectbox("Select Secondary Level", sorted(Secondary_levels.keys()))
+            if 'Primary_descriptors' in locals() and Primary_descriptors:
+                selected_Primary_key = st.selectbox(
+                    "Select Primary Level + Domain", 
+                    sorted(Primary_descriptors.keys())
+                )
+                st.text_area("Primary Descriptor", Primary_descriptors[selected_Primary_key], height=200)
+            else:
+                st.warning("⚠️ No valid Primary descriptors found.")
+
+            if 'Secondary_descriptors' in locals() and Secondary_descriptors:
+                selected_Secondary_key = st.selectbox(
+                    "Select Secondary Level + Domain", 
+                    sorted(Secondary_descriptors.keys())
+                )
+                st.text_area("Secondary Descriptor", Secondary_descriptors[selected_Secondary_key], height=200)
+            else:
+                st.warning("⚠️ No valid Secondary descriptors found.")
 
             # Compare levels
             if st.button("Compare Levels"):
