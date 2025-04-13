@@ -177,9 +177,6 @@ if login_result is not None:
 
         # Move PDF renders to CSV if need be
 
-        elif file_ext == "pdf":
-            st.subheader("📄 Parsing data from PDF")
-
         Primary_levels_dict, csv_path = parse_nqf_pdf_format(Primary_file, label="primary")
 
         if Primary_levels_dict and csv_path:
@@ -190,7 +187,7 @@ if login_result is not None:
         time.sleep(3)
 
         # Clear the success message
-        # success_placeholder.empty()
+        success_placeholder.empty()
 
         # ✅ Load into DataFrame like a normal CSV
         df_primary = pd.read_csv(csv_path)
@@ -250,7 +247,7 @@ if login_result is not None:
         # Move PDF renders to CSV if need be
 
             elif file_ext == "pdf":
-                st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
+                st.subheader("📄 Parsing data from PDF")
 
         Secondary_levels_dict, csv_path = parse_nqf_pdf_format(Secondary_file)
 
