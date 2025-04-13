@@ -126,10 +126,6 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                         result_text = response.choices[0].message.content
 
-                        if st.button("🔄 New Query"):
-                            st.session_state.results = []
-                            st.rerun()
-
                         if result_text:
                             match = re.search(r"similarity score[^\d]*(\d{1,3})", result_text, re.IGNORECASE)
                             ai_score = int(match.group(1)) if match else None
@@ -267,6 +263,10 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
                                 st.rerun()
                         else:
                             st.info("No results yet — run a comparison to enable downloading.")
+
+                        if st.button("🔄 New Query"):
+                            st.session_state.results = []
+                            st.rerun()
 
                     except Exception as e:
                         st.error(f"❌ API Error: {e}")
