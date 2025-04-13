@@ -288,7 +288,7 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
                 font-size: 0.8rem;
                 font-family: sans-serif;
                 z-index: 9999;">
-                Powered by Ascendra | Built with Streamlit & OpenAI • Version 1.0 – April 2025. Results are advisory.
+                Powered by Ascendra | Built with Streamlit & OpenAI • Version 1.0 – April 2025 • Results are advisory.
             </div>
         """, unsafe_allow_html=True)
 
