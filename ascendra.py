@@ -83,6 +83,7 @@ if login_result is not None:
             Parses a PDF and returns structured descriptors + temp CSV path.
             """
             text = ""
+            uploaded_file.seek(0)  # move pointer back to beginning
             with fitz.open(stream=uploaded_file.read(), filetype="pdf") as doc:
                 for page in doc:
                     text += page.get_text()
