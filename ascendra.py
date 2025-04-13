@@ -224,18 +224,18 @@ if login_result is not None:
                 elif file_ext == "pdf":
                     st.subheader("📄 Secondary PDF Detected")
 
-                    # Call the reusable function
-                    Secondary_levels, csv_path = extract_structured_from_pdf_to_csv(Secondary_file)
+                    # # Call the reusable function
+                    # Secondary_levels, csv_path = extract_structured_from_pdf_to_csv(Secondary_file)
 
-                    if Secondary_levels:
-                        st.success(f"✅ Found descriptors for {len(Secondary_levels)} levels.")
-                        st.write(Secondary_levels)
+                    # if Secondary_levels:
+                    #     st.success(f"✅ Found descriptors for {len(Secondary_levels)} levels.")
+                    #     st.write(Secondary_levels)
 
-                        if csv_path:
-                            with open(csv_path, "rb") as f:
-                                st.download_button("⬇️ Download Extracted CSV", f, file_name="secondary_descriptors.csv")
-                    else:
-                        st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
+                    #     if csv_path:
+                    #         with open(csv_path, "rb") as f:
+                    #             st.download_button("⬇️ Download Extracted CSV", f, file_name="secondary_descriptors.csv")
+                    # else:
+                    #     st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
               
 ###############
 
