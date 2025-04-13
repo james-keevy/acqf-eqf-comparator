@@ -48,8 +48,8 @@ try:
 
     # return extracted_data, csv_buffer
 
-except Exception as e:
-    raise RuntimeError(f"Error while parsing PDF: {e}")
+# except Exception as e:
+#     raise RuntimeError(f"Error while parsing PDF: {e}")
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
