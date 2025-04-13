@@ -236,6 +236,7 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
                             safe_multicell(pdf, 0, 8, "GPT Comparison Result:")
                             pdf.set_font("DejaVu", "", 8)
                             safe_multicell(pdf, 0, 8, result_text)
+                            pdf.ln(5)
 
                             # Convert to BytesIO
                             pdf_bytes = io.BytesIO(pdf.output(dest='S'))
