@@ -156,91 +156,61 @@ if login_result is not None:
                     def extract_structured_from_pdf_to_csv(pdf_file, output_csv="extracted_descriptors.csv"):
                         import fitz  # PyMuPDF
 
-                        # Step 1: Extract full text from PDF
-                        try:
-                            with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
-                                text = ""
-                                for page in doc:
-                                    text += page.get_text()
-                        except Exception as e:
-                            st.error(f"❌ Failed to read PDF: {e}")
-                            return None
+                    # Step 1: Extract full text from PDF
+                    try:
+                        with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
+                            text = ""
+                            for page in doc:
+                                text += page.get_text()
+                    except Exception as e:
+                        st.error(f"❌ Failed to read PDF: {e}")
+                        return None
 
-                        # def clean_pdf_text(text):
-                        #     # Remove lines that are just page numbers or "Page X" phrases
-                        #     lines = text.splitlines()
-                        #     clean_lines = []
-                        #     for line in lines:
-                        #         if re.match(r"^\s*Page\s*\d+(\s*of\s*\d+)?\s*$", line, flags=re.IGNORECASE):
-                        #             continue
-                        #         if re.match(r"^\s*\d+\s*$", line):  # Standalone numbers
-                        #             continue
-                        #         clean_lines.append(line)
-                        #     return "\n".join(clean_lines) 
+                    # Step 2: Use regex to extract Level → Domain → Descriptor triples
+                    pattern = r"""
+                    (?:Level[:\s-]*\s*(\d+))                               # Match Level number (e.g. Level 4, Level: 4)
+                    [\s\n\r]+                                              # Allow whitespace/newlines
+                    (?:Domain[:\s-]*)?                                     # Optional 'Domain:' label
+                    (Knowledge|Skills|Autonomy|Responsibility|Competence) # Explicit domain match
+                    [\s\n\r]+
+                    (.+?)                                                  # Descriptor (non-greedy)
+                    (?=\n?(?:Level[:\s-]*\s*\d+|$))                        # Lookahead for next Level or EOF
+                    """
+                    matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE)
 
-                        # Step 2: Use regex to extract Level → Domain → Descriptor triples
-                        pattern = r"""
-                        (?:Level[:\s-]*\s*(\d+))                              # Match Level number (e.g. Level 4, Level: 4)
-                        [\s\n\r]+                                             # Allow whitespace/newlines
-                        (?:Domain[:\s-]*)?                                    # Optional 'Domain:' label
-                        (Knowledge|Skills|Autonomy|Responsibility|Competence)  # Explicit domain match
-                        [\s\n\r]+
-                        (.+?)                                                 # Descriptor (non-greedy)
-                        (?=\n?(?:Level[:\s-]*\s*\d+|$))                       # Lookahead for next Level or EOF
-                        """
-                        matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE) 
+                    if not matches:
+                        st.warning("⚠️ No valid level-domain-descriptor groups found in the PDF.")
+                        return None
 
-                        structured = {}
-                                                
-                        # Normalize line endings, strip whitespace, and remove empty lines
+                    # Step 3: Clean and save to CSV
+                    rows = []
+                    for level, domain, descriptor in matches:
+                        level = f"Level {level.strip()}"
+                        domain = domain.strip().title()
+
+                        # ✅ Move cleaning inside the loop
                         cleaned_lines = [
-                            re.sub(r"\s+", " ", line).strip()  # Collapse multiple spaces/tabs and strip
+                            re.sub(r"\s+", " ", line).strip()
                             for line in descriptor.strip().splitlines()
-                            if line.strip() and not re.fullmatch(r"\s*", line)  # Skip lines that are just whitespace
+                            if line.strip() and not re.fullmatch(r"\s*", line)
                         ]
-                        cleaned_descriptor = " ".join(cleaned_lines)                       
-                        
-                        # for level, domain, descriptor in matches:
-                        #     level_label = f"Level {level.strip()}"
-                        #     domain = domain.strip().title()
+                        cleaned_descriptor = " ".join(cleaned_lines)
 
-                        #     # 🧼 Clean descriptor: strip empty lines, normalize whitespace
-                        #     cleaned_lines = [
-                        #         line.strip() for line in descriptor.strip().splitlines()
-                        #         if line.strip()  # Keep only non-empty lines
-                        #     ]
-                        #     cleaned_descriptor = " ".join(cleaned_lines)
+                        if level and domain and cleaned_descriptor:
+                            rows.append([level, domain, cleaned_descriptor])
 
-                        #     structured.setdefault(level_label, {})[domain] = cleaned_descriptor
+                    if not rows:
+                        st.warning("⚠️ All extracted entries were incomplete and skipped.")
+                        return None
 
-                        if not matches:
-                            st.warning("⚠️ No valid level-domain-descriptor groups found in the PDF.")
-                            return None
+                    # Step 4: Write to CSV
+                    output_path = f"/tmp/{output_csv}"
+                    with open(output_path, mode="w", encoding="utf-8", newline="") as f:
+                        writer = csv.writer(f)
+                        writer.writerow(["Level", "Domain", "Descriptor"])
+                        writer.writerows(rows)
 
-                        # Step 3: Clean and save to CSV
-                        rows = []
-                        for level, domain, descriptor, _ in matches:
-                            level = level.strip().title()
-                            domain = domain.strip().title()
-                            descriptor = descriptor.strip().replace("\n", " ").strip()
-
-                            if level and domain and descriptor:
-                                rows.append([level, domain, descriptor])
-
-                        if not rows:
-                            st.warning("⚠️ All extracted entries were incomplete and skipped.")
-                            return None
-
-                        # Step 4: Write to CSV
-                        output_path = f"/tmp/{output_csv}"  # For Streamlit or temp-safe environments
-                        with open(output_path, mode="w", encoding="utf-8", newline="") as f:
-                            writer = csv.writer(f)
-                            writer.writerow(["Level", "Domain", "Descriptor"])
-                            writer.writerows(rows)
-
-                        return output_path
-
-
+                    return output_path
 ###############
 
             except Exception as e:
