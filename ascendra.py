@@ -119,7 +119,8 @@ Provide a similarity score out of 100. Write this as a separate score below your
                             messages=[
                                 {
                                     "role": "system",
-                                    "content": """You are an expert in qualifications frameworks and international education systems. You understand learning outcomes and domain-based comparisons..."""
+                                    "content": """You are an expert in qualifications frameworks and international education systems. You understand learning outcomes and domain-based comparisons. You are able to compare the learning outcomes in different artefacts (such as level descriptors, qualifications, curricula, and job descriptions). You are well versed in the application of taxonomies, such as the revised Bloom taxonomy for knowledge, the Structure of the Observed Learning Outcome (SOLO) taxonomy, and the the Dreyfus
+model of skills acquisition."""
                                 },
                                 {
                                     "role": "user",
