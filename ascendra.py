@@ -110,11 +110,11 @@ Suggest the most appropriate Secondary level match.
 
 Provide a similarity score out of 100. Write this as a separate score below your response. 
 
-Add a visual depiction with one row of 10 circles sized double the hieght of the text. 
+Add a visual depiction with one row of 10 circles sized double the hieght of the text. Fill the circles in red that match the score out of 100 proportionally. Keep the other circles unfilled.
 
 Do not use a heading for the visual depiction. 
 
-Fill the circles in red that match the score out of 100 proportionally. Keep the other circles unfilled.
+
 
 """
 
