@@ -82,7 +82,7 @@ if login_result is not None:
         if Primary_file:
             if Primary_file.name.lower().endswith(".csv"):
                 try:
-                    df_primary = pd.read_csv(Primary_file, on_bad_lines='skip')
+                    df_primary = pd.read_csv(Primary_file, encoding='utf-8-sig', on_bad_lines='skip')
                     Primary_text = "\n".join(df_primary.iloc[:, 0].dropna().astype(str).tolist())
                 except Exception as e:
                     st.error(f"⚠️ Could not process Primary file: {e}")
@@ -93,7 +93,7 @@ if login_result is not None:
         if Secondary_file:
             if Secondary_file.name.lower().endswith(".csv"):
                 try:
-                    df_secondary = pd.read_csv(Secondary_file, on_bad_lines='skip')
+                    df_secondary = pd.read_csv(Secondary_file, encoding='utf-8-sig', on_bad_lines='skip')
                     Secondary_text = "\n".join(df_secondary.iloc[:, 0].dropna().astype(str).tolist())
                 except Exception as e:
                     st.error(f"⚠️ Could not process Secondary file: {e}")
