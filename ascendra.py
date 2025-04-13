@@ -172,16 +172,14 @@ if login_result is not None:
                             comment_cleaned = ""
                     
                         if ai_score is not None:
-                            st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
-                            
-                            if comment_cleaned:
+                                st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
                                 st.info(comment_cleaned)
+                                st.progress(ai_score / 100.0)
                             else:
-                                st.warning("⚠️ No explanation comment was included.")
-                                
-                            st.progress(ai_score / 100.0)
-                        else:
-                            st.error("❌ No valid similarity score found.")
+                                st.error("❌ No valid similarity score found.")
+
+                    except Exception as e:
+                        st.error(f"❌ GPT call failed: {e}")
                                                                    
                         result_text = response.choices[0].message.content
 
