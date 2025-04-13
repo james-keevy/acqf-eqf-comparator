@@ -96,15 +96,11 @@ if login_result is not None:
                 Secondary_text = "".join(Secondary_levels[selected_Secondary_level])
 
                 prompt = textwrap.dedent(f"""
+                    
                     Compare the following qualification level descriptors and assess their equivalence.
 
-                    Primary Level {selected_Primary_level}:
-                    {Primary_text}
-
-                    Secondary Level {selected_Secondary_level}:
-                    {Secondary_text}
-
-                    Compare the descriptors. Are these levels equivalent? Highlight similarities and differences. 
+                    Compare the descriptors. 
+                                          
                     Suggest the most appropriate Secondary level match and provide a similarity score out of 100.
                     
                     Add a result strictly in this JSON format:
@@ -112,6 +108,15 @@ if login_result is not None:
                     "similarity_score": [number between 0 and 100],
                     "comment": "[brief explanation of the match]"
                     }}
+                                         
+                    Continue with the comparison to check if these levels equivalent? Highlight similarities and differences.
+                                         
+                    Primary Level {selected_Primary_level}:
+                    {Primary_text}
+
+                    Secondary Level {selected_Secondary_level}:
+                    {Secondary_text}
+
                 """)
 
                 with st.spinner("Asking GPT-4o..."):
