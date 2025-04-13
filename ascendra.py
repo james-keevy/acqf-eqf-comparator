@@ -161,6 +161,7 @@ if login_result is not None:
                                     comment_cleaned = comment.strip()
                             else:
                                 st.warning("⚠️ No JSON block found in GPT output.")
+                        
                         except Exception as e:
                             st.warning(f"⚠️ Could not parse JSON. Falling back to regex...")
 
@@ -183,11 +184,16 @@ if login_result is not None:
 
                             if ai_score is not None:
                                 st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
-                                st.info(comment)
+                                
+                                if comment_cleaned:
+                                    st.info(comment_cleaned)
+                                else:
+                                    st.warning("⚠️ No explanation comment was included.")
+                                    
                                 st.progress(ai_score / 100.0)
                             else:
                                 st.error("❌ No valid similarity score found.")
-                                                        
+                          
                             with st.expander("View compared descriptors"):
                                 col1, col2 = st.columns(2)
                                 with col1:
