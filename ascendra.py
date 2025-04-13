@@ -170,7 +170,7 @@ if login_result is not None:
                             st.warning("⚠️ Could not parse JSON. Falling back to regex...")
                             ai_score = None
                             comment_cleaned = ""
-                    
+                        
                         if ai_score is not None:
                             st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
                             
