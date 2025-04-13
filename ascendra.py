@@ -195,15 +195,15 @@ if login_result is not None:
                             level_label = f"Level {level.strip()}"
                             domain = domain.strip().title()
 
-                        # 🧼 Clean descriptor: strip empty lines, normalize whitespace
-                        cleaned_lines = [
-                            line.strip() for line in descriptor.strip().splitlines()
-                            if line.strip()  # Keep only non-empty lines
-                        ]
-                        cleaned_descriptor = " ".join(cleaned_lines)
+                            # 🧼 Clean descriptor: strip empty lines, normalize whitespace
+                            cleaned_lines = [
+                                line.strip() for line in descriptor.strip().splitlines()
+                                if line.strip()  # Keep only non-empty lines
+                            ]
+                            cleaned_descriptor = " ".join(cleaned_lines)
 
-                        structured.setdefault(level_label, {})[domain] = cleaned_descriptor
-                                           
+                            structured.setdefault(level_label, {})[domain] = cleaned_descriptor
+                                         
                         if not matches:
                             st.warning("⚠️ No valid level-domain-descriptor groups found in the PDF.")
                             return None
