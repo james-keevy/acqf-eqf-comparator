@@ -230,7 +230,7 @@ if login_result is not None:
         Secondary_levels_dict, csv_path = parse_nqf_pdf_format(Secondary_file)
 
         if Secondary_levels_dict and csv_path:
-            st.success(f"✅ Parsed {len(Secondary_levels_dict)} levels from PDF.")
+            # st.success(f"✅ Parsed {len(Secondary_levels_dict)} levels from PDF.")
 
             # ✅ Load into DataFrame like a normal CSV
             df_secondary = pd.read_csv(csv_path)
