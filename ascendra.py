@@ -10,7 +10,7 @@ import textwrap
 import streamlit_authenticator as stauth
 import fitz  # PyMuPDF
 import io
-from ascandra import parse_pdf_format
+from ascendra import parse_pdf_format
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
