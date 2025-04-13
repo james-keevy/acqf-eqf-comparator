@@ -121,6 +121,10 @@ if login_result is not None:
 
             # Load Primary levels
             Primary_levels = defaultdict(list)
+            if 'Level' in df_primary.columns:
+                primary_levels = df_primary['Level'].dropna().unique().tolist()
+                selected_Primary_level = st.selectbox("Select Primary Level", primary_levels)
+
             # Primary_reader = csv.DictReader(Primary_file.read().decode("utf-8").splitlines())
             # Primary_reader.fieldnames = [h.strip().lstrip('﻿') for h in Primary_reader.fieldnames]
             # for row in Primary_reader:
@@ -129,6 +133,10 @@ if login_result is not None:
 
             # Load Secondary levels
             Secondary_levels = defaultdict(list)
+            if 'Level' in df_secondary.columns:
+                secondary_levels = df_secondary['Level'].dropna().unique().tolist()
+                selected_Secondary_level = st.selectbox("Select Secondary Level", secondary_levels)
+           
             # Secondary_reader = csv.DictReader(Secondary_file.read().decode("utf-8").splitlines())
             # Secondary_reader.fieldnames = [h.strip().lstrip('﻿') for h in Secondary_reader.fieldnames]
             #for row in Secondary_reader:
