@@ -117,7 +117,6 @@ if login_result is not None:
                     "Ten": "Level 10"
                 }
 
-                pdf_file.seek(0)  # 🔁 Ensure stream is fresh
                 with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
                     text = "\n".join([page.get_text() for page in doc])
 
@@ -205,6 +204,8 @@ if login_result is not None:
                     else:
                         st.warning("⚠️ Secondary CSV missing required columns.")
 
+############# PDF SECONDARY INPUT 
+
                 elif file_ext == "pdf":
                     st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
                     structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
@@ -212,9 +213,8 @@ if login_result is not None:
                     if structured_data:
                         st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
                         st.write(structured_data)
-                        # Load the generated CSV into df_secondary for downstream use
-                        df_secondary = pd.read_csv(csv_path)
-
+                        with open(csv_path, "rb") as f:
+                            st.download_button("⬇️ Download Extracted CSV", f, file_name="nqf_levels.csv")
                     else:
                         st.warning("⚠️ Could not parse any level-domain-descriptor entries.")
                         st.warning("⚠️ Secondary PDF parsing returned an empty dictionary.")
@@ -224,27 +224,26 @@ if login_result is not None:
                 elif file_ext == "pdf":
                     st.subheader("📄 Secondary PDF Detected")
 
+                    # Call the reusable function
+                    Secondary_levels, csv_path = extract_structured_from_pdf_to_csv(Secondary_file)
+
+                    if Secondary_levels:
+                        st.success(f"✅ Found descriptors for {len(Secondary_levels)} levels.")
+                        st.write(Secondary_levels)
+
+                        if csv_path:
+                            with open(csv_path, "rb") as f:
+                                st.download_button("⬇️ Download Extracted CSV", f, file_name="secondary_descriptors.csv")
+                    else:
+                        st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
+              
+###############
+
             except Exception as e:
                 st.error(f"❌ Could not process Secondary file: {e}")
             else:
                 st.warning("Unsupported file format for Secondary artefact.")
 
-        # Move PDF renders to CSV if need be
-
-        elif file_ext == "pdf":
-            st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
-
-        Secondary_levels_dict, csv_path = parse_nqf_pdf_format(Secondary_file)
-
-        if Secondary_levels_dict and csv_path:
-            st.success(f"✅ Parsed {len(Secondary_levels_dict)} levels from PDF.")
-
-            # ✅ Load into DataFrame like a normal CSV
-            df_secondary = pd.read_csv(csv_path)
-            st.session_state.df_secondary_loaded = True  # optional flag
-        else:
-            st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
-                
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
 
@@ -265,16 +264,6 @@ if login_result is not None:
                         Primary_levels.setdefault(level, {})[domain] = descriptor
                 else:
                     st.warning("⚠️ Primary CSV must include 'Level', 'Domain', and 'Descriptor' columns.")
-
-            # --- Build Secondary: Level → {Domain: Descriptor} ---
-            Secondary_levels = {}
-            if 'df_secondary' in locals() and isinstance(df_secondary, pd.DataFrame):
-                if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
-                    grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
-                    for (level, domain), descriptor in grouped.items():
-                        Secondary_levels.setdefault(level, {})[domain] = descriptor
-                else:
-                    st.warning("⚠️ Secondary data must include 'Level', 'Domain', and 'Descriptor' columns.")
 
             # --- Primary & Secondary UI ---
             if Primary_levels:
@@ -310,7 +299,7 @@ Suggest the most appropriate Secondary level match.
 
 Provide a similarity score out of 100. Write this as a separate score below your response. 
 
-Add a visual depiction with one row of 10 circles sized double the height of the text. Fill the circles in red to match the score out of 100 proportionally, starting from the left. Keep the other circles unfilled.
+Add a visual depiction with one row of 10 circles sized double the hieght of the text. Fill the circles in red to match the score out of 100 proportionally, starting from the left. Keep the other circles unfilled.
 
 Do not use a heading for the visual depiction. 
 
