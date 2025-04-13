@@ -72,11 +72,11 @@ if login_result is not None:
                 st.error(f"❌ Error reading PDF: {e}")
                 return ""
 
-        # Upload widgets
+        # File upload widgets
         Primary_file = st.file_uploader("📥 Upload a *Primary* artefact (CSV or PDF)", type=["csv", "pdf"])
         Secondary_file = st.file_uploader("📥 Upload a *Secondary* artefact (CSV or PDF)", type=["csv", "pdf"])
 
-        # Initialize text blocks
+        # Initialize variables
         Primary_text = ""
         Secondary_text = ""
 
