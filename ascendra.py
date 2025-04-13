@@ -148,6 +148,17 @@ if login_result is not None:
                             parsed = json.loads(json_text)
                             ai_score = parsed.get("similarity_score")
                             comment = parsed.get("comment", "")
+
+                            st.write(result_text)
+
+                            # Clean up comment text before showing
+                            if comment:
+                                # Remove "JSON Result:" and nested JSON (anything that looks like { ... })
+                                comment_cleaned = re.sub(r'JSON Result:.*', '', comment, flags=re.DOTALL).strip()
+                                comment_cleaned = re.sub(r'\{.*\}', '', comment_cleaned, flags=re.DOTALL).strip()
+                            else:
+                                comment_cleaned = ""
+
                         except Exception as e:
                             st.warning("⚠️ Could not parse JSON. Falling back to regex...")
                         
@@ -181,16 +192,6 @@ if login_result is not None:
                                     st.markdown(f"**Secondary Level {selected_Secondary_level}**")
                                     for item in Secondary_levels[selected_Secondary_level]:
                                         st.markdown(f"- {item}")
-
-                            st.write(result_text)
-
-                            # Clean up comment text before showing
-                            if comment:
-                                # Remove "JSON Result:" and nested JSON (anything that looks like { ... })
-                                comment_cleaned = re.sub(r'JSON Result:.*', '', comment, flags=re.DOTALL).strip()
-                                comment_cleaned = re.sub(r'\{.*\}', '', comment_cleaned, flags=re.DOTALL).strip()
-                            else:
-                                comment_cleaned = ""
                              
                             # --- Create PDF ---
                             from fpdf import FPDF
