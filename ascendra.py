@@ -140,17 +140,16 @@ if login_result is not None:
 ############# PDF SECONDARY INPUT 
 
                 elif file_ext == "pdf":
-                    Secondary_text = extract_text_from_pdf(Secondary_file)
-                    Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
+                    st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
+                    structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
 
-                    if 'Secondary_text' in locals():
-                        st.subheader("📄 Raw Secondary PDF Text")
-                        st.text_area("Raw Text", Secondary_text[:3000], height=300)
-
-                    if Secondary_levels:
-                        st.success(f"✅ Found descriptors for {len(Secondary_levels)} levels.")
-                        st.write(Secondary_levels)
+                    if structured_data:
+                        st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
+                        st.write(structured_data)
+                        with open(csv_path, "rb") as f:
+                            st.download_button("⬇️ Download Extracted CSV", f, file_name="nqf_levels.csv")
                     else:
+                        st.warning("⚠️ Could not parse any level-domain-descriptor entries.")
                         st.warning("⚠️ Secondary PDF parsing returned an empty dictionary.")
 
                     # ✅ Reusable function: Extract structured data and write to CSV
