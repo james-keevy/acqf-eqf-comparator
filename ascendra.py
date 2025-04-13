@@ -79,40 +79,35 @@ if login_result is not None:
 
         # --- Parse NQF PDF ---
         def parse_nqf_pdf_format(uploaded_file, label="primary"):
-            """
-            Parses a PDF and returns structured descriptors + temp CSV path.
-            """
-            text = ""
-            uploaded_file.seek(0)  # move pointer back to beginning
-            
             if not uploaded_file:
                 return {}, None
 
             try:
-                uploaded_file.seek(0)  # reset pointer just in case
-                pdf_bytes = uploaded_file.read()
-                uploaded_file.seek(0)  # reset again in case needed elsewhere
-
-                # ✅ Validate file is not empty
-                if not pdf_bytes:
-                    raise ValueError("Uploaded file is empty")
+                # Wrap the uploaded file in a BytesIO buffer
+                pdf_buffer = BytesIO(uploaded_file.read())
 
                 # ✅ Try opening PDF
                 text = ""
-                with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
+                with fitz.open(stream=pdf_buffer, filetype="pdf") as doc:
                     for page in doc:
                         text += page.get_text()
 
-                # ✅ Parse
+                # ✅ Extract structured descriptors
                 structured = extract_descriptors_from_pdf_text_grouped(text)
 
-                # ✅ Write to CSV
+                # ✅ Save to temp CSV
                 temp_dir = tempfile.gettempdir()
                 output_csv_path = Path(temp_dir) / f"{label.lower()}_levels.csv"
+
                 rows = []
                 for level, domains in structured.items():
                     for domain, descriptor in domains.items():
-                        rows.append({"Level": level, "Domain": domain, "Descriptor": descriptor})
+                        rows.append({
+                            "Level": level,
+                            "Domain": domain,
+                            "Descriptor": descriptor
+                        })
+
                 pd.DataFrame(rows).to_csv(output_csv_path, index=False, encoding="utf-8-sig")
 
                 return structured, str(output_csv_path)
