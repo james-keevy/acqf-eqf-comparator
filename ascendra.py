@@ -108,7 +108,7 @@ Compare the descriptors. Are these levels equivalent? Highlight similarities and
 
 Suggest the most appropriate Secondary level match.
 
-Provide a similarity score out of 100. Write this as a separate score below your response with a visual slider in red font. Do not use a heading for the slider. 
+Provide a similarity score out of 100. Write this as a separate score below your response with a visual slider in a bright colour. Do not use a heading for the slider. 
 
 """
 
