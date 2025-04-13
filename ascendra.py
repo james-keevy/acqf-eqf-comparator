@@ -138,9 +138,7 @@ if login_result is not None:
 
 
 ###############
-                elif Secondary_file.name.lower().endswith(".pdf"):
-                    Secondary_text = extract_text_from_pdf(Secondary_file)
-                    Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
+
             except Exception as e:
                 st.error(f"❌ Could not process Secondary file: {e}")
             else:
