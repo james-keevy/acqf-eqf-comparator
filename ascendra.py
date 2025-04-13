@@ -141,29 +141,25 @@ if login_result is not None:
             client = OpenAI(api_key=api_key)
                               
             # Build a dictionary of levels to their descriptors
-            if 'Level' in df_primary.columns and 'Description' in df_primary.columns:
-                Primary_levels = df_primary.groupby('Level')['Description'].apply(lambda x: "\n".join(x.dropna())).to_dict()
-            if 'Level' in df_secondary.columns and 'Description' in df_secondary.columns:
-                Secondary_levels = df_secondary.groupby('Level')['Description'].apply(lambda x: "\n".join(x.dropna())).to_dict()
+            Primary_levels = {}
+            if 'df_primary' in locals() and isinstance(df_primary, pd.DataFrame):
+                if all(col in df_primary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                    grouped = df_primary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                    for (level, domain), descriptor in grouped.items():
+                        Primary_levels.setdefault(level, {})[domain] = descriptor
+                else:
+                    st.warning("⚠️ Primary CSV must include 'Level', 'Domain', and 'Descriptor' columns.")
 
-            # Level selection dropdowns
-            if 'Primary_descriptors' in locals() and Primary_descriptors:
-                selected_Primary_key = st.selectbox(
-                    "Select Primary Level + Domain", 
-                    sorted(Primary_descriptors.keys())
-                )
-                st.text_area("Primary Descriptor", Primary_descriptors[selected_Primary_key], height=200)
-            else:
-                st.warning("⚠️ No valid Primary descriptors found.")
+            # --- Build Secondary: Level → {Domain: Descriptor} ---
 
-            if 'Secondary_descriptors' in locals() and Secondary_descriptors:
-                selected_Secondary_key = st.selectbox(
-                    "Select Secondary Level + Domain", 
-                    sorted(Secondary_descriptors.keys())
-                )
-                st.text_area("Secondary Descriptor", Secondary_descriptors[selected_Secondary_key], height=200)
-            else:
-                st.warning("⚠️ No valid Secondary descriptors found.")
+            Secondary_levels = {}
+            if 'df_secondary' in locals() and isinstance(df_secondary, pd.DataFrame):
+                if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                    grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                    for (level, domain), descriptor in grouped.items():
+                        Secondary_levels.setdefault(level, {})[domain] = descriptor
+                else:
+                    st.warning("⚠️ Secondary CSV must include 'Level', 'Domain', and 'Descriptor' columns.")
 
             # Compare levels
             if st.button("Compare Levels"):
