@@ -17,10 +17,10 @@ def parse_pdf_format(uploaded_file):
     import pandas as pd
     from io import BytesIO
 
-    # ✅ Read the content into BytesIO buffer once
+    uploaded_file.seek(0)  # ✅ Ensure pointer is at start
     file_bytes = BytesIO(uploaded_file.read())
-    doc = fitz.open(stream=file_bytes, filetype="pdf")
 
+    doc = fitz.open(stream=file_bytes, filetype="pdf")
     extracted_data = []
 
     for page in doc:
@@ -30,7 +30,6 @@ def parse_pdf_format(uploaded_file):
             if line.strip().lower().startswith("level"):
                 extracted_data.append({"Level": line.strip(), "Descriptor": "..."})
 
-    # Create a DataFrame and return as in-memory CSV
     df = pd.DataFrame(extracted_data)
     buffer = BytesIO()
     df.to_csv(buffer, index=False)
