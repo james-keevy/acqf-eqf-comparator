@@ -166,17 +166,17 @@ if login_result is not None:
                             st.error(f"❌ Failed to read PDF: {e}")
                             return None
 
-                        def clean_pdf_text(text):
-                            # Remove lines that are just page numbers or "Page X" phrases
-                            lines = text.splitlines()
-                            clean_lines = []
-                            for line in lines:
-                                if re.match(r"^\s*Page\s*\d+(\s*of\s*\d+)?\s*$", line, flags=re.IGNORECASE):
-                                    continue
-                                if re.match(r"^\s*\d+\s*$", line):  # Standalone numbers
-                                    continue
-                                clean_lines.append(line)
-                            return "\n".join(clean_lines) 
+                        # def clean_pdf_text(text):
+                        #     # Remove lines that are just page numbers or "Page X" phrases
+                        #     lines = text.splitlines()
+                        #     clean_lines = []
+                        #     for line in lines:
+                        #         if re.match(r"^\s*Page\s*\d+(\s*of\s*\d+)?\s*$", line, flags=re.IGNORECASE):
+                        #             continue
+                        #         if re.match(r"^\s*\d+\s*$", line):  # Standalone numbers
+                        #             continue
+                        #         clean_lines.append(line)
+                        #     return "\n".join(clean_lines) 
 
                         # Step 2: Use regex to extract Level → Domain → Descriptor triples
                         pattern = r"""
@@ -188,8 +188,22 @@ if login_result is not None:
                         (.+?)                                                 # Descriptor (non-greedy)
                         (?=\n?(?:Level[:\s-]*\s*\d+|$))                       # Lookahead for next Level or EOF
                         """
-                        matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE)                    
-                        
+                        matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE) 
+
+                        structured = {}
+                        for level, domain, descriptor in matches:
+                            level_label = f"Level {level.strip()}"
+                            domain = domain.strip().title()
+
+                            # 🧼 Clean descriptor: strip empty lines, normalize whitespace
+                            cleaned_lines = [
+                                line.strip() for line in descriptor.strip().splitlines()
+                                if line.strip()  # Keep only non-empty lines
+                            ]
+                            cleaned_descriptor = " ".join(cleaned_lines)
+
+                            structured.setdefault(level_label, {})[domain] = cleaned_descriptor
+                                           
                         if not matches:
                             st.warning("⚠️ No valid level-domain-descriptor groups found in the PDF.")
                             return None
