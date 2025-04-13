@@ -72,47 +72,36 @@ if login_result is not None:
                 st.error(f"❌ Error reading PDF: {e}")
                 return ""
 
-        # File upload widgets for CSV or PDF
+        # Upload widgets
         Primary_file = st.file_uploader("📥 Upload a *Primary* artefact (CSV or PDF)", type=["csv", "pdf"])
         Secondary_file = st.file_uploader("📥 Upload a *Secondary* artefact (CSV or PDF)", type=["csv", "pdf"])
 
+        # Initialize text blocks
         Primary_text = ""
         Secondary_text = ""
 
-        # --- Process Primary Artefact ---
-        if Primary_file and Primary_file.name.lower().endswith(".csv"):
+        # --- Process Primary File ---
+        if Primary_file:
             try:
-                Primary_file.seek(0)
-                decoded_primary = Primary_file.read().decode("utf-8-sig")
-                Primary_reader = csv.DictReader(io.StringIO(decoded_primary))
-
-                if Primary_reader.fieldnames:
-                    Primary_reader.fieldnames = [h.strip().lstrip('﻿') for h in Primary_reader.fieldnames]
-                    Primary_text = "\n".join(
-                        row[Primary_reader.fieldnames[0]] for row in Primary_reader if row.get(Primary_reader.fieldnames[0])
-                    )
-                else:
-                    st.error("⚠️ No headers found in the Primary CSV file.")
+                if Primary_file.name.lower().endswith(".csv"):
+                    df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig", on_bad_lines="skip")
+                    Primary_text = "\n".join(df_primary.iloc[:, 0].dropna().astype(str).tolist())
+                elif Primary_file.name.lower().endswith(".pdf"):
+                    Primary_text = extract_text_from_pdf(Primary_file)
             except Exception as e:
                 st.error(f"❌ Could not process Primary file: {e}")
 
-        # --- Process Secondary Artefact ---
-        if Secondary_file and Secondary_file.name.lower().endswith(".csv"):
+        # --- Process Secondary File ---
+        if Secondary_file:
             try:
-                Secondary_file.seek(0)
-                decoded_secondary = Secondary_file.read().decode("utf-8-sig")
-                Secondary_reader = csv.DictReader(io.StringIO(decoded_secondary))
-
-                if Secondary_reader.fieldnames:
-                    Secondary_reader.fieldnames = [h.strip().lstrip('﻿') for h in Secondary_reader.fieldnames]
-                    Secondary_text = "\n".join(
-                        row[Secondary_reader.fieldnames[0]] for row in Secondary_reader if row.get(Secondary_reader.fieldnames[0])
-                    )
-                else:
-                    st.error("⚠️ No headers found in the Secondary CSV file.")
+                if Secondary_file.name.lower().endswith(".csv"):
+                    df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
+                    Secondary_text = "\n".join(df_secondary.iloc[:, 0].dropna().astype(str).tolist())
+                elif Secondary_file.name.lower().endswith(".pdf"):
+                    Secondary_text = extract_text_from_pdf(Secondary_file)
             except Exception as e:
                 st.error(f"❌ Could not process Secondary file: {e}")
-
+        
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
 
