@@ -135,8 +135,6 @@ if login_result is not None:
                             ]
                         )
 
-                        # # --------------------------------------------------------
-
                         gpt_output = response.choices[0].message.content
 
                         # Initialize variables
@@ -158,10 +156,10 @@ if login_result is not None:
                                 ai_score = parsed.get("similarity_score")
                                 comment = parsed.get("comment", "")
 
-                                # ✅ Smart cleanup — only if there's noise
+                                # ✅ Smart cleanup
 
                                 comment_cleaned = comment.strip()
-                                
+
                                 if comment_cleaned.lower().startswith("json result"):
                                     comment_cleaned = comment_cleaned.split(":", 1)[-1].strip()
 
@@ -184,9 +182,7 @@ if login_result is not None:
                             st.progress(ai_score / 100.0)
                         else:
                             st.error("❌ No valid similarity score found.")
-                        
-                        # # --------------------------------------------------------
-                                            
+                                                                   
                         result_text = response.choices[0].message.content
 
                         if result_text:
