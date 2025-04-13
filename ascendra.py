@@ -10,6 +10,7 @@ import textwrap
 import streamlit_authenticator as stauth
 import fitz  # PyMuPDF
 import io
+from ascandra import parse_pdf_format
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
@@ -235,7 +236,7 @@ if login_result is not None:
         # elif file_ext == "pdf":
         #     st.subheader("📄 Parsing data from PDF")
 
-        Secondary_levels_dict, csv_path = parse_nqf_pdf_format(Secondary_file)
+        Secondary_levels_dict, csv_path = parse_pdf_format(Secondary_file)
 
         if Secondary_levels_dict and csv_path:
             st.success(f"✅ Parsed {len(Secondary_levels_dict)} levels from PDF.")
