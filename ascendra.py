@@ -125,6 +125,7 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                         # --------------------------------------------------------
                         # DEBUG: Show full GPT output
+                        gpt_output = response["choices"][0]["message"]["content"]
                         st.write("GPT Output:", gpt_output)
 
                         # Extract ai_score
