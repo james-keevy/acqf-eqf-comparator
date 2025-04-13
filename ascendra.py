@@ -547,5 +547,5 @@ model of skills acquisition."""
             st.error("Incorrect username or password")
         elif auth_status is None:
             st.warning("Please enter your credentials")
-    else:
-        st.error("Login form could not be rendered.")
+else:
+    st.error("Login form could not be rendered.")
