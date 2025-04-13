@@ -143,6 +143,12 @@ if login_result is not None:
             #for row in Secondary_reader:
             #    if row.get("Level") and row.get("Domain") and row.get("Descriptor"):
             #        Secondary_levels[row["Level"].strip()].append(f"{row['Domain'].strip()}: {row['Descriptor'].strip()}")
+                               
+            # Build a dictionary of levels to their descriptors
+            if 'Level' in df_primary.columns and 'Description' in df_primary.columns:
+                Primary_levels = df_primary.groupby('Level')['Description'].apply(lambda x: "\n".join(x.dropna())).to_dict()
+            if 'Level' in df_secondary.columns and 'Description' in df_secondary.columns:
+                Secondary_levels = df_secondary.groupby('Level')['Description'].apply(lambda x: "\n".join(x.dropna())).to_dict()
 
             # Level selection dropdowns
             selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
