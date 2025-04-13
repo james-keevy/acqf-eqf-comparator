@@ -3,4 +3,6 @@ streamlit-authenticator==0.2.3
 openai
 fpdf2
 pandas
+PyMuPDF
+
 
