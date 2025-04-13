@@ -1,5 +1,6 @@
 import streamlit as st
 import csv
+import openai
 import pandas as pd
 from collections import defaultdict
 from openai import OpenAI
