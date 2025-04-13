@@ -106,7 +106,7 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
 
             # ✅ Reusable function: Extract structured data and write to CSV
-            def parse_nqf_pdf_format(pdf_file, output_csv="nqf_descriptors.csv"):
+            def parse__pdf_format(pdf_file, output_csv="nqf_descriptors.csv"):
                 level_pattern = re.compile(r"NQF Level (\w+)", re.IGNORECASE)
                 domain_pattern = re.compile(r"^[a-j]\.\s+(.*?), in respect of which", re.IGNORECASE)
 
@@ -192,7 +192,8 @@ if login_result is not None:
             elif file_ext == "pdf":
                 # Handle PDF parsing
                 st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
-                structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
+                
+                structured_data, csv_path = parse_pdf_format(Secondary_file)
 
                 if structured_data:
                     st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
