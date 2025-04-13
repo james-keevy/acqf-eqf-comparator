@@ -115,16 +115,16 @@ if login_result is not None:
 
             # Load Primary levels
             Primary_levels = defaultdict(list)
-            Primary_reader = csv.DictReader(Primary_file.read().decode("utf-8").splitlines())
-            Primary_reader.fieldnames = [h.strip().lstrip('﻿') for h in Primary_reader.fieldnames]
+            # Primary_reader = csv.DictReader(Primary_file.read().decode("utf-8").splitlines())
+            # Primary_reader.fieldnames = [h.strip().lstrip('﻿') for h in Primary_reader.fieldnames]
             for row in Primary_reader:
                 if row.get("Level") and row.get("Domain") and row.get("Descriptor"):
                     Primary_levels[row["Level"].strip()].append(f"{row['Domain'].strip()}: {row['Descriptor'].strip()}")
 
             # Load Secondary levels
             Secondary_levels = defaultdict(list)
-            Secondary_reader = csv.DictReader(Secondary_file.read().decode("utf-8").splitlines())
-            Secondary_reader.fieldnames = [h.strip().lstrip('﻿') for h in Secondary_reader.fieldnames]
+            # Secondary_reader = csv.DictReader(Secondary_file.read().decode("utf-8").splitlines())
+            # Secondary_reader.fieldnames = [h.strip().lstrip('﻿') for h in Secondary_reader.fieldnames]
             for row in Secondary_reader:
                 if row.get("Level") and row.get("Domain") and row.get("Descriptor"):
                     Secondary_levels[row["Level"].strip()].append(f"{row['Domain'].strip()}: {row['Descriptor'].strip()}")
