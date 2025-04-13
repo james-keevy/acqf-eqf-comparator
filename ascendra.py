@@ -125,6 +125,16 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                         # --------------------------------------------------------
                         # DEBUG: Show full GPT output
+                        client = openai.OpenAI()
+
+                        response = client.chat.completions.create(
+                            model="gpt-4",
+                            messages=[
+                                {"role": "user", "content": prompt}
+                            ]
+                        )
+
+                        gpt_output = response.choices[0].message.content
                         gpt_output = response["choices"][0]["message"]["content"]
                         st.write("GPT Output:", gpt_output)
 
