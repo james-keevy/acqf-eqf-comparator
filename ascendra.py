@@ -108,9 +108,7 @@ if login_result is not None:
                     "similarity_score": [number between 0 and 100],
                     "comment": "[brief explanation of the match]"
                     }}
-                                         
-                    Do not show the JSON format to the user. 
-                                         
+                                                                                
                     Continue with the comparison to check if these levels equivalent? Highlight similarities and differences.
                                          
                     Primary Level {selected_Primary_level}:
@@ -165,6 +163,14 @@ if login_result is not None:
                             ai_score = int(match.group(1)) if match else None
 
                             st.subheader(f"Comparison Result: Primary Level {selected_Primary_level} - Secondary Level {selected_Secondary_level}")
+
+                            # Clean up comment text before showing
+                            if comment:
+                                # Remove "JSON Result:" and nested JSON (anything that looks like { ... })
+                                comment_cleaned = re.sub(r'JSON Result:.*', '', comment, flags=re.DOTALL).strip()
+                                comment_cleaned = re.sub(r'\{.*\}', '', comment_cleaned, flags=re.DOTALL).strip()
+                            else:
+                                comment_cleaned = ""
 
                             if ai_score is not None:
                                 st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
