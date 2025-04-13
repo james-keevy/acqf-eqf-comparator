@@ -10,7 +10,6 @@ import textwrap
 import streamlit_authenticator as stauth
 import fitz  # PyMuPDF
 import io
-import time
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
@@ -231,21 +230,13 @@ if login_result is not None:
         Secondary_levels_dict, csv_path = parse_nqf_pdf_format(Secondary_file)
 
         if Secondary_levels_dict and csv_path:
-            # st.success(f"✅ Parsed {len(Secondary_levels_dict)} levels from PDF.")
-            success_placeholder = st.empty()
-            success_placeholder.success(f"✅ Parsed data from PDF.")
-            # Wait for 3 seconds
-            time.sleep(3)
-
-            # Clear the success message
-            success_placeholder.empty()
+            st.success(f"✅ Parsed {len(Secondary_levels_dict)} levels from PDF.")
 
             # ✅ Load into DataFrame like a normal CSV
             df_secondary = pd.read_csv(csv_path)
             st.session_state.df_secondary_loaded = True  # optional flag
-
-            # else:
-            #     st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
+        else:
+            st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
                 
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
