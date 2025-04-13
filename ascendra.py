@@ -136,18 +136,18 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                             st.subheader(f"Comparison Result: Primary Level {selected_Primary_level} - Secondary Level {selected_Secondary_level}")
 
-                            if ai_score is not None and 0 <= ai_score <= 100:
-                                st.write(f"**AI Similarity Score:** {ai_score}/100")
-                                st.progress(ai_score / 100.0)
+                        if isinstance(ai_score, int) and 0 <= ai_score <= 100:
+                            st.metric(label="AI Similarity Score", value=f"{ai_score}/100")
+                            st.progress(ai_score / 100.0)
 
-                                if ai_score >= high_match_threshold:
-                                    st.success("High Match")
-                                elif ai_score >= 50:
-                                    st.warning("Moderate Match")
-                                else:
-                                    st.error("Low Match")
+                            if ai_score >= high_match_threshold:
+                                st.success("High Match")
+                            elif ai_score >= 50:
+                                st.warning("Moderate Match")
                             else:
-                                st.error("⚠️ No valid similarity score found in the response.")
+                                st.error("Low Match")
+                        else:
+                            st.error("⚠️ No valid similarity score found in the response.")
 
                             with st.expander("View compared descriptors"):
                                 col1, col2 = st.columns(2)
