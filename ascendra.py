@@ -162,6 +162,108 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                             st.write(result_text)
 
+                            from fpdf import FPDF
+                            import io
+                            from datetime import datetime
+                            from fpdf.enums import XPos, YPos
+
+                            class PDFWithFooter(FPDF):
+                                def footer(self):
+                                    self.set_y(-15)
+                                    self.set_font("DejaVu", "I", 8)
+                                    self.set_text_color(128)
+                                    self.cell(0, 10, "Powered by Ascendra | Version 1.0 – April 2025", 0, 0, "C")
+
+                            def safe_multicell(pdf_obj, width, height, text):
+                                import re
+                                if not text:
+                                    return
+                                words = re.split(r'(\s+)', str(text))
+                                current_line = ''
+                                for word in words:
+                                    chunk = current_line + word
+                                    if pdf_obj.get_string_width(chunk) > pdf_obj.w - 2 * pdf_obj.l_margin:
+                                        pdf_obj.multi_cell(width, height, current_line.strip(), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+                                        current_line = word
+                                    else:
+                                        current_line += word
+                                if current_line.strip():
+                                    pdf_obj.multi_cell(width, height, current_line.strip(), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+                            # --- Create PDF ---
+                            pdf = PDFWithFooter()
+                            pdf.add_page()
+
+                            # Fonts
+                            pdf.add_font('DejaVu', '', 'DejaVuSans.ttf', uni=True)
+                            pdf.add_font('DejaVu', 'B', 'DejaVuSans-Bold.ttf', uni=True)
+                            pdf.add_font('DejaVu', 'I', 'DejaVuSans-Oblique.ttf', uni=True)
+                            pdf.set_font("DejaVu", size=8)
+
+                            # Header
+                            pdf.image("ascendra_v5.png", x=10, y=8, w=40)
+                            pdf.ln(25)
+                            pdf.set_font("DejaVu", "B", 14)
+                            safe_multicell(pdf, 0, 8, "Primary - Secondary Comparison Report")
+                            pdf.set_font("DejaVu", "", 8)
+                            safe_multicell(pdf, 0, 8, datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"))
+                            pdf.ln(10)
+
+                            # Primary Level
+                            pdf.set_font("DejaVu", "B", 12)
+                            safe_multicell(pdf, 0, 8, f"Primary Level {selected_Primary_level}")
+                            pdf.set_font("DejaVu", "", 8)
+                            for item in Primary_levels[selected_Primary_level]:
+                                safe_multicell(pdf, 0, 8, f"• {item}")
+                            pdf.ln(5)
+
+                            # Secondary Level
+                            pdf.set_font("DejaVu", "B", 12)
+                            safe_multicell(pdf, 0, 8, f"Secondary Level {selected_Secondary_level}")
+                            pdf.set_font("DejaVu", "", 8)
+                            for item in Secondary_levels[selected_Secondary_level]:
+                                safe_multicell(pdf, 0, 8, f"• {item}")
+                            pdf.ln(5)
+
+                            # Similarity Score
+                            if similarity_score is not None:
+                                pdf.set_font("DejaVu", "B", 12)
+                                safe_multicell(pdf, 0, 8, f"Similarity Score: {similarity_score}/100")
+                                pdf.ln(5)
+
+                            # GPT Result
+                            pdf.set_font("DejaVu", "B", 12)
+                            safe_multicell(pdf, 0, 8, "GPT Comparison Result:")
+                            pdf.set_font("DejaVu", "", 8)
+                            safe_multicell(pdf, 0, 8, result_text)
+
+                            # Convert to BytesIO
+                            pdf_bytes = io.BytesIO(pdf.output(dest='S'))
+
+                            # PDF Download Button
+                            st.download_button(
+                                label="📄 Download this comparison as PDF",
+                                data=pdf_bytes,
+                                file_name=f"Primary_Secondary_comparison_{selected_Primary_level}_{selected_Secondary_level}.pdf",
+                                mime="application/pdf")
+                            
+                            # CSV Export Button
+                            if st.session_state.get("results"):
+                                df = pd.DataFrame(st.session_state.results)
+                                st.download_button(
+                                    label="📥 Download comparison as CSV",
+                                    data=df.to_csv(index=False).encode("utf-8"),
+                                    file_name="Primary_Secondary_comparisons.csv",
+                                    mime="text/csv"
+                                )
+
+                            # Reset Button
+                            if st.button("🔄 Run new query"):
+                                st.session_state.results = []
+                                st.rerun()
+                        else:
+                            st.info("No results yet — run a comparison to enable downloading.")
+
                     except Exception as e:
                         st.error(f"❌ API Error: {e}")
 
