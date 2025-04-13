@@ -81,6 +81,10 @@ if login_result is not None:
         Primary_text = ""
         Secondary_text = ""
 
+        def parse_nqf_pdf_format(uploaded_file):
+            # your PDF parsing logic here
+            return structured_dict, output_csv_path
+
         # --- Process Primary File ---
                 
         Primary_levels = {}
