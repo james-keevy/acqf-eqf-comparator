@@ -8,6 +8,7 @@ import re
 from fpdf import FPDF
 import textwrap
 import streamlit_authenticator as stauth
+import fitz  # PyMuPDF
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
@@ -57,6 +58,41 @@ if login_result is not None:
         # File upload widgets
         Primary_file = st.file_uploader("Upload a primary artefact in CSV format", type="csv")
         Secondary_file = st.file_uploader("Upload a secondary artefact in CSV format", type="csv")
+
+        # Helper function to extract text from PDF
+def extract_text_from_pdf(file):
+    text = ""
+    try:
+        with fitz.open(stream=file.read(), filetype="pdf") as doc:
+            for page in doc:
+                text += page.get_text()
+        return text
+    except Exception as e:
+        st.error(f"❌ Error reading PDF: {e}")
+        return ""
+
+        # File upload widgets for CSV or PDF
+        # Primary_file = st.file_uploader("Upload a primary artefact (CSV or PDF)", type=["csv", "pdf"])
+        # Secondary_file = st.file_uploader("Upload a secondary artefact (CSV or PDF)", type=["csv", "pdf"])
+
+        Primary_text = ""
+        Secondary_text = ""
+
+        # Process Primary
+        if Primary_file:
+            if Primary_file.name.endswith(".csv"):
+                df_primary = pd.read_csv(Primary_file)
+                Primary_text = "\n".join(df_primary.iloc[:, 0].astype(str).tolist())
+            elif Primary_file.name.endswith(".pdf"):
+                Primary_text = extract_text_from_pdf(Primary_file)
+
+        # Process Secondary
+        if Secondary_file:
+            if Secondary_file.name.endswith(".csv"):
+                df_secondary = pd.read_csv(Secondary_file)
+                Secondary_text = "\n".join(df_secondary.iloc[:, 0].astype(str).tolist())
+            elif Secondary_file.name.endswith(".pdf"):
+                Secondary_text = extract_text_from_pdf(Secondary_file)
 
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
