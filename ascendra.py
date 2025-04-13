@@ -16,22 +16,21 @@ def parse_pdf_format(uploaded_file):
     import pandas as pd
     from io import BytesIO
 
-    doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
+    # ✅ Read the content into BytesIO buffer once
+    file_bytes = BytesIO(uploaded_file.read())
+    doc = fitz.open(stream=file_bytes, filetype="pdf")
+
     extracted_data = []
 
     for page in doc:
         text = page.get_text("text")
-        # Example logic: each Level starts with "Level" followed by number
         lines = text.splitlines()
         for line in lines:
             if line.strip().lower().startswith("level"):
-                # Add more extraction logic here
                 extracted_data.append({"Level": line.strip(), "Descriptor": "..."})
 
-    # Convert to DataFrame
+    # Create a DataFrame and return as in-memory CSV
     df = pd.DataFrame(extracted_data)
-
-    # Save to in-memory CSV
     buffer = BytesIO()
     df.to_csv(buffer, index=False)
     buffer.seek(0)
