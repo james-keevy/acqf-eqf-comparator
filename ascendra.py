@@ -167,8 +167,15 @@ if login_result is not None:
                             return None
 
                         # Step 2: Use regex to extract Level → Domain → Descriptor triples
-                        pattern = r"(Level\s*\d+)[\s\n]+(Knowledge|Skills|Autonomy|Responsibility|Competence)[\s\n]+(.+?)(?=(Level\s*\d+|$))"
-                        matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE)
+                        pattern = r"""
+                        (?:Level[:\s-]*\s*(\d+))                           # Match Level (e.g., Level 4, Level: 4)
+                        [\s\n\r]*                                          # Allow whitespace/newlines
+                        (?:Domain[:\s-]*\s*)?(Knowledge|Skills|Autonomy|Responsibility|Competence)  # Match domain
+                        [\s\n\r]+                                          # At least one newline/space
+                        (.+?)                                              # Descriptor (non-greedy)
+                        (?=\n?(?:Level[:\s-]*\s*\d+|$))                    # Lookahead for next Level or end of doc
+                        """
+                        matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE)
 
                         if not matches:
                             st.warning("⚠️ No valid level-domain-descriptor groups found in the PDF.")
