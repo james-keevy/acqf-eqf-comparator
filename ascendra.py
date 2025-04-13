@@ -164,8 +164,8 @@ if login_result is not None:
             # --- Primary UI ---
             if Primary_levels:
                 selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
-                st.markdown(f"### 📝 Primary Descriptors for {selected_Primary_level}")
-                #for domain, descriptor in Primary_levels[selected_Primary_level].items():
+                # st.markdown(f"### 📝 Primary Descriptors for {selected_Primary_level}")
+                # for domain, descriptor in Primary_levels[selected_Primary_level].items():
                 #    st.markdown(f"**{domain}**")
                 #    st.text_area("", descriptor, height=150, key=f"primary_{selected_Primary_level}_{domain}")
             else:
@@ -173,8 +173,8 @@ if login_result is not None:
                 
             if Secondary_levels:
                 selected_Secondary_level = st.selectbox("Select Secondary Level", sorted(Secondary_levels.keys()))
-                st.markdown(f"### 📝 Secondary Descriptors for {selected_Secondary_level}")
-                #for domain, descriptor in Secondary_levels[selected_Secondary_level].items():
+                # st.markdown(f"### 📝 Secondary Descriptors for {selected_Secondary_level}")
+                # for domain, descriptor in Secondary_levels[selected_Secondary_level].items():
                 #    st.markdown(f"**{domain}**")
                 #    st.text_area("", descriptor, height=150, key=f"secondary_{selected_Secondary_level}_{domain}")
             else:
