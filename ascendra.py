@@ -162,24 +162,6 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                             st.write(result_text)
 
-                            st.session_state.results.append({
-                                "Primary Level": selected_Primary_level,
-                                "Secondary Level": selected_Secondary_level,
-                                "Similarity Score": ai_score if ai_score else "N/A",
-                                "Response": result_text,
-                                "Timestamp": datetime.utcnow().isoformat()
-                            })
-
-                            # ✅ Show CSV export button right after results are stored
-                            if st.session_state.results:
-                                df = pd.DataFrame(st.session_state.results)
-                                st.download_button(
-                                    label="📥 Download comparison as CSV",
-                                    data=df.to_csv(index=False).encode("utf-8"),
-                                    file_name="Primary_Secondary_comparisons.csv",
-                                    mime="text/csv"
-                                )
-
                             from fpdf import FPDF
                             import io
                             from datetime import datetime
@@ -257,6 +239,24 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                             # Convert to BytesIO
                             pdf_bytes = io.BytesIO(pdf.output(dest='S'))
+
+                            st.session_state.results.append({
+                                "Primary Level": selected_Primary_level,
+                                "Secondary Level": selected_Secondary_level,
+                                "Similarity Score": ai_score if ai_score else "N/A",
+                                "Response": result_text,
+                                "Timestamp": datetime.utcnow().isoformat()
+                            })
+
+                            # ✅ Show CSV export button right after results are stored
+                            if st.session_state.results:
+                                df = pd.DataFrame(st.session_state.results)
+                                st.download_button(
+                                    label="📥 Download comparison as CSV",
+                                    data=df.to_csv(index=False).encode("utf-8"),
+                                    file_name="Primary_Secondary_comparisons.csv",
+                                    mime="text/csv"
+                                )
 
                             # PDF Download Button
                             st.download_button(
