@@ -234,7 +234,7 @@ if login_result is not None:
         #elif file_ext == "pdf":
         #    st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
 
-        Secondary_levels_dict, csv_path = parse_nqf_pdf_format(Secondary_file)
+        # Secondary_levels_dict, csv_path = parse_nqf_pdf_format(Secondary_file)
 
         if Secondary_levels_dict and csv_path:
             st.success(f"✅ Parsed {len(Secondary_levels_dict)} levels from PDF.")
