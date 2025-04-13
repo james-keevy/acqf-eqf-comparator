@@ -174,7 +174,7 @@ if login_result is not None:
 
         # Move PDF renders to CSV if need be
 
-                Secondary_levels_dict, csv_path = parse_nqf_pdf_format(Secondary_file)
+        Primarylevels_dict, csv_path = parse_nqf_pdf_format(Primary_file)
 
         if Primary_level_dict and csv_path:
             success_placeholder = st.empty()
