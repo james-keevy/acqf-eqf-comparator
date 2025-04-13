@@ -174,6 +174,10 @@ if login_result is not None:
 
                 return structured, output_path
       
+       
+       
+        # ..............................end primary
+        
         # --- Process Secondary File ---
         Secondary_levels = {}
 
@@ -247,6 +251,8 @@ if login_result is not None:
             # else:
             #     st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
                 
+        # ..............................end secondary 
+        
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
 
@@ -258,7 +264,7 @@ if login_result is not None:
         if api_key and Primary_file and Secondary_file:
             client = OpenAI(api_key=api_key)
                               
-            # Build a dictionary of levels to their descriptors
+            # Build Primary: Level → {Domain: Descriptor} ---
             Primary_levels = {}
             if 'df_primary' in locals() and isinstance(df_primary, pd.DataFrame):
                 if all(col in df_primary.columns for col in ['Level', 'Domain', 'Descriptor']):
