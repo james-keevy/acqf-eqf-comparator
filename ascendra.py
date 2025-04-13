@@ -146,7 +146,21 @@ if login_result is not None:
                         #     ]
                         # )
 
-                            # Optional fallback logic
+                        gpt_output = response.choices[0].message.content
+
+                        ai_score = None
+                        comment = ""
+
+                        try:
+                            # Extract JSON block even if GPT adds text around it
+                            json_text = re.search(r'\{.*\}', gpt_output, re.DOTALL).group(0)
+                            parsed = json.loads(json_text)
+                            ai_score = parsed.get("similarity_score")
+                            comment = parsed.get("comment", "")
+                        except Exception as e:
+                            st.warning("⚠️ Could not parse JSON. Falling back to regex...")
+                        
+                        # Optional fallback logic
 
                         # st.write("🧠 GPT Output:", gpt_output)
 
@@ -181,19 +195,6 @@ if login_result is not None:
                             ai_score = int(match.group(1)) if match else None
 
                             st.subheader(f"Comparison Result: Primary Level {selected_Primary_level} - Secondary Level {selected_Secondary_level}")
-
-                        gpt_output = response.choices[0].message.content
-                        ai_score = None
-                        comment = ""
-
-                        try:
-                            # Extract JSON block even if GPT adds text around it
-                            json_text = re.search(r'\{.*\}', gpt_output, re.DOTALL).group(0)
-                            parsed = json.loads(json_text)
-                            ai_score = parsed.get("similarity_score")
-                            comment = parsed.get("comment", "")
-                        except Exception as e:
-                            st.warning("⚠️ Could not parse JSON. Falling back to regex...")
 
                             if ai_score is not None:
                                 st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
