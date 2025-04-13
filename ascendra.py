@@ -207,6 +207,16 @@ if login_result is not None:
                         writer.writerow(["Level", "Domain", "Descriptor"])
                         writer.writerows(rows)
 
+                    # --- Build Secondary: Level → {Domain: Descriptor} ---
+                    Secondary_levels = {}
+                    if 'df_secondary' in locals() and isinstance(df_secondary, pd.DataFrame):
+                        if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                            grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                            for (level, domain), descriptor in grouped.items():
+                                Secondary_levels.setdefault(level, {})[domain] = descriptor
+                        else:
+                            st.warning("⚠️ Secondary CSV must include 'Level', 'Domain', and 'Descriptor' columns.")
+
 ###############
 
             except Exception as e:
@@ -234,17 +244,6 @@ if login_result is not None:
                         Primary_levels.setdefault(level, {})[domain] = descriptor
                 else:
                     st.warning("⚠️ Primary CSV must include 'Level', 'Domain', and 'Descriptor' columns.")
-
-            # --- Build Secondary: Level → {Domain: Descriptor} ---
-
-            Secondary_levels = {}
-            if 'df_secondary' in locals() and isinstance(df_secondary, pd.DataFrame):
-                if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
-                    grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
-                    for (level, domain), descriptor in grouped.items():
-                        Secondary_levels.setdefault(level, {})[domain] = descriptor
-                else:
-                    st.warning("⚠️ Secondary CSV must include 'Level', 'Domain', and 'Descriptor' columns.")
 
             # --- Primary & Secondary UI ---
             if Primary_levels:
