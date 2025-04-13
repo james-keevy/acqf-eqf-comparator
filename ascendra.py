@@ -258,15 +258,15 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
                                 mime="application/pdf")
                             
                             # Reset Button
-                            if st.button("🔄 Run new query"):
-                                st.session_state.results = []
-                                st.rerun()
+                            # if st.button("🔄 Run new query"):
+                            #    st.session_state.results = []
+                            #    st.rerun()
                         else:
                             st.info("No results yet — run a comparison to enable downloading.")
 
-                        # if st.button("🔄 New Query"):
-                        #    st.session_state.results = []
-                        #    st.rerun()
+                         if st.button("🔄 New Query"):
+                            st.session_state.results = []
+                            st.rerun()
 
                     except Exception as e:
                         st.error(f"❌ API Error: {e}")
