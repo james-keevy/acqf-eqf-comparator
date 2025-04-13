@@ -169,7 +169,10 @@ if login_result is not None:
                         result_text = response.choices[0].message.content
 
                         if result_text:
-                            match = re.search(r"similarity score[^\d]*(\d{1,3})", result_text, re.IGNORECASE)
+                            match = re.search(r'"similarity_score"\s*:\s*(\d{1,3})', result_text)
+                            if not match:
+                                match = re.search(r"similarity score[^\d]*(\d{1,3})", result_text, re.IGNORECASE)
+
                             ai_score = int(match.group(1)) if match else None
 
                             st.subheader(f"Comparison Result: Primary Level {selected_Primary_level} - Secondary Level {selected_Secondary_level}")
