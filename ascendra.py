@@ -280,7 +280,7 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
         <style>
         footer { visibility: hidden; }
         footer:after {
-            content: 'Powered by Ascendra | Built with Streamlit & OpenAI • Version 1.0 – April 2025 Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts (e.g. qualifications, curricula, microcredentials, job descriptions and many others), but results should be interpreted as advisory, not definitive. The model relies on language patterns and may not capture nuanced policy or contextual differences across frameworks. It is not a substitute for expert judgement, formal benchmarking, or regulatory endorsement. Users should validate results through human review and consult official frameworks for authoritative decisions'
+            content: 'Powered by Ascendra | Built with Streamlit & OpenAI • Version 1.0 – April 2025. Ascendra provides AI-assisted comparisons of learning outcomes across artefacts. Results are advisory and should be reviewed with expert judgement.';
             visibility: visible;
             display: block;
             position: fixed;
