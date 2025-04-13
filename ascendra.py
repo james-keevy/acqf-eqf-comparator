@@ -131,9 +131,9 @@ if login_result is not None:
             Secondary_levels = defaultdict(list)
             # Secondary_reader = csv.DictReader(Secondary_file.read().decode("utf-8").splitlines())
             # Secondary_reader.fieldnames = [h.strip().lstrip('﻿') for h in Secondary_reader.fieldnames]
-            for row in Secondary_reader:
-                if row.get("Level") and row.get("Domain") and row.get("Descriptor"):
-                    Secondary_levels[row["Level"].strip()].append(f"{row['Domain'].strip()}: {row['Descriptor'].strip()}")
+            #for row in Secondary_reader:
+            #    if row.get("Level") and row.get("Domain") and row.get("Descriptor"):
+            #        Secondary_levels[row["Level"].strip()].append(f"{row['Domain'].strip()}: {row['Descriptor'].strip()}")
 
             # Level selection dropdowns
             selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
