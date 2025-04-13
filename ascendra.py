@@ -140,19 +140,31 @@ if login_result is not None:
                         gpt_output = response.choices[0].message.content
 
                         ai_score = None
-                        comment = ""
+                        comment_cleaned = ""
 
                         try:
-                            # Extract JSON block even if GPT adds text around it
-                            json_text = re.search(r'\{.*\}', gpt_output, re.DOTALL).group(0)
-                            parsed = json.loads(json_text)
-                            ai_score = parsed.get("similarity_score")
-                            comment = parsed.get("comment", "")
+                            # Extract only the JSON part from the GPT output
+                            json_match = re.search(r'\{.*\}', gpt_output, re.DOTALL)
+                            
+                            if json_match:
+                                json_text = json_match.group(0)
+                                parsed = json.loads(json_text)
 
-                            st.write(result_text)
+                                ai_score = parsed.get("similarity_score")
+                                comment = parsed.get("comment", "")
 
+                                # Clean up comment text if needed
+                                if comment:
+                                    comment_cleaned = re.sub(r'JSON Result:.*', '', comment, flags=re.DOTALL).strip()
+                                    comment_cleaned = re.sub(r'\{.*\}', '', comment_cleaned, flags=re.DOTALL).strip()
+                            else:
+                                st.warning("⚠️ No JSON block found in GPT output.")
                         except Exception as e:
-                            st.warning("⚠️ Could not parse JSON. Falling back to regex...")
+                            st.warning(f"⚠️ Could not parse JSON. Falling back to regex...")
+
+                            # Fallback regex logic here if needed
+                            ai_score = None
+                            comment_cleaned = ""
                         
                         # # --------------------------------------------------------
                                             
