@@ -158,7 +158,7 @@ if login_result is not None:
 
                                 # ✅ Smart cleanup
 
-                                # comment_cleaned = comment.strip()
+                                comment_cleaned = comment.strip()
 
                                 if comment_cleaned.lower().startswith("json result"):
                                     comment_cleaned = comment_cleaned.split(":", 1)[-1].strip()
