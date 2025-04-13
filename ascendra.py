@@ -162,6 +162,16 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                             st.write(result_text)
 
+                            # CSV Export Button
+                            if st.session_state.get("results"):
+                                df = pd.DataFrame(st.session_state.results)
+                                st.download_button(
+                                    label="📥 Download comparison as CSV",
+                                    data=df.to_csv(index=False).encode("utf-8"),
+                                    file_name="Primary_Secondary_comparisons.csv",
+                                    mime="text/csv"
+                                )
+
                             from fpdf import FPDF
                             import io
                             from datetime import datetime
@@ -247,16 +257,6 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
                                 file_name=f"Primary_Secondary_comparison_{selected_Primary_level}_{selected_Secondary_level}.pdf",
                                 mime="application/pdf")
                             
-                            # CSV Export Button
-                            if st.session_state.get("results"):
-                                df = pd.DataFrame(st.session_state.results)
-                                st.download_button(
-                                    label="📥 Download comparison as CSV",
-                                    data=df.to_csv(index=False).encode("utf-8"),
-                                    file_name="Primary_Secondary_comparisons.csv",
-                                    mime="text/csv"
-                                )
-
                             # Reset Button
                             if st.button("🔄 Run new query"):
                                 st.session_state.results = []
