@@ -48,7 +48,6 @@ if login_result is not None:
         st.title("Comparing learning outcomes")
         st.caption("Ascendra v1.1 is limited to CSV files")
         st.caption("Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts (e.g. qualifications, curricula, microcredentials, job descriptions and many others), but results should be interpreted as advisory, not definitive. The model relies on language patterns and may not capture nuanced policy or contextual differences across frameworks. It is not a substitute for expert judgement, formal benchmarking, or regulatory endorsement. Users should validate results through human review and consult official frameworks for authoritative decisions.")
-
         st.caption("Click 'Compare Levels' to generate an AI-based similarity score. The threshold below helps categorize the result.")
 
         # Input: OpenAI API key
