@@ -210,7 +210,7 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                             # Similarity Score                                                  
                             if ai_score is not None and 0 <= ai_score <= 100:
-                                st.write(f"**AI Similarity Score:** {ai_score}/100")
+                                # st.write(f"**AI Similarity Score:** {ai_score}/100")
                                 st.progress(ai_score / 100.0)
 
                                 if ai_score >= high_match_threshold:
