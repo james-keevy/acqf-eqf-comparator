@@ -137,7 +137,7 @@ if login_result is not None:
 
                         # # --------------------------------------------------------
 
-                        # gpt_output = response.choices[0].message.content
+                        gpt_output = response.choices[0].message.content
 
                         ai_score = None
                         comment = ""
