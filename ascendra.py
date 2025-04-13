@@ -126,46 +126,46 @@ if login_result is not None:
 ############# PDF SECONDARY INPUT 
                 elif extension == "pdf":
                 
-                def extract_structured_data_from_pdf(file):
-                    try:
-                        with fitz.open(stream=file.read(), filetype="pdf") as doc:
-                            full_text = "\n".join(page.get_text() for page in doc)
+                    def extract_structured_data_from_pdf(file):
+                        try:
+                            with fitz.open(stream=file.read(), filetype="pdf") as doc:
+                                full_text = "\n".join(page.get_text() for page in doc)
 
-                        # Pattern: captures Level, Domain, Descriptor (until next Level or end)
-                        pattern = r"(Level\s*\d+)[\s\n]+(Knowledge|Skills|Autonomy|Responsibility|Competence)[\s\n]+(.+?)(?=(?:Level\s*\d+)|\Z)"
-                        matches = re.findall(pattern, full_text, flags=re.DOTALL | re.IGNORECASE)
+                            # Pattern: captures Level, Domain, Descriptor (until next Level or end)
+                            pattern = r"(Level\s*\d+)[\s\n]+(Knowledge|Skills|Autonomy|Responsibility|Competence)[\s\n]+(.+?)(?=(?:Level\s*\d+)|\Z)"
+                            matches = re.findall(pattern, full_text, flags=re.DOTALL | re.IGNORECASE)
 
-                        rows = []
-                        for level_raw, domain_raw, descriptor in matches:
-                            level = level_raw.strip().title()
-                            domain = domain_raw.strip().title()
-                            desc = descriptor.strip().replace('\n', ' ')
-                            if level and domain and desc:  # skip incomplete
-                                rows.append((level, domain, desc))
+                            rows = []
+                            for level_raw, domain_raw, descriptor in matches:
+                                level = level_raw.strip().title()
+                                domain = domain_raw.strip().title()
+                                desc = descriptor.strip().replace('\n', ' ')
+                                if level and domain and desc:  # skip incomplete
+                                    rows.append((level, domain, desc))
 
-                        return pd.DataFrame(rows, columns=["Level", "Domain", "Descriptor"])
+                            return pd.DataFrame(rows, columns=["Level", "Domain", "Descriptor"])
 
-                    except Exception as e:
-                        st.error(f"❌ Error processing PDF: {e}")
-                        return pd.DataFrame()
-                    
-                    # Use this after file upload and calling the function above
-                    df = extract_structured_data_from_pdf(Primary_file)
+                        except Exception as e:
+                            st.error(f"❌ Error processing PDF: {e}")
+                            return pd.DataFrame()
+                        
+                        # Use this after file upload and calling the function above
+                        df = extract_structured_data_from_pdf(Primary_file)
 
-                    if not df.empty:
-                        st.success(f"✅ Extracted {len(df)} entries from PDF.")
-                        st.dataframe(df)
+                        if not df.empty:
+                            st.success(f"✅ Extracted {len(df)} entries from PDF.")
+                            st.dataframe(df)
 
-                        # Convert to CSV
-                        csv_bytes = df.to_csv(index=False).encode("utf-8")
-                        st.download_button(
-                            label="📥 Download Extracted Data as CSV",
-                            data=csv_bytes,
-                            file_name="extracted_descriptors.csv",
-                            mime="text/csv"
-                        )
-                    else:
-                        st.warning("⚠️ No valid structured descriptors found in PDF.")
+                            # Convert to CSV
+                            csv_bytes = df.to_csv(index=False).encode("utf-8")
+                            st.download_button(
+                                label="📥 Download Extracted Data as CSV",
+                                data=csv_bytes,
+                                file_name="extracted_descriptors.csv",
+                                mime="text/csv"
+                            )
+                        else:
+                            st.warning("⚠️ No valid structured descriptors found in PDF.")
 
                     # Secondary_text = extract_text_from_pdf(Secondary_file)
                     # Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
