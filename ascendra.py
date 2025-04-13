@@ -1,6 +1,5 @@
 import streamlit as st
 import csv
-import openai
 import pandas as pd
 from collections import defaultdict
 from openai import OpenAI
@@ -9,7 +8,6 @@ import re
 from fpdf import FPDF
 import textwrap
 import streamlit_authenticator as stauth
-import json
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
@@ -43,13 +41,14 @@ if login_result is not None:
     name, auth_status, username = login_result
     if auth_status:
         authenticator.logout('Logout', location='sidebar')
-        st.success(f"Logged in {name}")
+        st.success(f"Welcome {name}")
 
         # --- Streamlit UI ---
         st.image("ascendra_v5.png", width=300)
         st.title("Comparing learning outcomes")
         st.caption("Ascendra v1.1 is limited to CSV files")
         st.caption("Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts (e.g. qualifications, curricula, microcredentials, job descriptions and many others), but results should be interpreted as advisory, not definitive. The model relies on language patterns and may not capture nuanced policy or contextual differences across frameworks. It is not a substitute for expert judgement, formal benchmarking, or regulatory endorsement. Users should validate results through human review and consult official frameworks for authoritative decisions.")
+
         st.caption("Click 'Compare Levels' to generate an AI-based similarity score. The threshold below helps categorize the result.")
 
         # Input: OpenAI API key
@@ -68,7 +67,7 @@ if login_result is not None:
 
         # If all inputs are available
         if api_key and Primary_file and Secondary_file:
-            client = openai.OpenAI(api_key=api_key)
+            client = OpenAI(api_key=api_key)
 
             # Load Primary levels
             Primary_levels = defaultdict(list)
@@ -95,29 +94,19 @@ if login_result is not None:
                 Primary_text = "".join(Primary_levels[selected_Primary_level])
                 Secondary_text = "".join(Secondary_levels[selected_Secondary_level])
 
-                prompt = textwrap.dedent(f"""
-                    
-                    Compare the following qualification level descriptors and assess their equivalence.
+                prompt = f"""
 
-                    Compare the descriptors. 
-                                          
-                    Suggest the most appropriate Secondary level match and provide a similarity score out of 100.
-                    
-                    Add a result strictly in this JSON format:
-                    {{
-                    "similarity_score": [number between 0 and 100],
-                    "comment": "[brief explanation of the match]"
-                    }}
-                                                                                
-                    Continue with the comparison to check if these levels equivalent? Highlight similarities and differences.
-                                         
-                    Primary Level {selected_Primary_level}:
-                    {Primary_text}
+Compare the following qualification level descriptors and assess their equivalence.
 
-                    Secondary Level {selected_Secondary_level}:
-                    {Secondary_text}
+Primary Level {selected_Primary_level}:
+{Primary_text}
 
-                """)
+Secondary Level {selected_Secondary_level}:
+{Secondary_text}
+
+Compare the descriptors. Are these levels equivalent? Highlight similarities and differences. 
+Suggest the most appropriate Secondary level match and provide a similarity score out of 100.
+"""
 
                 with st.spinner("Asking GPT-4o..."):
                     try:
@@ -135,65 +124,14 @@ if login_result is not None:
                             ]
                         )
 
-                        gpt_output = response.choices[0].message.content
-
-                        # Initialize variables
-                        ai_score = None
-                        comment_cleaned = ""
-
-                        try:
-                            # Try to extract JSON from GPT output
-                            json_match = re.search(r'\{.*\}', gpt_output, re.DOTALL)
-                            
-                            if json_match:
-                                json_text = json_match.group(0)
-
-                                # DEBUG: check raw JSON block (optional)
-                                # st.write("🧾 Extracted JSON block:", json_text)
-
-                                parsed = json.loads(json_text)
-
-                                ai_score = parsed.get("similarity_score")
-                                comment = parsed.get("comment", "")
-
-                                # ✅ Smart cleanup
-
-                                comment_cleaned = comment.strip()
-
-                                if comment_cleaned.lower().startswith("json result"):
-                                    comment_cleaned = comment_cleaned.split(":", 1)[-1].strip()
-
-                            else:
-                                st.warning("⚠️ No JSON block found in GPT output.")
-
-                        except Exception as e:
-                            st.warning("⚠️ Could not parse JSON. Falling back to regex...")
-                            ai_score = None
-                            comment_cleaned = ""
-                        
-                        if ai_score is not None:
-                            st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
-                            
-                            if comment_cleaned:
-                                st.info(comment_cleaned)
-                            else:
-                                st.warning("⚠️ No explanation comment was included.")
-                                
-                            st.progress(ai_score / 100.0)
-                        else:
-                            st.error("❌ No valid similarity score found.")
-                                                                   
                         result_text = response.choices[0].message.content
 
                         if result_text:
-                            match = re.search(r'"similarity_score"\s*:\s*(\d{1,3})', result_text)
-                            if not match:
-                                match = re.search(r"similarity score[^\d]*(\d{1,3})", result_text, re.IGNORECASE)
-
+                            match = re.search(r"similarity score[^\d]*(\d{1,3})", result_text, re.IGNORECASE)
                             ai_score = int(match.group(1)) if match else None
 
                             st.subheader(f"Comparison Result: Primary Level {selected_Primary_level} - Secondary Level {selected_Secondary_level}")
-                         
+
                             with st.expander("View compared descriptors"):
                                 col1, col2 = st.columns(2)
                                 with col1:
@@ -204,8 +142,9 @@ if login_result is not None:
                                     st.markdown(f"**Secondary Level {selected_Secondary_level}**")
                                     for item in Secondary_levels[selected_Secondary_level]:
                                         st.markdown(f"- {item}")
-                             
-                            # --- Create PDF ---
+
+                            st.write(result_text)
+
                             from fpdf import FPDF
                             import io
                             from datetime import datetime
@@ -234,6 +173,7 @@ if login_result is not None:
                                 if current_line.strip():
                                     pdf_obj.multi_cell(width, height, current_line.strip(), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
+                            # --- Create PDF ---
                             pdf = PDFWithFooter()
                             pdf.add_page()
 
@@ -268,10 +208,10 @@ if login_result is not None:
                                 safe_multicell(pdf, 0, 8, f"• {item}")
                             pdf.ln(5)
 
-                            # AI similarity Score                                                  
+                            # Similarity Score                                                  
                             if ai_score is not None and 0 <= ai_score <= 100:
-                                # st.write(f"**AI Similarity Score:** {ai_score}/100")
-                                # st.progress(ai_score / 100.0)
+                                st.write(f"**AI Similarity Score:** {ai_score}/100")
+                                st.progress(ai_score / 100.0)
 
                                 if ai_score >= high_match_threshold:
                                     st.success("High Match")
@@ -295,7 +235,7 @@ if login_result is not None:
                             st.session_state.results.append({
                                 "Primary Level": selected_Primary_level,
                                 "Secondary Level": selected_Secondary_level,
-                                # "Similarity Score": ai_score if ai_score else "N/A",
+                                "Similarity Score": ai_score if ai_score else "N/A",
                                 "Response": result_text,
                                 "Timestamp": datetime.utcnow().isoformat()
                             })
