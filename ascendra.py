@@ -48,7 +48,7 @@ if login_result is not None:
         # --- Streamlit UI ---
         st.image("ascendra_v5.png", width=300)
         st.title("Comparing learning outcomes")
-        st.caption("Ascendra v1.1 is limited to CSV files")
+        st.caption("Ascendra v1.2 is limited to CSV and PDF files")
         st.caption("Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts (e.g. qualifications, curricula, microcredentials, job descriptions and many others), but results should be interpreted as advisory, not definitive. The model relies on language patterns and may not capture nuanced policy or contextual differences across frameworks. It is not a substitute for expert judgement, formal benchmarking, or regulatory endorsement. Users should validate results through human review and consult official frameworks for authoritative decisions.")
 
         st.caption("Click 'Compare Levels' to generate an AI-based similarity score. The threshold below helps categorize the result.")
@@ -83,22 +83,28 @@ if login_result is not None:
         # --- Process Primary File ---
         if Primary_file:
             try:
-                if Primary_file.name.lower().endswith(".csv"):
+                extension = Primary_file.name.lower().split(".")[-1]
+                if extension == "csv":
                     df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig", on_bad_lines="skip")
                     Primary_text = "\n".join(df_primary.iloc[:, 0].dropna().astype(str).tolist())
-                elif Primary_file.name.lower().endswith(".pdf"):
+                elif extension == "pdf":
                     Primary_text = extract_text_from_pdf(Primary_file)
+                else:
+                    st.warning("Unsupported file format for Primary artefact.")
             except Exception as e:
                 st.error(f"❌ Could not process Primary file: {e}")
 
         # --- Process Secondary File ---
         if Secondary_file:
             try:
-                if Secondary_file.name.lower().endswith(".csv"):
+                extension = Secondary_file.name.lower().split(".")[-1]
+                if extension == "csv":
                     df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
                     Secondary_text = "\n".join(df_secondary.iloc[:, 0].dropna().astype(str).tolist())
-                elif Secondary_file.name.lower().endswith(".pdf"):
+                elif extension == "pdf":
                     Secondary_text = extract_text_from_pdf(Secondary_file)
+                else:
+                    st.warning("Unsupported file format for Secondary artefact.")
             except Exception as e:
                 st.error(f"❌ Could not process Secondary file: {e}")
         
