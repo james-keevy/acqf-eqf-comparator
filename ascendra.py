@@ -149,6 +149,15 @@ if login_result is not None:
                             st.error(f"❌ Error processing PDF: {e}")
                             return pd.DataFrame()
                         
+                        Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
+
+                        #TEST
+                        if Secondary_levels:
+                            st.success(f"✅ Found descriptors for {len(Secondary_levels)} levels.")
+                            st.write(Secondary_levels)
+                        else:
+                            st.warning("⚠️ Secondary PDF parsing returned an empty dictionary.")
+
                         # Use this after file upload and calling the function above
                         df = extract_structured_data_from_pdf(Primary_file)
 
@@ -158,11 +167,11 @@ if login_result is not None:
 
                             # Convert to CSV
                             csv_bytes = df.to_csv(index=False).encode("utf-8")
-                            st.download_button(
-                                label="📥 Download Extracted Data as CSV",
-                                data=csv_bytes,
-                                file_name="extracted_descriptors.csv",
-                                mime="text/csv"
+                            # st.download_button(
+                            #     label="📥 Download Extracted Data as CSV",
+                            #     data=csv_bytes,
+                            #     file_name="extracted_descriptors.csv",
+                            #     mime="text/csv"
                             )
                         else:
                             st.warning("⚠️ No valid structured descriptors found in PDF.")
