@@ -240,6 +240,7 @@ if login_result is not None:
                     st.write(df_secondary)
                 except Exception as e:
                     st.error(f"❌ PDF parsing error: {e}")
+                    st.exception(e)  # 🔍 Show full traceback in Streamlit
             else:
                 st.warning("⚠️ Please upload a PDF file to continue.")
 
