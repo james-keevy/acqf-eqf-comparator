@@ -182,6 +182,8 @@ if login_result is not None:
                                     for item in Secondary_levels[selected_Secondary_level]:
                                         st.markdown(f"- {item}")
 
+                            st.write(result_text)
+
                             # Clean up comment text before showing
                             if comment:
                                 # Remove "JSON Result:" and nested JSON (anything that looks like { ... })
@@ -190,8 +192,7 @@ if login_result is not None:
                             else:
                                 comment_cleaned = ""
                              
-                            st.write(result_text)
-
+                            # --- Create PDF ---
                             from fpdf import FPDF
                             import io
                             from datetime import datetime
@@ -220,7 +221,6 @@ if login_result is not None:
                                 if current_line.strip():
                                     pdf_obj.multi_cell(width, height, current_line.strip(), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
-                            # --- Create PDF ---
                             pdf = PDFWithFooter()
                             pdf.add_page()
 
