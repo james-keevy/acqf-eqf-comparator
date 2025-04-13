@@ -155,15 +155,7 @@ if login_result is not None:
                             st.warning("⚠️ Could not parse JSON. Falling back to regex...")
                         
                         # # --------------------------------------------------------
-                    
-                        # Clean up comment text before showing
-                        if comment:
-                            # Remove "JSON Result:" and nested JSON (anything that looks like { ... })
-                            comment_cleaned = re.sub(r'JSON Result:.*', '', comment, flags=re.DOTALL).strip()
-                            comment_cleaned = re.sub(r'\{.*\}', '', comment_cleaned, flags=re.DOTALL).strip()
-                        else:
-                            comment_cleaned = ""
-                        
+                                            
                         result_text = response.choices[0].message.content
 
                         if result_text:
