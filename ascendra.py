@@ -41,7 +41,7 @@ if login_result is not None:
     name, auth_status, username = login_result
     if auth_status:
         authenticator.logout('Logout', location='sidebar')
-        st.success(f"Welcome {name}")
+        st.success(f"Logged in {name}")
 
         # --- Streamlit UI ---
         st.image("ascendra_v5.png", width=300)
