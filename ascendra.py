@@ -275,10 +275,10 @@ if login_result is not None:
                 elif file_ext == "pdf":
                     st.subheader("📄 Secondary PDF Detected")
 
-            except Exception as e:
-                st.error(f"❌ Could not process Secondary file: {e}")
-            else:
-                st.warning("Unsupported file format for Secondary artefact.")
+            # except Exception as e:
+            #     st.error(f"❌ Could not process Secondary file: {e}")
+            # else:
+            #     st.warning("Unsupported file format for Secondary artefact.")
 
         # Move PDF renders to CSV if need be
 
