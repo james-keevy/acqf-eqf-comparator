@@ -146,7 +146,21 @@ if login_result is not None:
                         #     ]
                         # )
 
-                        # gpt_output = response.choices[0].message.content
+                        gpt_output = response.choices[0].message.content
+
+                        ai_score = None
+                        comment = ""
+
+                        try:
+                            # Extract JSON block even if GPT adds text around it
+                            json_text = re.search(r'\{.*\}', gpt_output, re.DOTALL).group(0)
+                            parsed = json.loads(json_text)
+                            ai_score = parsed.get("similarity_score")
+                            comment = parsed.get("comment", "")
+                        except Exception as e:
+                            st.warning("⚠️ Could not parse JSON. Falling back to regex...")
+                            # Optional fallback logic
+
                         # st.write("🧠 GPT Output:", gpt_output)
 
                         # # Try to extract ai_score from JSON
@@ -164,10 +178,12 @@ if login_result is not None:
                         #         ai_score = int(match.group(1))
 
                         # # DEBUG: Show extracted score
-                        # if ai_score is not None:
-                        #     st.write("🎯 Extracted ai_score:", ai_score)
-                        # else:
-                        #     st.error("❌ No valid similarity score found in the response.")
+                       if ai_score is not None:
+                            st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
+                            st.info(comment)
+                            st.progress(ai_score / 100.0)
+                        else:
+                            st.error("❌ No valid similarity score found.")
 
                         # # --------------------------------------------------------
                         
@@ -258,7 +274,7 @@ if login_result is not None:
                                 safe_multicell(pdf, 0, 8, f"• {item}")
                             pdf.ln(5)
 
-                            # Similarity Score                                                  
+                            # AI similarity Score                                                  
                             if ai_score is not None and 0 <= ai_score <= 100:
                                 st.write(f"**AI Similarity Score:** {ai_score}/100")
                                 st.progress(ai_score / 100.0)
