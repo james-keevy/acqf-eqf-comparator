@@ -109,7 +109,8 @@ if login_result is not None:
         if Primary_file:
             ext = Primary_file.name.split(".")[-1].lower()
             if ext == "csv":
-                df_primary = pd.read_csv(Primary_file)
+                Primary_file.seek(0)
+                df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig", on_bad_lines='skip')
             elif ext == "pdf":
                 data, csv_bytes = parse_nqf_pdf_format(Primary_file)
                 if data:
