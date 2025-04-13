@@ -188,8 +188,8 @@ if login_result is not None:
 
         # Move PDF renders to CSV if need be
 
-        elif file_ext == "pdf":
-            st.subheader("📄 Parsing data from PDF")
+        # elif file_ext == "pdf":
+        #     st.subheader("📄 Parsing data from PDF")
 
     Primary_levels_dict, csv_path = parse_nqf_pdf_format(Primary_file)
 
