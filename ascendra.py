@@ -270,8 +270,8 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
                             if st.button("🔄 Run new query"):
                                 st.session_state.results = []
                                 st.rerun()
-                        else:
-                            st.info("No results yet — run a comparison to enable downloading.")
+                            else:
+                                st.info("No results yet — run a comparison to enable downloading.")
 
                     except Exception as e:
                         st.error(f"❌ API Error: {e}")
