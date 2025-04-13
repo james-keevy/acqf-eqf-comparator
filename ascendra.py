@@ -185,6 +185,9 @@ if login_result is not None:
                         else:
                             st.error("❌ No valid similarity score found.")
 
+                        if st.checkbox("🔍 Show raw GPT output (debug only)"):
+                            st.code(gpt_output, language="json")
+
                         # # --------------------------------------------------------
                         
                         result_text = response.choices[0].message.content
