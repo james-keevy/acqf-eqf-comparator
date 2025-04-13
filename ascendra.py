@@ -102,6 +102,7 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
 
             # ✅ Reusable function: Extract structured data and write to CSV
+          
             def parse_nqf_pdf_format(pdf_file, output_csv="nqf_descriptors.csv"):
                 level_pattern = re.compile(r"NQF Level (\w+)", re.IGNORECASE)
                 domain_pattern = re.compile(r"^[a-j]\.\s+(.*?), in respect of which", re.IGNORECASE)
@@ -113,7 +114,6 @@ if login_result is not None:
                     "Ten": "Level 10"
                 }
 
-                pdf_file.seek(0)  # 🔁 Ensure stream is fresh
                 with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
                     text = "\n".join([page.get_text() for page in doc])
 
@@ -168,8 +168,8 @@ if login_result is not None:
                     writer.writerows(rows)
 
                 return structured, output_path
-      
-        # --- Process Secondary File ---
+  
+              # --- Process Secondary File ---
         Secondary_levels = {}
 
         def extract_descriptors_from_pdf_text_grouped(text):
