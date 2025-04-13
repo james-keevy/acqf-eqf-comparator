@@ -108,6 +108,22 @@ if login_result is not None:
         # --- Process Secondary File ---
         Secondary_levels = {}  # Ensure it always exists
 
+        def extract_descriptors_from_pdf_text_grouped(text):
+            """
+            Extracts descriptors from plain PDF text in the form:
+            Level → { Domain → Descriptor }
+            """
+            pattern = r"(Level\s*\d+)[\s\n]+(Knowledge|Skills|Autonomy|Responsibility|Competence)[\s\n]+(.+?)(?=(?:Level\s*\d+)|\Z)"
+            matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE)
+
+            structured = {}
+            for level_raw, domain_raw, descriptor in matches:
+                level = level_raw.strip().title()
+                domain = domain_raw.strip().title()
+                desc = descriptor.strip().replace('\n', ' ')
+                structured.setdefault(level, {})[domain] = desc
+            return structured
+
         if Secondary_file:
             try:
                 if Secondary_file.name.lower().endswith(".csv"):
