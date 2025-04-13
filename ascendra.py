@@ -331,12 +331,13 @@ model of skills acquisition."""
                                 st.session_state.results = []
                                 st.rerun()
 
-                    except Exception as e:
-                        st.error(f"❌ API Error: {e}")
+                except Exception as e:
+                    st.error(f"❌ API Error: {e}")
 
-    elif auth_status is False:
-        st.error("Incorrect username or password")
-    elif auth_status is None:
-        st.warning("Please enter your credentials")
-else:
-    st.error("Login form could not be rendered.")
+        # ✅ These lines should align with the outermost block
+        elif auth_status is False:
+            st.error("Incorrect username or password")
+        elif auth_status is None:
+            st.warning("Please enter your credentials")
+    else:
+        st.error("Login form could not be rendered.")
