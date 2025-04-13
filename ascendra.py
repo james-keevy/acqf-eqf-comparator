@@ -153,70 +153,76 @@ if login_result is not None:
                     else:
                         st.warning("⚠️ Secondary PDF parsing returned an empty dictionary.")
 
+                    # ✅ Reusable function: Extract structured data and write to CSV
                     def extract_structured_from_pdf_to_csv(pdf_file, output_csv="extracted_descriptors.csv"):
-                        import fitz  # PyMuPDF
+                        try:
+                            with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
+                                text = ""
+                                for page in doc:
+                                    text += page.get_text()
+                        except Exception as e:
+                            st.error(f"❌ Failed to read PDF: {e}")
+                            return {}, None
 
-                    # Step 1: Extract full text from PDF
-                    try:
-                        with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
-                            text = ""
-                            for page in doc:
-                                text += page.get_text()
-                    except Exception as e:
-                        st.error(f"❌ Failed to read PDF: {e}")
+                        pattern = r"""
+                        (?:Level[:\s-]*\s*(\d+))
+                        [\s\n\r]+
+                        (?:Domain[:\s-]*)?
+                        (Knowledge|Skills|Autonomy|Responsibility|Competence)
+                        [\s\n\r]+
+                        (.+?)
+                        (?=\n?(?:Level[:\s-]*\s*\d+|$))
+                        """
+                        matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE)
 
-                    # Step 2: Use regex to extract Level → Domain → Descriptor triples
-                    pattern = r"""
-                    (?:Level[:\s-]*\s*(\d+))                               # Match Level number (e.g. Level 4, Level: 4)
-                    [\s\n\r]+                                              # Allow whitespace/newlines
-                    (?:Domain[:\s-]*)?                                     # Optional 'Domain:' label
-                    (Knowledge|Skills|Autonomy|Responsibility|Competence) # Explicit domain match
-                    [\s\n\r]+
-                    (.+?)                                                  # Descriptor (non-greedy)
-                    (?=\n?(?:Level[:\s-]*\s*\d+|$))                        # Lookahead for next Level or EOF
-                    """
-                    matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE)
+                        if not matches:
+                            return {}, None
 
-                    if not matches:
-                        st.warning("⚠️ No valid level-domain-descriptor groups found in the PDF.")
+                        structured = {}
+                        rows = []
+                        for level, domain, descriptor in matches:
+                            level = f"Level {level.strip()}"
+                            domain = domain.strip().title()
 
-                    # Step 3: Clean and save to CSV
-                    rows = []
-                    for level, domain, descriptor in matches:
-                        level = f"Level {level.strip()}"
-                        domain = domain.strip().title()
+                            cleaned_lines = [
+                                re.sub(r"\s+", " ", line).strip()
+                                for line in descriptor.strip().splitlines()
+                                if line.strip()
+                            ]
+                            cleaned_descriptor = " ".join(cleaned_lines)
 
-                        # ✅ Move cleaning inside the loop
-                        cleaned_lines = [
-                            re.sub(r"\s+", " ", line).strip()
-                            for line in descriptor.strip().splitlines()
-                            if line.strip() and not re.fullmatch(r"\s*", line)
-                        ]
-                        cleaned_descriptor = " ".join(cleaned_lines)
+                            if level and domain and cleaned_descriptor:
+                                structured.setdefault(level, {})[domain] = cleaned_descriptor
+                                rows.append([level, domain, cleaned_descriptor])
 
-                        if level and domain and cleaned_descriptor:
-                            rows.append([level, domain, cleaned_descriptor])
+                        if not rows:
+                            return {}, None
 
-                    if not rows:
-                        st.warning("⚠️ All extracted entries were incomplete and skipped.")
+                        output_path = f"/tmp/{output_csv}"
+                        with open(output_path, mode="w", encoding="utf-8", newline="") as f:
+                            writer = csv.writer(f)
+                            writer.writerow(["Level", "Domain", "Descriptor"])
+                            writer.writerows(rows)
 
-                    # Step 4: Write to CSV
-                    output_path = f"/tmp/{output_csv}"
-                    with open(output_path, mode="w", encoding="utf-8", newline="") as f:
-                        writer = csv.writer(f)
-                        writer.writerow(["Level", "Domain", "Descriptor"])
-                        writer.writerows(rows)
+                        return structured, output_path
 
-                    # --- Build Secondary: Level → {Domain: Descriptor} ---
-                    Secondary_levels = {}
-                    if 'df_secondary' in locals() and isinstance(df_secondary, pd.DataFrame):
-                        if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
-                            grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
-                            for (level, domain), descriptor in grouped.items():
-                                Secondary_levels.setdefault(level, {})[domain] = descriptor
-                        else:
-                            st.warning("⚠️ Secondary CSV must include 'Level', 'Domain', and 'Descriptor' columns.")
+                    # --- Inside your file handling logic ---
+                elif file_ext == "pdf":
+                    st.subheader("📄 Secondary PDF Detected")
 
+                    # Call the reusable function
+                    Secondary_levels, csv_path = extract_structured_from_pdf_to_csv(Secondary_file)
+
+                    if Secondary_levels:
+                        st.success(f"✅ Found descriptors for {len(Secondary_levels)} levels.")
+                        st.write(Secondary_levels)
+
+                        if csv_path:
+                            with open(csv_path, "rb") as f:
+                                st.download_button("⬇️ Download Extracted CSV", f, file_name="secondary_descriptors.csv")
+                    else:
+                        st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
+              
 ###############
 
             except Exception as e:
