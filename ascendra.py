@@ -117,6 +117,7 @@ if login_result is not None:
                     "Ten": "Level 10"
                 }
 
+                pdf_file.seek(0)  # 🔁 Ensure stream is fresh
                 with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
                     text = "\n".join([page.get_text() for page in doc])
 
