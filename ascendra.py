@@ -171,7 +171,9 @@ if login_result is not None:
                             ai_score = None
                             comment_cleaned = ""
                     
-                        if ai_score is not None:
+                            st.subheader(f"Comparison Result: Primary Level {selected_Primary_level} - Secondary Level {selected_Secondary_level}")
+
+                            if ai_score is not None:
                             st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
                             
                             if comment_cleaned:
@@ -191,8 +193,6 @@ if login_result is not None:
                                 match = re.search(r"similarity score[^\d]*(\d{1,3})", result_text, re.IGNORECASE)
 
                             ai_score = int(match.group(1)) if match else None
-
-                            st.subheader(f"Comparison Result: Primary Level {selected_Primary_level} - Secondary Level {selected_Secondary_level}")
                          
                             with st.expander("View compared descriptors"):
                                 col1, col2 = st.columns(2)
