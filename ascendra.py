@@ -235,8 +235,9 @@ if login_result is not None:
             # ✅ Load into DataFrame like a normal CSV
             df_secondary = pd.read_csv(csv_path)
             st.session_state.df_secondary_loaded = True  # optional flag
-        else:
-            st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
+
+            # else:
+            #     st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
                 
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
