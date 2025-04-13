@@ -87,6 +87,17 @@ if login_result is not None:
                 if extension == "csv":
                     df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig", on_bad_lines="skip")
                     Primary_text = "\n".join(df_primary.iloc[:, 0].dropna().astype(str).tolist())
+                    # Load Primary levels
+                    if 'df_primary' in locals() and isinstance(df_primary, pd.DataFrame):
+                        if all(col in df_primary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                            # Group by Level and Domain
+                            Primary_descriptors = (
+                                df_primary.groupby(['Level', 'Domain'])['Descriptor']
+                                .apply(lambda x: "\n".join(x.dropna()))
+                                .to_dict()
+                            )
+                        else:
+                            st.warning("⚠️ Primary CSV must have 'Level', 'Domain', and 'Descriptor' columns.")
                 elif extension == "pdf":
                     Primary_text = extract_text_from_pdf(Primary_file)
                 else:
@@ -101,6 +112,16 @@ if login_result is not None:
                 if extension == "csv":
                     df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
                     Secondary_text = "\n".join(df_secondary.iloc[:, 0].dropna().astype(str).tolist())
+                    # Load Secondary levels
+                    if 'df_secondary' in locals() and isinstance(df_secondary, pd.DataFrame):
+                        if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                            Secondary_descriptors = (
+                                df_secondary.groupby(['Level', 'Domain'])['Descriptor']
+                                .apply(lambda x: "\n".join(x.dropna()))
+                                .to_dict()
+                            )
+                        else:
+                            st.warning("⚠️ Secondary CSV must have 'Level', 'Domain', and 'Descriptor' columns.")
                 elif extension == "pdf":
                     Secondary_text = extract_text_from_pdf(Secondary_file)
                 else:
@@ -118,31 +139,6 @@ if login_result is not None:
         # If all inputs are available
         if api_key and Primary_file and Secondary_file:
             client = OpenAI(api_key=api_key)
-
-            # if row.get("Level") and row.get("Domain") and row.get("Descriptor"):
-
-            # Load Primary levels
-            if 'df_primary' in locals() and isinstance(df_primary, pd.DataFrame):
-                if all(col in df_primary.columns for col in ['Level', 'Domain', 'Descriptor']):
-                    # Group by Level and Domain
-                    Primary_descriptors = (
-                        df_primary.groupby(['Level', 'Domain'])['Descriptor']
-                        .apply(lambda x: "\n".join(x.dropna()))
-                        .to_dict()
-                    )
-                else:
-                    st.warning("⚠️ Primary CSV must have 'Level', 'Domain', and 'Descriptor' columns.")
-
-            # Load Secondary levels
-            if 'df_secondary' in locals() and isinstance(df_secondary, pd.DataFrame):
-                if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
-                    Secondary_descriptors = (
-                        df_secondary.groupby(['Level', 'Domain'])['Descriptor']
-                        .apply(lambda x: "\n".join(x.dropna()))
-                        .to_dict()
-                    )
-                else:
-                    st.warning("⚠️ Secondary CSV must have 'Level', 'Domain', and 'Descriptor' columns.")
                               
             # Build a dictionary of levels to their descriptors
             if 'Level' in df_primary.columns and 'Description' in df_primary.columns:
