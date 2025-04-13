@@ -120,30 +120,26 @@ if login_result is not None:
             client = OpenAI(api_key=api_key)
 
             # Load Primary levels
-            Primary_levels = defaultdict(list)
             if 'df_primary' in locals() and isinstance(df_primary, pd.DataFrame):
-                if 'Level' in df_primary.columns:
-                    primary_levels = df_primary['Level'].dropna().unique().tolist()
-                    selected_Primary_level = st.selectbox("Select Primary Level", primary_levels)
-
-            # Primary_reader = csv.DictReader(Primary_file.read().decode("utf-8").splitlines())
-            # Primary_reader.fieldnames = [h.strip().lstrip('﻿') for h in Primary_reader.fieldnames]
-            # for row in Primary_reader:
-            #    if row.get("Level") and row.get("Domain") and row.get("Descriptor"):
-            #        Primary_levels[row["Level"].strip()].append(f"{row['Domain'].strip()}: {row['Descriptor'].strip()}")
+                if 'Level' in df_primary.columns and 'Description' in df_primary.columns:
+                    Primary_levels = df_primary.groupby('Level')['Description'].apply(lambda x: "\n".join(x.dropna())).to_dict()
+                    selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
+                else:
+                    st.warning("⚠️ Columns 'Level' and 'Description' not found in Primary file.")
+            else:
+                st.warning("⚠️ Please upload a valid Primary CSV with levels.")
 
             # Load Secondary levels
             if 'df_secondary' in locals() and isinstance(df_secondary, pd.DataFrame):
-                if 'Level' in df_secondary.columns:
-                    secondary_levels = df_secondary['Level'].dropna().unique().tolist()
-                    selected_Secondary_level = st.selectbox("Select Secondary Level", secondary_levels)
+                if 'Level' in df_secondary.columns and 'Description' in df_secondary.columns:
+                    Secondary_levels = df_secondary.groupby('Level')['Description'].apply(lambda x: "\n".join(x.dropna())).to_dict()
+                    selected_Secondary_level = st.selectbox("Select Secondary Level", sorted(Secondary_levels.keys()))
+                else:
+                    st.warning("⚠️ Columns 'Level' and 'Description' not found in Secondary file.")
+            else:
+                st.warning("⚠️ Please upload a valid Secondary CSV with levels.")
 
-                       # Secondary_reader = csv.DictReader(Secondary_file.read().decode("utf-8").splitlines())
-            # Secondary_reader.fieldnames = [h.strip().lstrip('﻿') for h in Secondary_reader.fieldnames]
-            #for row in Secondary_reader:
-            #    if row.get("Level") and row.get("Domain") and row.get("Descriptor"):
-            #        Secondary_levels[row["Level"].strip()].append(f"{row['Domain'].strip()}: {row['Descriptor'].strip()}")
-                               
+                              
             # Build a dictionary of levels to their descriptors
             if 'Level' in df_primary.columns and 'Description' in df_primary.columns:
                 Primary_levels = df_primary.groupby('Level')['Description'].apply(lambda x: "\n".join(x.dropna())).to_dict()
