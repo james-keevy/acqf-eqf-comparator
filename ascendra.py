@@ -130,12 +130,9 @@ if login_result is not None:
                     Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
             except Exception as e:
                 st.error(f"❌ Could not process Secondary file: {e}")
+            else:
+                st.warning("Unsupported file format for Secondary artefact.")
 
-                else:
-                    st.warning("Unsupported file format for Secondary artefact.")
-            except Exception as e:
-                st.error(f"❌ Could not process Secondary file: {e}")
-        
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
 
