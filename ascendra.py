@@ -277,23 +277,19 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
         # --- Pinned footer ---
         st.markdown("""
-        <style>
-        body::after {
-            content: 'Powered by Ascendra | Built with Streamlit & OpenAI • Version 1.0 – April 2025. Results are advisory.';
-            visibility: visible;
-            display: block;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #f0f2f6;
-            color: #6c757d;
-            text-align: center;
-            padding: 0.5rem;
-            font-size: 0.8rem;
-            font-family: sans-serif;
-            z-index: 9999;
-        }
-        </style>
+            <div style="
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                background-color: #f0f2f6;
+                color: #6c757d;
+                text-align: center;
+                padding: 0.5rem;
+                font-size: 0.8rem;
+                font-family: sans-serif;
+                z-index: 9999;">
+                Powered by Ascendra | Built with Streamlit & OpenAI • Version 1.0 – April 2025. Results are advisory.
+            </div>
         """, unsafe_allow_html=True)
 
     elif auth_status is False:
