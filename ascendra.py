@@ -194,7 +194,7 @@ if login_result is not None:
 
         if Secondary_file:
             try:
-                file_ext = Secondary_file.name.lower().split(".")[-1]
+                file_ext = Secondary_file.name.split(".")[-1].lower()
 
                 if file_ext == "csv":
                     df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
@@ -231,10 +231,10 @@ if login_result is not None:
 
         # Move PDF renders to CSV if need be
 
-        #elif file_ext == "pdf":
-        #    st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
+        elif file_ext == "pdf":
+            st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
 
-        # Secondary_levels_dict, csv_path = parse_nqf_pdf_format(Secondary_file)
+        Secondary_levels_dict, csv_path = parse_nqf_pdf_format(Secondary_file)
 
         if Secondary_levels_dict and csv_path:
             st.success(f"✅ Parsed {len(Secondary_levels_dict)} levels from PDF.")
