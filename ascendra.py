@@ -191,7 +191,7 @@ if login_result is not None:
 
             elif file_ext == "pdf":
                 # Handle PDF parsing
-                st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
+                # st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
                 
                 structured_data, csv_path = parse_pdf_format(Secondary_file)
 
