@@ -178,6 +178,18 @@ if login_result is not None:
                         """
                         matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE)
 
+                        def clean_pdf_text(text):
+                            # Remove lines that are just page numbers or "Page X" phrases
+                            lines = text.splitlines()
+                            clean_lines = []
+                            for line in lines:
+                                if re.match(r"^\s*Page\s*\d+(\s*of\s*\d+)?\s*$", line, flags=re.IGNORECASE):
+                                    continue
+                                if re.match(r"^\s*\d+\s*$", line):  # Standalone numbers
+                                    continue
+                                clean_lines.append(line)
+                            return "\n".join(clean_lines)                     
+                        
                         if not matches:
                             st.warning("⚠️ No valid level-domain-descriptor groups found in the PDF.")
                             return None
