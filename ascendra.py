@@ -213,8 +213,11 @@ if login_result is not None:
                     if structured_data:
                         st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
                         st.write(structured_data)
-                        with open(csv_path, "rb") as f:
-                            st.download_button("⬇️ Download Extracted CSV", f, file_name="nqf_levels.csv")
+                        # Load the generated CSV into df_secondary for downstream use
+                        df_secondary = pd.read_csv(csv_path)
+                        # Optional: confirm it's loaded
+                        st.success("Secondary descriptors loaded from PDF successfully.")
+                        st.dataframe(df_secondary.head())  # optional preview
                     else:
                         st.warning("⚠️ Could not parse any level-domain-descriptor entries.")
                         st.warning("⚠️ Secondary PDF parsing returned an empty dictionary.")
