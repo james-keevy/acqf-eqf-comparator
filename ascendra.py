@@ -13,10 +13,9 @@ import io
 from io import BytesIO
 
 def parse_pdf_format(uploaded_file):
-
-# 🔒 Check if the file is valid
-if uploaded_file is None:
-    raise ValueError("No file was uploaded.")
+    # 🔒 Check if the file is valid
+    if uploaded_file is None:
+        raise ValueError("No file was uploaded.")
 
 try:
     uploaded_file.seek(0)  # 💡 Reset file pointer
