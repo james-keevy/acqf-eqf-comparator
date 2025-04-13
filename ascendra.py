@@ -331,8 +331,8 @@ model of skills acquisition."""
                                 st.session_state.results = []
                                 st.rerun()
 
-                except Exception as e:
-                    st.error(f"❌ API Error: {e}")
+                    except Exception as e:
+                        st.error(f"❌ API Error: {e}")
 
         # ✅ These lines should align with the outermost block
         elif auth_status is False:
