@@ -133,8 +133,6 @@ if login_result is not None:
                 
         Primary_levels = {}
 
-        structured_data = None  # declare upfront
-
         if Primary_file:
             try:
                 file_ext = Primary_file.name.split(".")[-1].lower()
