@@ -164,19 +164,11 @@ if login_result is not None:
             # --- Primary UI ---
             if Primary_levels:
                 selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
-                # st.markdown(f"### 📝 Primary Descriptors for {selected_Primary_level}")
-                # for domain, descriptor in Primary_levels[selected_Primary_level].items():
-                #    st.markdown(f"**{domain}**")
-                #    st.text_area("", descriptor, height=150, key=f"primary_{selected_Primary_level}_{domain}")
             else:
                 st.warning("⚠️ No valid Primary descriptors found.")
                 
             if Secondary_levels:
                 selected_Secondary_level = st.selectbox("Select Secondary Level", sorted(Secondary_levels.keys()))
-                # st.markdown(f"### 📝 Secondary Descriptors for {selected_Secondary_level}")
-                # for domain, descriptor in Secondary_levels[selected_Secondary_level].items():
-                #    st.markdown(f"**{domain}**")
-                #    st.text_area("", descriptor, height=150, key=f"secondary_{selected_Secondary_level}_{domain}")
             else:
                 st.warning("⚠️ No valid Secondary descriptors found.")
 
@@ -184,7 +176,9 @@ if login_result is not None:
             if st.button("Compare Levels"):
                 Primary_text = "".join(Primary_levels[selected_Primary_level])
                 Secondary_text = "".join(Secondary_levels[selected_Secondary_level])
-
+            
+            # PROMPT GPT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            
                 prompt = f"""
 
 Compare the following qualification level descriptors and assess their equivalence.
@@ -212,6 +206,9 @@ Do not use a heading for the visual depiction.
                         response = client.chat.completions.create(
                             model="gpt-4o",
                             messages=[
+
+                            # PROMPT GPT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
                                 {
                                     "role": "system",
                                     "content": """You are an expert in qualifications frameworks and international education systems. You understand learning outcomes and domain-based comparisons. You are able to compare the learning outcomes in different artefacts (such as level descriptors, qualifications, curricula, and job descriptions). You are well versed in the application of taxonomies, such as the revised Bloom taxonomy for knowledge, the Structure of the Observed Learning Outcome (SOLO) taxonomy, and the the Dreyfus
