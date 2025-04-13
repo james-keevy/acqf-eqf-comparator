@@ -275,16 +275,6 @@ if login_result is not None:
                 elif file_ext == "pdf":
                     st.subheader("📄 Secondary PDF Detected")
 
-            # except Exception as e:
-            #     st.error(f"❌ Could not process Secondary file: {e}")
-            # else:
-            #     st.warning("Unsupported file format for Secondary artefact.")
-
-        # Move PDF renders to CSV if need be
-
-        # elif file_ext == "pdf":
-        #     st.subheader("📄 Parsing data from PDF")
-
         Secondary_levels_dict, csv_path = parse_pdf_format(Secondary_file)
 
         if Secondary_levels_dict and csv_path:
