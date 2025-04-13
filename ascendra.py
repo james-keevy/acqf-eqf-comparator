@@ -82,102 +82,78 @@ if login_result is not None:
         Secondary_text = ""
 
         # --- Process Primary File ---
-        if Primary_file:
-            try:
-                extension = Primary_file.name.lower().split(".")[-1]
-                if extension == "csv":
-                    df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig", on_bad_lines="skip")
-                    Primary_text = "\n".join(df_primary.iloc[:, 0].dropna().astype(str).tolist())
-                    # Load Primary levels
-                    if 'df_primary' in locals() and isinstance(df_primary, pd.DataFrame):
+                
+        Primary_levels = {}
+
+        def extract_descriptors_from_pdf_text_grouped(text):
+            """
+            Extracts descriptors from plain PDF text in the form:
+            Level → { Domain → Descriptor }
+            """
+            pattern = r"(Level\s*\d+)[\s\n]+(Knowledge|Skills|Autonomy|Responsibility|Competence)[\s\n]+(.+?)(?=(?:Level\s*\d+)|\Z)"
+            matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE)
+
+            structured = {}
+            for level_raw, domain_raw, descriptor in matches:
+                level = level_raw.strip().title()
+                domain = domain_raw.strip().title()
+                desc = descriptor.strip().replace('\n', ' ')
+                structured.setdefault(level, {})[domain] = desc
+            return structured
+
+            if Primary_file:
+                try:
+                    file_ext = Primary_file.name.split(".")[-1].lower()
+
+                    if file_ext == "csv":
+                        df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig", on_bad_lines="skip")
                         if all(col in df_primary.columns for col in ['Level', 'Domain', 'Descriptor']):
-                            # Group by Level and Domain
-                            Primary_descriptors = (
-                                df_primary.groupby(['Level', 'Domain'])['Descriptor']
-                                .apply(lambda x: "\n".join(x.dropna()))
-                                .to_dict()
-                            )
+                            grouped = df_primary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                            for (level, domain), descriptor in grouped.items():
+                                Primary_levels.setdefault(level, {})[domain] = descriptor
                         else:
-                            st.warning("⚠️ Primary CSV must have 'Level', 'Domain', and 'Descriptor' columns.")
-                elif extension == "pdf":
-                    Primary_text = extract_text_from_pdf(Primary_file)
-                else:
-                    st.warning("Unsupported file format for Primary artefact.")
-            except Exception as e:
-                st.error(f"❌ Could not process Primary file: {e}")
+                            st.warning("⚠️ Primary CSV is missing required columns: Level, Domain, Descriptor.")
 
-            # ✅ Reusable function: Extract structured data and write to CSV
-            def parse_nqf_pdf_format(pdf_file, output_csv="nqf_descriptors.csv"):
-                level_pattern = re.compile(r"NQF Level (\w+)", re.IGNORECASE)
-                domain_pattern = re.compile(r"^[a-j]\.\s+(.*?), in respect of which", re.IGNORECASE)
+                    elif file_ext == "pdf":
+                        st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
+                        structured_data, csv_path = parse_nqf_pdf_format(Primary_file)
 
-                level_number_map = {
-                    "One": "Level 1", "Two": "Level 2", "Three": "Level 3",
-                    "Four": "Level 4", "Five": "Level 5", "Six": "Level 6",
-                    "Seven": "Level 7", "Eight": "Level 8", "Nine": "Level 9",
-                    "Ten": "Level 10"
-                }
+                        if structured_data:
+                            st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
+                            st.write(structured_data)
+                            df_primary = pd.read_csv(csv_path)
+                        else:
+                            st.warning("⚠️ No structured descriptors could be extracted from the PDF.")
 
-                pdf_file.seek(0)  # 🔁 Ensure stream is fresh
-                with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
-                    text = "\n".join([page.get_text() for page in doc])
+                    else:
+                        st.error(f"❌ Unsupported file format: `{file_ext.upper()}`. Please upload a CSV or PDF file.")
 
-                lines = text.splitlines()
-                structured = {}
-                current_level = None
-                current_domain = None
-                current_descriptor = []
+                except Exception as e:
+                    st.error(f"❌ Error processing Primary artefact: {e}")
 
-                for line in lines:
-                    line = line.strip()
+        # Move PDF renders to CSV if need be
 
-                    # Detect level header
-                    level_match = level_pattern.search(line)
-                    if level_match:
-                        level_word = level_match.group(1).title()
-                        current_level = level_number_map.get(level_word)
-                        continue
+            elif file_ext == "pdf":
+                st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
 
-                    # Detect domain start (e.g., a. Scope of knowledge)
-                    domain_match = domain_pattern.match(line)
-                    if domain_match and current_level:
-                        # Save previous domain if exists
-                        if current_level and current_domain and current_descriptor:
-                            descriptor_text = " ".join(current_descriptor).strip()
-                            structured.setdefault(current_level, {})[current_domain] = descriptor_text
-                            current_descriptor = []
+        Primary_levels_dict, csv_path = parse_nqf_pdf_format(Primary_file)
 
-                        current_domain = domain_match.group(1).strip()
-                        # Remove domain part from line to start descriptor cleanly
-                        descriptor_start = line.split("in respect of which", 1)[-1].strip()
-                        current_descriptor = [descriptor_start] if descriptor_start else []
+        if Primary_levels_dict and csv_path:
+            # st.success(f"✅ Parsed {len(Primary_levels_dict)} levels from PDF.")
+            success_placeholder = st.empty()
+            success_placeholder.success(f"✅ Parsed data from PDF.")
+            # Wait for 3 seconds
+            time.sleep(3)
 
-                    elif current_domain and line:
-                        current_descriptor.append(line)
+            # Clear the success message
+            success_placeholder.empty()
 
-                # Save last one
-                if current_level and current_domain and current_descriptor:
-                    descriptor_text = " ".join(current_descriptor).strip()
-                    structured.setdefault(current_level, {})[current_domain] = descriptor_text
-
-                # Write to CSV
-                rows = []
-                for level, domains in structured.items():
-                    for domain, descriptor in domains.items():
-                        rows.append([level, domain, descriptor])
-
-                output_path = f"/tmp/{output_csv}"
-                with open(output_path, mode="w", encoding="utf-8", newline="") as f:
-                    writer = csv.writer(f)
-                    writer.writerow(["Level", "Domain", "Descriptor"])
-                    writer.writerows(rows)
-
-                return structured, output_path
-      
-       
+            # ✅ Load into DataFrame like a normal CSV
+            df_primary = pd.read_csv(csv_path)
+            st.session_state.df_primary_loaded = True  # optional flag
        
         # ..............................end primary
-        
+
         # --- Process Secondary File ---
         Secondary_levels = {}
 
@@ -247,10 +223,7 @@ if login_result is not None:
             # ✅ Load into DataFrame like a normal CSV
             df_secondary = pd.read_csv(csv_path)
             st.session_state.df_secondary_loaded = True  # optional flag
-
-            # else:
-            #     st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
-                
+               
         # ..............................end secondary 
         
         # Match threshold slider
