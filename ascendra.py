@@ -131,6 +131,7 @@ if login_result is not None:
 
         # --- Process Primary File ---
                 
+        structured_data = None  # <- ensures it exists even if skipped
         Primary_levels = {}
 
         if Primary_file:
@@ -181,7 +182,7 @@ if login_result is not None:
         # Wait for 3 seconds
         time.sleep(3)
 
-        Clear the success message
+        # Clear the success message
         success_placeholder.empty()
 
         # ✅ Load into DataFrame like a normal CSV
