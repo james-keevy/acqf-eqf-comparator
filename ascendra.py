@@ -67,7 +67,7 @@ if login_result is not None:
 
         # If all inputs are available
         if api_key and Primary_file and Secondary_file:
-            client = OpenAI(api_key=api_key)
+            client = openai.OpenAI(api_key=api_key)
 
             # Load Primary levels
             Primary_levels = defaultdict(list)
