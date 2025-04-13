@@ -278,9 +278,8 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
         # --- Pinned footer ---
         st.markdown("""
         <style>
-        footer { visibility: hidden; }
-        footer:after {
-            content: 'Powered by Ascendra | Built with Streamlit & OpenAI • Version 1.0 – April 2025. Ascendra provides AI-assisted comparisons of learning outcomes across artefacts. Results are advisory and should be reviewed with expert judgement.';
+        body::after {
+            content: 'Powered by Ascendra | Built with Streamlit & OpenAI • Version 1.0 – April 2025. Results are advisory.';
             visibility: visible;
             display: block;
             position: fixed;
@@ -291,7 +290,7 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
             text-align: center;
             padding: 0.5rem;
             font-size: 0.8rem;
-            font-family: 'sans-serif';
+            font-family: sans-serif;
             z-index: 9999;
         }
         </style>
