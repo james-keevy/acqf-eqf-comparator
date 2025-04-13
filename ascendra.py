@@ -206,7 +206,7 @@ if login_result is not None:
                         st.warning("⚠️ Secondary CSV missing required columns.")
 
                 elif file_ext == "pdf":
-                    st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
+                    st.subheader("📄 Parsing data from PDF")
                     structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
 
                     if structured_data:
@@ -232,7 +232,7 @@ if login_result is not None:
         # Move PDF renders to CSV if need be
 
         elif file_ext == "pdf":
-            st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
+            st.subheader("📄 Parsing data from PDF")
 
         Secondary_levels_dict, csv_path = parse_nqf_pdf_format(Secondary_file)
 
