@@ -192,42 +192,35 @@ if login_result is not None:
                 structured.setdefault(level, {})[domain] = desc
             return structured
 
-        if Secondary_file:
-            try:
-                file_ext = Secondary_file.name.lower().split(".")[-1]
+            if Secondary_file:
+                try:
+                    file_ext = Secondary_file.name.split(".")[-1].lower()
 
-                if file_ext == "csv":
-                    df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
-                    if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
-                        grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
-                        for (level, domain), descriptor in grouped.items():
-                            Secondary_levels.setdefault(level, {})[domain] = descriptor
+                    if file_ext == "csv":
+                        df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
+                        if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                            grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                            for (level, domain), descriptor in grouped.items():
+                                Secondary_levels.setdefault(level, {})[domain] = descriptor
+                        else:
+                            st.warning("⚠️ Secondary CSV is missing required columns: Level, Domain, Descriptor.")
+
+                    elif file_ext == "pdf":
+                        st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
+                        structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
+
+                        if structured_data:
+                            st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
+                            st.write(structured_data)
+                            df_secondary = pd.read_csv(csv_path)
+                        else:
+                            st.warning("⚠️ No structured descriptors could be extracted from the PDF.")
+
                     else:
-                        st.warning("⚠️ Secondary CSV missing required columns.")
+                        st.error(f"❌ Unsupported file format: `{file_ext.upper()}`. Please upload a CSV or PDF file.")
 
-                elif file_ext == "pdf":
-                    st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
-                    structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
-
-                    if structured_data:
-                        st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
-                        st.write(structured_data)
-                        # Load the generated CSV into df_secondary for downstream use
-                        df_secondary = pd.read_csv(csv_path)
-
-                    else:
-                        st.warning("⚠️ Could not parse any level-domain-descriptor entries.")
-                        st.warning("⚠️ Secondary PDF parsing returned an empty dictionary.")
-
-
-                    # --- Inside your file handling logic ---
-                elif file_ext == "pdf":
-                    st.subheader("📄 Secondary PDF Detected")
-
-            except Exception as e:
-                st.error(f"❌ Could not process Secondary file: {e}")
-            else:
-                st.warning("Unsupported file format for Secondary artefact.")
+                except Exception as e:
+                    st.error(f"❌ Error processing Secondary artefact: {e}")
 
         # Move PDF renders to CSV if need be
 
