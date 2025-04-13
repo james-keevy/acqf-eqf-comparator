@@ -153,17 +153,50 @@ if login_result is not None:
                     else:
                         st.warning("⚠️ Secondary PDF parsing returned an empty dictionary.")
 
-                    def extract_descriptors_from_pdf_text_grouped(text):
-                        pattern = r"(Level\s*\d+)[\s\n]+(Knowledge|Skills|Autonomy|Responsibility|Competence)[\s\n]+(.+?)(?=(?:Level\s*\d+)|\Z)"
+                    def extract_structured_from_pdf_to_csv(pdf_file, output_csv="extracted_descriptors.csv"):
+                        import fitz  # PyMuPDF
+
+                        # Step 1: Extract full text from PDF
+                        try:
+                            with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
+                                text = ""
+                                for page in doc:
+                                    text += page.get_text()
+                        except Exception as e:
+                            st.error(f"❌ Failed to read PDF: {e}")
+                            return None
+
+                        # Step 2: Use regex to extract Level → Domain → Descriptor triples
+                        pattern = r"(Level\s*\d+)[\s\n]+(Knowledge|Skills|Autonomy|Responsibility|Competence)[\s\n]+(.+?)(?=(Level\s*\d+|$))"
                         matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE)
 
-                        structured = {}
-                        for level_raw, domain_raw, descriptor in matches:
-                            level = level_raw.strip().title()
-                            domain = domain_raw.strip().title()
-                            desc = descriptor.strip().replace('\n', ' ')
-                            structured.setdefault(level, {})[domain] = desc
-                        return structured
+                        if not matches:
+                            st.warning("⚠️ No valid level-domain-descriptor groups found in the PDF.")
+                            return None
+
+                        # Step 3: Clean and save to CSV
+                        rows = []
+                        for level, domain, descriptor, _ in matches:
+                            level = level.strip().title()
+                            domain = domain.strip().title()
+                            descriptor = descriptor.strip().replace("\n", " ").strip()
+
+                            if level and domain and descriptor:
+                                rows.append([level, domain, descriptor])
+
+                        if not rows:
+                            st.warning("⚠️ All extracted entries were incomplete and skipped.")
+                            return None
+
+                        # Step 4: Write to CSV
+                        output_path = f"/tmp/{output_csv}"  # For Streamlit or temp-safe environments
+                        with open(output_path, mode="w", encoding="utf-8", newline="") as f:
+                            writer = csv.writer(f)
+                            writer.writerow(["Level", "Domain", "Descriptor"])
+                            writer.writerows(rows)
+
+                        return output_path
+
 
 ###############
 
