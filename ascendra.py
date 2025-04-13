@@ -71,28 +71,28 @@ def extract_text_from_pdf(file):
         st.error(f"❌ Error reading PDF: {e}")
         return ""
 
-        # File upload widgets for CSV or PDF
-        # Primary_file = st.file_uploader("Upload a primary artefact (CSV or PDF)", type=["csv", "pdf"])
-        # Secondary_file = st.file_uploader("Upload a secondary artefact (CSV or PDF)", type=["csv", "pdf"])
+    # File upload widgets for CSV or PDF
+    # Primary_file = st.file_uploader("Upload a primary artefact (CSV or PDF)", type=["csv", "pdf"])
+    # Secondary_file = st.file_uploader("Upload a secondary artefact (CSV or PDF)", type=["csv", "pdf"])
 
-        Primary_text = ""
-        Secondary_text = ""
+    Primary_text = ""
+    Secondary_text = ""
 
-        # Process Primary
-        if Primary_file:
-            if Primary_file.name.endswith(".csv"):
-                df_primary = pd.read_csv(Primary_file)
-                Primary_text = "\n".join(df_primary.iloc[:, 0].astype(str).tolist())
-            elif Primary_file.name.endswith(".pdf"):
-                Primary_text = extract_text_from_pdf(Primary_file)
+    # Process Primary
+    if Primary_file:
+        if Primary_file.name.endswith(".csv"):
+            df_primary = pd.read_csv(Primary_file)
+            Primary_text = "\n".join(df_primary.iloc[:, 0].astype(str).tolist())
+        elif Primary_file.name.endswith(".pdf"):
+            Primary_text = extract_text_from_pdf(Primary_file)
 
-        # Process Secondary
-        if Secondary_file:
-            if Secondary_file.name.endswith(".csv"):
-                df_secondary = pd.read_csv(Secondary_file)
-                Secondary_text = "\n".join(df_secondary.iloc[:, 0].astype(str).tolist())
-            elif Secondary_file.name.endswith(".pdf"):
-                Secondary_text = extract_text_from_pdf(Secondary_file)
+    # Process Secondary
+    if Secondary_file:
+        if Secondary_file.name.endswith(".csv"):
+            df_secondary = pd.read_csv(Secondary_file)
+            Secondary_text = "\n".join(df_secondary.iloc[:, 0].astype(str).tolist())
+        elif Secondary_file.name.endswith(".pdf"):
+            Secondary_text = extract_text_from_pdf(Secondary_file)
 
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
