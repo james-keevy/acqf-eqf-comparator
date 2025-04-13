@@ -91,12 +91,11 @@ if login_result is not None:
 
             # Compare levels
             if st.button("Compare Levels"):
-                Primary_text = "
-".join(Primary_levels[selected_Primary_level])
-                Secondary_text = "
-".join(Secondary_levels[selected_Secondary_level])
+                Primary_text = "".join(Primary_levels[selected_Primary_level])
+                Secondary_text = "".join(Secondary_levels[selected_Secondary_level])
 
                 prompt = f"""
+
 Compare the following qualification level descriptors and assess their equivalence.
 
 Primary Level {selected_Primary_level}:
