@@ -193,6 +193,7 @@ if login_result is not None:
             return structured
 
         if Secondary_file:
+            file_ext = Secondary_file.name.split(".")[-1].lower()
             try:
                 file_ext = Secondary_file.name.lower().split(".")[-1]
 
