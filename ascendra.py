@@ -139,33 +139,37 @@ if login_result is not None:
 
                         gpt_output = response.choices[0].message.content
 
+                        # Initialize variables
                         ai_score = None
                         comment_cleaned = ""
 
                         try:
-                            # Extract only the JSON part from the GPT output
+                            # Try to extract JSON from GPT output
                             json_match = re.search(r'\{.*\}', gpt_output, re.DOTALL)
                             
                             if json_match:
                                 json_text = json_match.group(0)
+
+                                # DEBUG: check raw JSON block (optional)
+                                # st.write("🧾 Extracted JSON block:", json_text)
+
                                 parsed = json.loads(json_text)
 
                                 ai_score = parsed.get("similarity_score")
                                 comment = parsed.get("comment", "")
 
-                                # Clean up only if there’s clearly extra JSON or formatting noise
+                                # ✅ Smart cleanup — only if there's noise
                                 if "JSON Result" in comment or "{" in comment:
                                     comment_cleaned = re.sub(r'JSON Result:.*', '', comment, flags=re.DOTALL).strip()
                                     comment_cleaned = re.sub(r'\{.*\}', '', comment_cleaned, flags=re.DOTALL).strip()
                                 else:
                                     comment_cleaned = comment.strip()
+
                             else:
                                 st.warning("⚠️ No JSON block found in GPT output.")
-                        
-                        except Exception as e:
-                            st.warning(f"⚠️ Could not parse JSON. Falling back to regex...")
 
-                            # Fallback regex logic here if needed
+                        except Exception as e:
+                            st.warning("⚠️ Could not parse JSON. Falling back to regex...")
                             ai_score = None
                             comment_cleaned = ""
                         
