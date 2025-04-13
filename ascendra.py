@@ -249,7 +249,10 @@ if login_result is not None:
 
             if Secondary_file is not None:
                 try:
-                    Secondary_levels_dict, csv_path = parse_pdf_format(Secondary_file)
+                    if Secondary_file is not None:
+                        Secondary_levels_dict, csv_path = parse_pdf_format(Secondary_file)
+                    else:
+                        st.warning("⚠️ No Secondary file uploaded.")
                     df_secondary = pd.read_csv(csv_path)
                     st.success("✅ PDF parsed successfully.")
                     st.write(df_secondary)
