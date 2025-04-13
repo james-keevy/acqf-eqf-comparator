@@ -237,11 +237,15 @@ if login_result is not None:
             return structured
 
             if Secondary_file is not None:
-                structured_data, csv_io = parse_pdf_format(Secondary_file)
-                df_secondary = pd.read_csv(csv_io)
-
-            try:
-                file_ext = Secondary_file.name.lower().split(".")[-1]
+                try:
+                    Secondary_levels_dict, csv_path = parse_pdf_format(Secondary_file)
+                    df_secondary = pd.read_csv(csv_path)
+                    st.success("✅ PDF parsed successfully.")
+                    st.write(df_secondary)
+                except Exception as e:
+                    st.error(f"❌ PDF parsing error: {e}")
+            else:
+                st.warning("⚠️ Please upload a PDF file to continue.")
 
                 if file_ext == "csv":
                     df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
