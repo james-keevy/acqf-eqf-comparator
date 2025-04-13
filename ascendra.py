@@ -10,7 +10,33 @@ import textwrap
 import streamlit_authenticator as stauth
 import fitz  # PyMuPDF
 import io
-from ascendra import parse_pdf_format
+
+def parse_pdf_format(uploaded_file):
+    import fitz  # PyMuPDF
+    import pandas as pd
+    from io import BytesIO
+
+    doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
+    extracted_data = []
+
+    for page in doc:
+        text = page.get_text("text")
+        # Example logic: each Level starts with "Level" followed by number
+        lines = text.splitlines()
+        for line in lines:
+            if line.strip().lower().startswith("level"):
+                # Add more extraction logic here
+                extracted_data.append({"Level": line.strip(), "Descriptor": "..."})
+
+    # Convert to DataFrame
+    df = pd.DataFrame(extracted_data)
+
+    # Save to in-memory CSV
+    buffer = BytesIO()
+    df.to_csv(buffer, index=False)
+    buffer.seek(0)
+
+    return extracted_data, buffer
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
