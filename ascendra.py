@@ -123,6 +123,23 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
                             ]
                         )
 
+                        # --------------------------------------------------------
+                        # DEBUG: Show full GPT output
+                        st.write("GPT Output:", gpt_output)
+
+                        # Extract ai_score
+                        import re
+                        match = re.search(r'\b(\d{1,3})\b', gpt_output)
+                        if match:
+                            ai_score = int(match.group(1))
+                        else:
+                            ai_score = None
+
+                        # DEBUG: Show extracted score
+                        st.write("Extracted ai_score:", ai_score)
+
+                        # --------------------------------------------------------
+                        
                         result_text = response.choices[0].message.content
 
                         if result_text:
