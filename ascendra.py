@@ -106,7 +106,7 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
 
             # ✅ Reusable function: Extract structured data and write to CSV
-            def parse__pdf_format(pdf_file, output_csv="nqf_descriptors.csv"):
+            def parse_pdf_format(pdf_file, output_csv="nqf_descriptors.csv"):
                 level_pattern = re.compile(r"NQF Level (\w+)", re.IGNORECASE)
                 domain_pattern = re.compile(r"^[a-j]\.\s+(.*?), in respect of which", re.IGNORECASE)
 
