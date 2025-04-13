@@ -88,15 +88,6 @@ if login_result is not None:
                         if row.get("Level") and row.get("Domain") and row.get("Descriptor"):
                             Secondary_levels[row["Level"].strip()].append(f"{row['Domain'].strip()}: {row['Descriptor'].strip()}")
 
-                    # Level selection dropdowns
-                    selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
-                    selected_Secondary_level = st.selectbox("Select Secondary Level", sorted(Secondary_levels.keys()))
-
-                    # Compare levels
-                    if st.button("Compare Levels"):
-                        Primary_text = "\n".join(Primary_levels[selected_Primary_level])
-                        Secondary_text = "\n".join(Secondary_levels[selected_Secondary_level])
-
                     # Set similarity slider in place
                     similarity_score = st.slider(
                         "Set Similarity Score", 
@@ -106,20 +97,30 @@ if login_result is not None:
                         step=1, 
                         key="similarity_score_slider"
                     )
+                    
+                    # Level selection dropdowns
+                    selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
+                    selected_Secondary_level = st.selectbox("Select Secondary Level", sorted(Secondary_levels.keys()))
 
-                        prompt = f"""
-                
-                Compare the following qualification level descriptors and assess their equivalence.
+                    # Compare levels
+                    if st.button("Compare Levels"):
+                        Primary_text = "\n".join(Primary_levels[selected_Primary_level])
+                        Secondary_text = "\n".join(Secondary_levels[selected_Secondary_level])
 
-                Primary Level {selected_Primary_level}:
-                {Primary_text}
+                prompt = f"""
+            Compare the following qualification level descriptors and assess their equivalence.
 
-                Secondary Level {selected_Secondary_level}:
-                {Secondary_text}
+            Primary Level {selected_Primary_level}:
+            {Primary_text}
 
-                Compare the descriptors. Are these levels equivalent? Highlight similarities and differences. Suggest the most appropriate Secondary level match and provide a similarity score out of 100.
-                """
-                        with st.spinner("Asking GPT-4o..."):
+            Secondary Level {selected_Secondary_level}:
+            {Secondary_text}
+
+            Compare the descriptors. Are these levels equivalent? Highlight similarities and differences. 
+            Suggest the most appropriate Secondary level match and provide a similarity score out of 100.
+            """
+                        
+                with st.spinner("Asking GPT-4o..."):
                             try:
                                 response = client.chat.completions.create(
                                     model="gpt-4o",
@@ -220,7 +221,7 @@ if login_result is not None:
 
                                     # Header
                                     pdf.image("ascendra_v5.png", x=10, y=8, w=40)
-                                    pdf.ln(45)
+                                    pdf.ln(25)
                                     pdf.set_font("DejaVu", "B", 14)
                                     safe_multicell(pdf, 0, 8, "Primary - Secondary Comparison Report")
                                     pdf.set_font("DejaVu", "", 8)
