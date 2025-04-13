@@ -153,10 +153,12 @@ if login_result is not None:
                                 ai_score = parsed.get("similarity_score")
                                 comment = parsed.get("comment", "")
 
-                                # Clean up comment text if needed
-                                if comment:
+                                # Clean up only if there’s clearly extra JSON or formatting noise
+                                if "JSON Result" in comment or "{" in comment:
                                     comment_cleaned = re.sub(r'JSON Result:.*', '', comment, flags=re.DOTALL).strip()
                                     comment_cleaned = re.sub(r'\{.*\}', '', comment_cleaned, flags=re.DOTALL).strip()
+                                else:
+                                    comment_cleaned = comment.strip()
                             else:
                                 st.warning("⚠️ No JSON block found in GPT output.")
                         except Exception as e:
