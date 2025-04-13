@@ -161,6 +161,25 @@ if login_result is not None:
                 else:
                     st.warning("⚠️ Secondary CSV must include 'Level', 'Domain', and 'Descriptor' columns.")
 
+            # --- Primary UI ---
+            if Primary_levels:
+                selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
+                st.markdown(f"### 📝 Primary Descriptors for {selected_Primary_level}")
+                for domain, descriptor in Primary_levels[selected_Primary_level].items():
+                    st.markdown(f"**{domain}**")
+                    st.text_area("", descriptor, height=150, key=f"primary_{selected_Primary_level}_{domain}")
+            else:
+                st.warning("⚠️ No valid Primary descriptors found.")
+                
+            if Secondary_levels:
+                selected_Secondary_level = st.selectbox("Select Secondary Level", sorted(Secondary_levels.keys()))
+                st.markdown(f"### 📝 Secondary Descriptors for {selected_Secondary_level}")
+                for domain, descriptor in Secondary_levels[selected_Secondary_level].items():
+                    st.markdown(f"**{domain}**")
+                    st.text_area("", descriptor, height=150, key=f"secondary_{selected_Secondary_level}_{domain}")
+            else:
+                st.warning("⚠️ No valid Secondary descriptors found.")
+
             # Compare levels
             if st.button("Compare Levels"):
                 Primary_text = "".join(Primary_levels[selected_Primary_level])
