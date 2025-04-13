@@ -108,7 +108,9 @@ Compare the descriptors. Are these levels equivalent? Highlight similarities and
 
 Suggest the most appropriate Secondary level match.
 
-Provide a similarity score out of 100. Write this as a separate score below your response. Add a visual depiction with one row of 10 circles in a bright colour. Do not use a heading for the slider. Colour the circles that match the score out of 100 proportionally.
+Provide a similarity score out of 100. Write this as a separate score below your response. 
+
+Add a visual depiction with one row of 10 circles. Do not use a heading for the slider. Fillthe circles in red that match the score out of 100 proportionally. Keep the other circles unfilled.
 
 """
 
