@@ -191,19 +191,28 @@ if login_result is not None:
                         matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE) 
 
                         structured = {}
-                        for level, domain, descriptor in matches:
-                            level_label = f"Level {level.strip()}"
-                            domain = domain.strip().title()
+                                                
+                        # Normalize line endings, strip whitespace, and remove empty lines
+                        cleaned_lines = [
+                            re.sub(r"\s+", " ", line).strip()  # Collapse multiple spaces/tabs and strip
+                            for line in descriptor.strip().splitlines()
+                            if line.strip() and not re.fullmatch(r"\s*", line)  # Skip lines that are just whitespace
+                        ]
+                        cleaned_descriptor = " ".join(cleaned_lines)                       
+                        
+                        # for level, domain, descriptor in matches:
+                        #     level_label = f"Level {level.strip()}"
+                        #     domain = domain.strip().title()
 
-                            # 🧼 Clean descriptor: strip empty lines, normalize whitespace
-                            cleaned_lines = [
-                                line.strip() for line in descriptor.strip().splitlines()
-                                if line.strip()  # Keep only non-empty lines
-                            ]
-                            cleaned_descriptor = " ".join(cleaned_lines)
+                        #     # 🧼 Clean descriptor: strip empty lines, normalize whitespace
+                        #     cleaned_lines = [
+                        #         line.strip() for line in descriptor.strip().splitlines()
+                        #         if line.strip()  # Keep only non-empty lines
+                        #     ]
+                        #     cleaned_descriptor = " ".join(cleaned_lines)
 
-                            structured.setdefault(level_label, {})[domain] = cleaned_descriptor
-                                         
+                        #     structured.setdefault(level_label, {})[domain] = cleaned_descriptor
+
                         if not matches:
                             st.warning("⚠️ No valid level-domain-descriptor groups found in the PDF.")
                             return None
