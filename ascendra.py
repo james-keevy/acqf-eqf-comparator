@@ -60,8 +60,7 @@ def parse_pdf_format(uploaded_file):
 # except Exception as e:
 #     raise RuntimeError(f"Error while parsing PDF: {e}")
 
-finally:
-    st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
+st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
 # To create a login screen for your public app (simulating private access)
 
