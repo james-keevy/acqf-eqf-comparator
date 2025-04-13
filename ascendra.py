@@ -106,27 +106,13 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
 
         # --- Process Secondary File ---
-        Secondary_levels = {}  # Ensure it always exists
-
-        def extract_descriptors_from_pdf_text_grouped(text):
-            """
-            Extracts descriptors from plain PDF text in the form:
-            Level → { Domain → Descriptor }
-            """
-            pattern = r"(Level\s*\d+)[\s\n]+(Knowledge|Skills|Autonomy|Responsibility|Competence)[\s\n]+(.+?)(?=(?:Level\s*\d+)|\Z)"
-            matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE)
-
-            structured = {}
-            for level_raw, domain_raw, descriptor in matches:
-                level = level_raw.strip().title()
-                domain = domain_raw.strip().title()
-                desc = descriptor.strip().replace('\n', ' ')
-                structured.setdefault(level, {})[domain] = desc
-            return structured
+        Secondary_levels = {}
 
         if Secondary_file:
             try:
-                if Secondary_file.name.lower().endswith(".csv"):
+                file_ext = Secondary_file.name.lower().split(".")[-1]
+
+                if file_ext == "csv":
                     df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
                     if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
                         grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
@@ -134,6 +120,17 @@ if login_result is not None:
                             Secondary_levels.setdefault(level, {})[domain] = descriptor
                     else:
                         st.warning("⚠️ Secondary CSV missing required columns.")
+
+                elif file_ext == "pdf":
+                    Secondary_text = extract_text_from_pdf(Secondary_file)
+                    Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
+
+                else:
+                    st.warning("⚠️ Unsupported file format for Secondary artefact.")
+
+            except Exception as e:
+                st.error(f"❌ Could not process Secondary file: {e}")
+
 
 ############# PDF SECONDARY INPUT 
 
