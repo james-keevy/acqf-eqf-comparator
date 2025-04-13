@@ -164,14 +164,6 @@ if login_result is not None:
 
                             st.subheader(f"Comparison Result: Primary Level {selected_Primary_level} - Secondary Level {selected_Secondary_level}")
 
-                            # Clean up comment text before showing
-                            if comment:
-                                # Remove "JSON Result:" and nested JSON (anything that looks like { ... })
-                                comment_cleaned = re.sub(r'JSON Result:.*', '', comment, flags=re.DOTALL).strip()
-                                comment_cleaned = re.sub(r'\{.*\}', '', comment_cleaned, flags=re.DOTALL).strip()
-                            else:
-                                comment_cleaned = ""
-
                             if ai_score is not None:
                                 st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
                                 st.info(comment)
@@ -190,6 +182,14 @@ if login_result is not None:
                                     for item in Secondary_levels[selected_Secondary_level]:
                                         st.markdown(f"- {item}")
 
+                            # Clean up comment text before showing
+                            if comment:
+                                # Remove "JSON Result:" and nested JSON (anything that looks like { ... })
+                                comment_cleaned = re.sub(r'JSON Result:.*', '', comment, flags=re.DOTALL).strip()
+                                comment_cleaned = re.sub(r'\{.*\}', '', comment_cleaned, flags=re.DOTALL).strip()
+                            else:
+                                comment_cleaned = ""
+                             
                             st.write(result_text)
 
                             from fpdf import FPDF
