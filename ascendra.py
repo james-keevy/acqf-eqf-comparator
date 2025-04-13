@@ -168,8 +168,8 @@ if login_result is not None:
 
                         except Exception as e:
                             st.warning("⚠️ Could not parse JSON. Falling back to regex...")
-                            ai_score = None
-                            comment_cleaned = ""
+                            # ai_score = None
+                            # comment_cleaned = ""
                     
                             st.subheader(f"Comparison Result: Primary Level {selected_Primary_level} - Secondary Level {selected_Secondary_level}")
 
