@@ -56,8 +56,8 @@ if login_result is not None:
         api_key = st.secrets["OPENAI_API_KEY"]
 
         # File upload widgets
-        Primary_file = st.file_uploader("Upload a primary artefact in CSV format", type="csv")
-        Secondary_file = st.file_uploader("Upload a secondary artefact in CSV format", type="csv")
+        # Primary_file = st.file_uploader("Upload a primary artefact in CSV format", type="csv")
+        # Secondary_file = st.file_uploader("Upload a secondary artefact in CSV format", type="csv")
 
         # Helper function to extract text from PDF
         def extract_text_from_pdf(file):
