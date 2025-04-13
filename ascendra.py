@@ -250,7 +250,7 @@ if login_result is not None:
                             # AI similarity Score                                                  
                             if ai_score is not None and 0 <= ai_score <= 100:
                                 # st.write(f"**AI Similarity Score:** {ai_score}/100")
-                                st.progress(ai_score / 100.0)
+                                # st.progress(ai_score / 100.0)
 
                                 if ai_score >= high_match_threshold:
                                     st.success("High Match")
