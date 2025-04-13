@@ -112,6 +112,9 @@ if login_result is not None:
                 pd.DataFrame(rows).to_csv(output_csv_path, index=False, encoding="utf-8-sig")
 
                 return structured, str(output_csv_path)
+                
+                #TEST            
+                st.text_area("📄 Extracted PDF Text", text[:3000], height=300)
 
             except Exception as e:
             #   st.error(f"❌ Failed to parse PDF: {e}")
