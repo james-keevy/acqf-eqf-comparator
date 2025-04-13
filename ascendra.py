@@ -103,12 +103,8 @@ if login_result is not None:
                                           
                     Suggest the most appropriate Secondary level match and provide a similarity score out of 100.
                     
-                    Add a result strictly in this JSON format:
-                    {{
-                    "similarity_score": [number between 0 and 100],
-                    "comment": "[brief explanation of the match]"
-                    }}
-                                         
+                    Add a result strictly in JSON format
+                                            
                     Continue with the comparison to check if these levels equivalent? Highlight similarities and differences.
                                          
                     Primary Level {selected_Primary_level}:
