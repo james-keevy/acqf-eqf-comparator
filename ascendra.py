@@ -226,9 +226,9 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
                             pdf.ln(5)
 
                             # Similarity Score
-                            if similarity_score is not None:
+                            if ai_score is not None:
                                 pdf.set_font("DejaVu", "B", 12)
-                                safe_multicell(pdf, 0, 8, f"Similarity Score: {similarity_score}/100")
+                                safe_multicell(pdf, 0, 8, f"Similarity Score: {ai_score}/100")
                                 pdf.ln(5)
 
                             # GPT Result
