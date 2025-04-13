@@ -151,12 +151,12 @@ if login_result is not None:
                         
                         Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
 
-                        #TEST
-                        if Secondary_levels:
-                            st.success(f"✅ Found descriptors for {len(Secondary_levels)} levels.")
-                            st.write(Secondary_levels)
-                        else:
-                            st.warning("⚠️ Secondary PDF parsing returned an empty dictionary.")
+                    #TEST
+                    if Secondary_levels:
+                        st.success(f"✅ Found descriptors for {len(Secondary_levels)} levels.")
+                        st.write(Secondary_levels)
+                    else:
+                        st.warning("⚠️ Secondary PDF parsing returned an empty dictionary.")
 
                         # Use this after file upload and calling the function above
                         df = extract_structured_data_from_pdf(Primary_file)
