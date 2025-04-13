@@ -17,25 +17,43 @@ def parse_pdf_format(uploaded_file):
     import pandas as pd
     from io import BytesIO
 
-    uploaded_file.seek(0)  # ✅ Ensure pointer is at start
-    file_bytes = BytesIO(uploaded_file.read())
+    # 🔒 Check if the file is valid
+    if uploaded_file is None:
+        raise ValueError("No file was uploaded.")
 
-    doc = fitz.open(stream=file_bytes, filetype="pdf")
-    extracted_data = []
+    try:
+        uploaded_file.seek(0)  # 💡 Reset file pointer
+        file_bytes = BytesIO(uploaded_file.read())
 
-    for page in doc:
-        text = page.get_text("text")
-        lines = text.splitlines()
-        for line in lines:
-            if line.strip().lower().startswith("level"):
-                extracted_data.append({"Level": line.strip(), "Descriptor": "..."})
+        doc = fitz.open(stream=file_bytes, filetype="pdf")
 
-    df = pd.DataFrame(extracted_data)
-    buffer = BytesIO()
-    df.to_csv(buffer, index=False)
-    buffer.seek(0)
+        extracted_data = []
 
-    return extracted_data, buffer
+        for page in doc:
+            text = page.get_text("text")
+            lines = text.splitlines()
+            for line in lines:
+                if line.strip().lower().startswith("level"):
+                    extracted_data.append({
+                        "Level": line.strip(),
+                        "Domain": "TBD",  # placeholder
+                        "Descriptor": "..."  # placeholder
+                    })
+
+        if not extracted_data:
+            raise ValueError("No level descriptors found in PDF.")
+
+        df = pd.DataFrame(extracted_data)
+
+        # ✅ Save to in-memory CSV
+        csv_buffer = BytesIO()
+        df.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+
+        return extracted_data, csv_buffer
+
+    except Exception as e:
+        raise RuntimeError(f"Error while parsing PDF: {e}")
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
