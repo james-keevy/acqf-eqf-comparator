@@ -119,26 +119,30 @@ if login_result is not None:
         if api_key and Primary_file and Secondary_file:
             client = OpenAI(api_key=api_key)
 
+            # if row.get("Level") and row.get("Domain") and row.get("Descriptor"):
+
             # Load Primary levels
             if 'df_primary' in locals() and isinstance(df_primary, pd.DataFrame):
-                if 'Level' in df_primary.columns and 'Description' in df_primary.columns:
-                    Primary_levels = df_primary.groupby('Level')['Description'].apply(lambda x: "\n".join(x.dropna())).to_dict()
-                    selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
+                if all(col in df_primary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                    # Group by Level and Domain
+                    Primary_descriptors = (
+                        df_primary.groupby(['Level', 'Domain'])['Descriptor']
+                        .apply(lambda x: "\n".join(x.dropna()))
+                        .to_dict()
+                    )
                 else:
-                    st.warning("⚠️ Columns 'Level' and 'Description' not found in Primary file.")
-            else:
-                st.warning("⚠️ Please upload a valid Primary CSV with levels.")
+                    st.warning("⚠️ Primary CSV must have 'Level', 'Domain', and 'Descriptor' columns.")
 
             # Load Secondary levels
             if 'df_secondary' in locals() and isinstance(df_secondary, pd.DataFrame):
-                if 'Level' in df_secondary.columns and 'Description' in df_secondary.columns:
-                    Secondary_levels = df_secondary.groupby('Level')['Description'].apply(lambda x: "\n".join(x.dropna())).to_dict()
-                    selected_Secondary_level = st.selectbox("Select Secondary Level", sorted(Secondary_levels.keys()))
+                if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                    Secondary_descriptors = (
+                        df_secondary.groupby(['Level', 'Domain'])['Descriptor']
+                        .apply(lambda x: "\n".join(x.dropna()))
+                        .to_dict()
+                    )
                 else:
-                    st.warning("⚠️ Columns 'Level' and 'Description' not found in Secondary file.")
-            else:
-                st.warning("⚠️ Please upload a valid Secondary CSV with levels.")
-
+                    st.warning("⚠️ Secondary CSV must have 'Level', 'Domain', and 'Descriptor' columns.")
                               
             # Build a dictionary of levels to their descriptors
             if 'Level' in df_primary.columns and 'Description' in df_primary.columns:
