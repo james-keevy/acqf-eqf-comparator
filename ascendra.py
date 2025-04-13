@@ -78,7 +78,10 @@ if login_result is not None:
         Primary_text = ""
         Secondary_text = ""
 
-        # --- Parse NQF PDF ---
+        # --- Process Primary File ---
+        
+        Primary_levels = {}
+
         def parse_nqf_pdf_format(uploaded_file, label="primary"):
             if not uploaded_file:
                 return {}, None
@@ -113,12 +116,9 @@ if login_result is not None:
 
                 return structured, str(output_csv_path)
                 
-            #TEST            
-            st.text_area("📄 Extracted PDF Text", text[:3000], height=300)
-
-            # except Exception as e:
-            # #   st.error(f"❌ Failed to parse PDF: {e}")
-            #     return {}, None
+            except Exception as e:
+            #   st.error(f"❌ Failed to parse PDF: {e}")
+                return {}, None
 
             structured = extract_descriptors_from_pdf_text_grouped(text)
 
@@ -132,10 +132,6 @@ if login_result is not None:
 
             pd.DataFrame(rows).to_csv(output_csv_path, index=False, encoding="utf-8-sig")
             return structured, str(output_csv_path)
-
-        # --- Process Primary File ---
-
-            Primary_levels = {}
 
             def extract_descriptors_from_pdf_text_grouped(text):
                 """
@@ -213,7 +209,53 @@ if login_result is not None:
         # ..............................end primary
 
         # --- Process Secondary File ---
+        
         Secondary_levels = {}
+
+        def parse_nqf_pdf_format(uploaded_file, label="secondary"):
+            if not uploaded_file:
+                return {}, None
+
+            try:
+                # Wrap the uploaded file in a BytesIO buffer
+                pdf_buffer = BytesIO(uploaded_file.read())
+
+                # ✅ Try opening PDF
+                text = ""
+                with fitz.open(stream=pdf_buffer, filetype="pdf") as doc:
+                    for page in doc:
+                        text += page.get_text()
+
+                # ✅ Extract structured descriptors
+                structured = extract_descriptors_from_pdf_text_grouped(text)
+
+                # ✅ Save to temp CSV
+                temp_dir = tempfile.gettempdir()
+                output_csv_path = Path(temp_dir) / f"{label.lower()}_levels.csv"
+
+                rows = []
+                for level, domains in structured.items():
+                    for domain, descriptor in domains.items():
+                        rows.append({
+                            "Level": level,
+                            "Domain": domain,
+                            "Descriptor": descriptor
+                        })
+
+                pd.DataFrame(rows).to_csv(output_csv_path, index=False, encoding="utf-8-sig")
+
+                return structured, str(output_csv_path)
+                
+            except Exception as e:
+            #   st.error(f"❌ Failed to parse PDF: {e}")
+                return {}, None
+
+            structured = extract_descriptors_from_pdf_text_grouped(text)
+
+            temp_dir = tempfile.gettempdir()
+            output_csv_path = Path(temp_dir) / f"{label.lower()}_levels.csv"
+
+            rows = []
 
         def extract_descriptors_from_pdf_text_grouped(text):
             """
@@ -281,7 +323,7 @@ if login_result is not None:
             df_secondary = pd.read_csv(csv_path)
             st.session_state.df_secondary_loaded = True  # optional flag
                
-        # ..............................end secondary 
+    # ..............................end secondary 
         
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
