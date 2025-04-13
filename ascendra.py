@@ -87,17 +87,7 @@ if login_result is not None:
                     for row in Secondary_reader:
                         if row.get("Level") and row.get("Domain") and row.get("Descriptor"):
                             Secondary_levels[row["Level"].strip()].append(f"{row['Domain'].strip()}: {row['Descriptor'].strip()}")
-
-                    # Set similarity slider in place
-                    similarity_score = st.slider(
-                        "Set Similarity Score", 
-                        min_value=0, 
-                        max_value=100, 
-                        value=70, 
-                        step=1, 
-                        key="similarity_score_slider"
-                    )
-                    
+                  
                     # Level selection dropdowns
                     selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
                     selected_Secondary_level = st.selectbox("Select Secondary Level", sorted(Secondary_levels.keys()))
