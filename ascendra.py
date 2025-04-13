@@ -172,7 +172,7 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
                                     self.set_y(-15)
                                     self.set_font("DejaVu", "I", 8)
                                     self.set_text_color(128)
-                                    self.cell(0, 10, "Powered by Ascendra | Version 1.0 – April 2025", 0, 0, "C")
+                                    self.cell(0, 10, "Powered by Ascendra | Version 1.0 – April 2025 – Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts (e.g. qualifications, curricula, microcredentials, job descriptions and many others), but results should be interpreted as advisory, not definitive. The model relies on language patterns and may not capture nuanced policy or contextual differences across frameworks. It is not a substitute for expert judgement, formal benchmarking, or regulatory endorsement. Users should validate results through human review and consult official frameworks for authoritative decisions.", 0, 0, "C")
 
                             def safe_multicell(pdf_obj, width, height, text):
                                 import re
@@ -274,23 +274,6 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                     except Exception as e:
                         st.error(f"❌ API Error: {e}")
-
-        # --- Pinned footer ---
-        st.markdown("""
-            <div style="
-                position: fixed;
-                bottom: 0;
-                width: 100%;
-                background-color: #f0f2f6;
-                color: #6c757d;
-                text-align: center;
-                padding: 0.5rem;
-                font-size: 0.8rem;
-                font-family: sans-serif;
-                z-index: 9999;">
-                Powered by Ascendra | Built with Streamlit & OpenAI • Version 1.0 – April 2025 • Results are advisory.
-            </div>
-        """, unsafe_allow_html=True)
 
     elif auth_status is False:
         st.error("Incorrect username or password")
