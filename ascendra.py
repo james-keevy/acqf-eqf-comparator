@@ -136,19 +136,6 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                             st.subheader(f"Comparison Result: Primary Level {selected_Primary_level} - Secondary Level {selected_Secondary_level}")
 
-                            if ai_score is not None and 0 <= ai_score <= 100:
-                                st.write(f"**AI Similarity Score:** {ai_score}/100")
-                                st.progress(ai_score / 100.0)
-
-                                if ai_score >= high_match_threshold:
-                                    st.success("High Match")
-                                elif ai_score >= 50:
-                                    st.warning("Moderate Match")
-                                else:
-                                    st.error("Low Match")
-                            else:
-                                st.error("⚠️ No valid similarity score found in the response.")
-
                             with st.expander("View compared descriptors"):
                                 col1, col2 = st.columns(2)
                                 with col1:
@@ -226,10 +213,18 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
                             pdf.ln(5)
 
                             # Similarity Score
-                            if ai_score is not None:
-                                pdf.set_font("DejaVu", "B", 12)
-                                safe_multicell(pdf, 0, 8, f"Similarity Score: {ai_score}/100")
-                                pdf.ln(5)
+                            if ai_score is not None and 0 <= ai_score <= 100:
+                                st.write(f"**AI Similarity Score:** {ai_score}/100")
+                                st.progress(ai_score / 100.0)
+
+                                if ai_score >= high_match_threshold:
+                                    st.success("High Match")
+                                elif ai_score >= 50:
+                                    st.warning("Moderate Match")
+                                else:
+                                    st.error("Low Match")
+                            else:
+                                st.error("⚠️ No valid similarity score found in the response.")
 
                             # GPT Result
                             pdf.set_font("DejaVu", "B", 12)
