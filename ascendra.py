@@ -202,7 +202,7 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                             # Header
                             pdf.image("ascendra_v5.png", x=10, y=8, w=40)
-                            pdf.ln(25)
+                            pdf.ln(45)
                             pdf.set_font("DejaVu", "B", 14)
                             safe_multicell(pdf, 0, 8, "Primary - Secondary Comparison Report")
                             pdf.set_font("DejaVu", "", 8)
