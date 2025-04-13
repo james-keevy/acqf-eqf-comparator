@@ -212,19 +212,19 @@ Provide a similarity score out of 100. Write this as a separate score below your
                                 safe_multicell(pdf, 0, 8, f"• {item}")
                             pdf.ln(5)
 
-                            # Similarity Score                                                  
-                            if ai_score is not None and 0 <= ai_score <= 100:
-                                st.write(f"**AI Similarity Score:** {ai_score}/100")
-                                st.progress(ai_score / 100.0)
+                            # # Similarity Score                                                  
+                            # if ai_score is not None and 0 <= ai_score <= 100:
+                            #     st.write(f"**AI Similarity Score:** {ai_score}/100")
+                            #     st.progress(ai_score / 100.0)
 
-                                if ai_score >= high_match_threshold:
-                                    st.success("High Match")
-                                elif ai_score >= 50:
-                                    st.warning("Moderate Match")
-                                else:
-                                    st.error("Low Match")
-                            else:
-                                st.error("⚠️ No valid similarity score found in the response.")
+                            #     if ai_score >= high_match_threshold:
+                            #         st.success("High Match")
+                            #     elif ai_score >= 50:
+                            #         st.warning("Moderate Match")
+                            #     else:
+                            #         st.error("Low Match")
+                            # else:
+                            #     st.error("⚠️ No valid similarity score found in the response.")
 
                             # GPT Result
                             pdf.set_font("DejaVu", "B", 12)
