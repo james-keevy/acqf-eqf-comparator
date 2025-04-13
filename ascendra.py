@@ -199,7 +199,6 @@ if login_result is not None:
 
                     if not rows:
                         st.warning("⚠️ All extracted entries were incomplete and skipped.")
-                        return None
 
                     # Step 4: Write to CSV
                     output_path = f"/tmp/{output_csv}"
@@ -208,7 +207,6 @@ if login_result is not None:
                         writer.writerow(["Level", "Domain", "Descriptor"])
                         writer.writerows(rows)
 
-                    return output_path
 ###############
 
             except Exception as e:
