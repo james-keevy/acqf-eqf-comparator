@@ -10,6 +10,7 @@ import textwrap
 import streamlit_authenticator as stauth
 import fitz  # PyMuPDF
 import io
+from io import BytesIO
 
 def parse_pdf_format(uploaded_file):
     import fitz  # PyMuPDF
@@ -218,8 +219,10 @@ if login_result is not None:
                 structured.setdefault(level, {})[domain] = desc
             return structured
 
-        if Secondary_file:
-            file_ext = Secondary_file.name.split(".")[-1].lower()
+            if Secondary_file is not None:
+                structured_data, csv_io = parse_pdf_format(Secondary_file)
+                df_secondary = pd.read_csv(csv_io)
+
             try:
                 file_ext = Secondary_file.name.lower().split(".")[-1]
 
