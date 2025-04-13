@@ -80,25 +80,26 @@ if login_result is not None:
 
         # --- Process Primary Artefact ---
         if Primary_file:
-            try:
-                if Primary_file.name.lower().endswith(".csv"):
-                    df_primary = pd.read_csv(Primary_file)
+            if Primary_file.name.lower().endswith(".csv"):
+                try:
+                    df_primary = pd.read_csv(Primary_file, on_bad_lines='skip')
                     Primary_text = "\n".join(df_primary.iloc[:, 0].dropna().astype(str).tolist())
-                elif Primary_file.name.lower().endswith(".pdf"):
-                    Primary_text = extract_text_from_pdf(Primary_file)
-            except Exception as e:
-                st.error(f"⚠️ Could not process Primary file: {e}")
+                except Exception as e:
+                    st.error(f"⚠️ Could not process Primary file: {e}")
+            elif Primary_file.name.lower().endswith(".pdf"):
+                Primary_text = extract_text_from_pdf(Primary_file)
 
         # --- Process Secondary Artefact ---
         if Secondary_file:
-            try:
-                if Secondary_file.name.lower().endswith(".csv"):
-                    df_secondary = pd.read_csv(Secondary_file)
+            if Secondary_file.name.lower().endswith(".csv"):
+                try:
+                    df_secondary = pd.read_csv(Secondary_file, on_bad_lines='skip')
                     Secondary_text = "\n".join(df_secondary.iloc[:, 0].dropna().astype(str).tolist())
-                elif Secondary_file.name.lower().endswith(".pdf"):
-                    Secondary_text = extract_text_from_pdf(Secondary_file)
-            except Exception as e:
-                st.error(f"⚠️ Could not process Secondary file: {e}")
+                except Exception as e:
+                    st.error(f"⚠️ Could not process Secondary file: {e}")
+            elif Secondary_file.name.lower().endswith(".pdf"):
+                Secondary_text = extract_text_from_pdf(Secondary_file)
+
 
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
