@@ -174,16 +174,16 @@ if login_result is not None:
                             st.subheader(f"Comparison Result: Primary Level {selected_Primary_level} - Secondary Level {selected_Secondary_level}")
 
                             if ai_score is not None:
-                            st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
-                            
-                            if comment_cleaned:
-                                st.info(comment_cleaned)
-                            else:
-                                st.warning("⚠️ No explanation comment was included.")
+                                st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
                                 
-                            st.progress(ai_score / 100.0)
-                        else:
-                            st.error("❌ No valid similarity score found.")
+                                if comment_cleaned:
+                                    st.info(comment_cleaned)
+                                else:
+                                    st.warning("⚠️ No explanation comment was included.")
+                                    
+                                st.progress(ai_score / 100.0)
+                            else:
+                                st.error("❌ No valid similarity score found.")
                                                                    
                         result_text = response.choices[0].message.content
 
