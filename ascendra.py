@@ -212,10 +212,7 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
                                 safe_multicell(pdf, 0, 8, f"• {item}")
                             pdf.ln(5)
 
-                            # Similarity Score
-                            match = re.search(r"similarity score[^\d]*(\d{1,3})", result_text, re.IGNORECASE)
-                            ai_score = int(match.group(1)) if match else None
-                                                    
+                            # Similarity Score                                                  
                             if ai_score is not None and 0 <= ai_score <= 100:
                                 st.write(f"**AI Similarity Score:** {ai_score}/100")
                                 st.progress(ai_score / 100.0)
