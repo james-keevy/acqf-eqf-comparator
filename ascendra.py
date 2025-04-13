@@ -174,15 +174,21 @@ if login_result is not None:
 
         Primary_levels_dict, csv_path = parse_nqf_pdf_format(Primary_file, label="primary")
 
-        if Primary_levels_dict and csv_path:
-        # st.success(f"✅ Parsed {len(Primary_levels_dict)} levels from PDF.")
+        if structured_data:
             success_placeholder = st.empty()
-            success_placeholder.success(f"✅ Parsed data from PDF.")
-        # Wait for 3 seconds
-        time.sleep(3)
+            success_placeholder.success("✅ Parsed data from PDF.")
+            time.sleep(3)
+            success_placeholder.empty()
+
+        # if Primary_levels_dict and csv_path:
+        # # st.success(f"✅ Parsed {len(Primary_levels_dict)} levels from PDF.")
+        #     success_placeholder = st.empty()
+        #     success_placeholder.success(f"✅ Parsed data from PDF.")
+        # # Wait for 3 seconds
+        # time.sleep(3)
 
         # Clear the success message
-        success_placeholder.empty()
+        # success_placeholder.empty()
 
         # ✅ Load into DataFrame like a normal CSV
         df_primary = pd.read_csv(csv_path)
