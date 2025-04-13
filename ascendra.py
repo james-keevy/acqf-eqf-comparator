@@ -172,7 +172,7 @@ if login_result is not None:
                             #     data=csv_bytes,
                             #     file_name="extracted_descriptors.csv",
                             #     mime="text/csv"
-                            )
+                            #)
                         else:
                             st.warning("⚠️ No valid structured descriptors found in PDF.")
 
