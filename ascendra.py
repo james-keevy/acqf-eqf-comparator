@@ -51,7 +51,8 @@ try:
 # except Exception as e:
 #     raise RuntimeError(f"Error while parsing PDF: {e}")
 
-st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
+finally:
+    st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
 # To create a login screen for your public app (simulating private access)
 
