@@ -137,8 +137,8 @@ if login_result is not None:
                     else:
                         st.warning("⚠️ Secondary CSV missing required columns.")
 
-
 ############# PDF SECONDARY INPUT 
+
                 elif file_ext == "pdf":
                     Secondary_text = extract_text_from_pdf(Secondary_file)
                     Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
@@ -154,49 +154,63 @@ if login_result is not None:
                         st.warning("⚠️ Secondary PDF parsing returned an empty dictionary.")
 
                     # ✅ Reusable function: Extract structured data and write to CSV
-                    def extract_structured_from_pdf_to_csv(pdf_file, output_csv="extracted_descriptors.csv"):
-                        try:
-                            with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
-                                text = ""
-                                for page in doc:
-                                    text += page.get_text()
-                        except Exception as e:
-                            st.error(f"❌ Failed to read PDF: {e}")
-                            return {}, None
+                    def parse_nqf_pdf_format(pdf_file, output_csv="nqf_descriptors.csv"):
+                        level_pattern = re.compile(r"NQF Level (\w+)", re.IGNORECASE)
+                        domain_pattern = re.compile(r"^[a-j]\.\s+(.*?), in respect of which", re.IGNORECASE)
 
-                        pattern = r"""
-                        (?:Level[:\s-]*\s*(\d+))
-                        [\s\n\r]+
-                        (?:Domain[:\s-]*)?
-                        (Knowledge|Skills|Autonomy|Responsibility|Competence)
-                        [\s\n\r]+
-                        (.+?)
-                        (?=\n?(?:Level[:\s-]*\s*\d+|$))
-                        """
-                        matches = re.findall(pattern, text, flags=re.DOTALL | re.IGNORECASE | re.VERBOSE)
+                        level_number_map = {
+                            "One": "Level 1", "Two": "Level 2", "Three": "Level 3",
+                            "Four": "Level 4", "Five": "Level 5", "Six": "Level 6",
+                            "Seven": "Level 7", "Eight": "Level 8", "Nine": "Level 9",
+                            "Ten": "Level 10"
+                        }
 
-                        if not matches:
-                            return {}, None
+                        with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
+                            text = "\n".join([page.get_text() for page in doc])
 
+                        lines = text.splitlines()
                         structured = {}
+                        current_level = None
+                        current_domain = None
+                        current_descriptor = []
+
+                        for line in lines:
+                            line = line.strip()
+
+                            # Detect level header
+                            level_match = level_pattern.search(line)
+                            if level_match:
+                                level_word = level_match.group(1).title()
+                                current_level = level_number_map.get(level_word)
+                                continue
+
+                            # Detect domain start (e.g., a. Scope of knowledge)
+                            domain_match = domain_pattern.match(line)
+                            if domain_match and current_level:
+                                # Save previous domain if exists
+                                if current_level and current_domain and current_descriptor:
+                                    descriptor_text = " ".join(current_descriptor).strip()
+                                    structured.setdefault(current_level, {})[current_domain] = descriptor_text
+                                    current_descriptor = []
+
+                                current_domain = domain_match.group(1).strip()
+                                # Remove domain part from line to start descriptor cleanly
+                                descriptor_start = line.split("in respect of which", 1)[-1].strip()
+                                current_descriptor = [descriptor_start] if descriptor_start else []
+
+                            elif current_domain and line:
+                                current_descriptor.append(line)
+
+                        # Save last one
+                        if current_level and current_domain and current_descriptor:
+                            descriptor_text = " ".join(current_descriptor).strip()
+                            structured.setdefault(current_level, {})[current_domain] = descriptor_text
+
+                        # Write to CSV
                         rows = []
-                        for level, domain, descriptor in matches:
-                            level = f"Level {level.strip()}"
-                            domain = domain.strip().title()
-
-                            cleaned_lines = [
-                                re.sub(r"\s+", " ", line).strip()
-                                for line in descriptor.strip().splitlines()
-                                if line.strip()
-                            ]
-                            cleaned_descriptor = " ".join(cleaned_lines)
-
-                            if level and domain and cleaned_descriptor:
-                                structured.setdefault(level, {})[domain] = cleaned_descriptor
-                                rows.append([level, domain, cleaned_descriptor])
-
-                        if not rows:
-                            return {}, None
+                        for level, domains in structured.items():
+                            for domain, descriptor in domains.items():
+                                rows.append([level, domain, descriptor])
 
                         output_path = f"/tmp/{output_csv}"
                         with open(output_path, mode="w", encoding="utf-8", newline="") as f:
