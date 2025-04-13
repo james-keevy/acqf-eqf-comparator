@@ -162,8 +162,16 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
 
                             st.write(result_text)
 
-                            # CSV Export Button
-                            if st.session_state.get("results"):
+                            st.session_state.results.append({
+                                "Primary Level": selected_Primary_level,
+                                "Secondary Level": selected_Secondary_level,
+                                "Similarity Score": ai_score if ai_score else "N/A",
+                                "Response": result_text,
+                                "Timestamp": datetime.utcnow().isoformat()
+                            })
+
+                            # ✅ Show CSV export button right after results are stored
+                            if st.session_state.results:
                                 df = pd.DataFrame(st.session_state.results)
                                 st.download_button(
                                     label="📥 Download comparison as CSV",
