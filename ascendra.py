@@ -13,47 +13,44 @@ import io
 from io import BytesIO
 
 def parse_pdf_format(uploaded_file):
-    import fitz  # PyMuPDF
-    import pandas as pd
-    from io import BytesIO
 
-    # 🔒 Check if the file is valid
-    if uploaded_file is None:
-        raise ValueError("No file was uploaded.")
+# 🔒 Check if the file is valid
+if uploaded_file is None:
+    raise ValueError("No file was uploaded.")
 
-    try:
-        uploaded_file.seek(0)  # 💡 Reset file pointer
-        file_bytes = BytesIO(uploaded_file.read())
+try:
+    uploaded_file.seek(0)  # 💡 Reset file pointer
+    file_bytes = BytesIO(uploaded_file.read())
 
-        doc = fitz.open(stream=file_bytes, filetype="pdf")
+    doc = fitz.open(stream=file_bytes, filetype="pdf")
 
-        extracted_data = []
+    extracted_data = []
 
-        for page in doc:
-            text = page.get_text("text")
-            lines = text.splitlines()
-            for line in lines:
-                if line.strip().lower().startswith("level"):
-                    extracted_data.append({
-                        "Level": line.strip(),
-                        "Domain": "TBD",  # placeholder
-                        "Descriptor": "..."  # placeholder
-                    })
+    for page in doc:
+        text = page.get_text("text")
+        lines = text.splitlines()
+        for line in lines:
+            if line.strip().lower().startswith("level"):
+                extracted_data.append({
+                    "Level": line.strip(),
+                    "Domain": "TBD",  # placeholder
+                    "Descriptor": "..."  # placeholder
+                })
 
-        if not extracted_data:
-            raise ValueError("No level descriptors found in PDF.")
+    if not extracted_data:
+        raise ValueError("No level descriptors found in PDF.")
 
-        df = pd.DataFrame(extracted_data)
+    df = pd.DataFrame(extracted_data)
 
-        # ✅ Save to in-memory CSV
-        csv_buffer = BytesIO()
-        df.to_csv(csv_buffer, index=False)
-        csv_buffer.seek(0)
+    # ✅ Save to in-memory CSV
+    csv_buffer = BytesIO()
+    df.to_csv(csv_buffer, index=False)
+    csv_buffer.seek(0)
 
-        return extracted_data, csv_buffer
+    return extracted_data, csv_buffer
 
-    except Exception as e:
-        raise RuntimeError(f"Error while parsing PDF: {e}")
+except Exception as e:
+    raise RuntimeError(f"Error while parsing PDF: {e}")
 
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
