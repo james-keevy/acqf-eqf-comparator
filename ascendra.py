@@ -106,91 +106,30 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
 
         # --- Process Secondary File ---
+        Secondary_levels = {}  # Ensure it always exists
+
         if Secondary_file:
             try:
-                extension = Secondary_file.name.lower().split(".")[-1]
-                if extension == "csv":
+                if Secondary_file.name.lower().endswith(".csv"):
                     df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
-                    Secondary_text = "\n".join(df_secondary.iloc[:, 0].dropna().astype(str).tolist())
-                    # Load Secondary levels
-                    if 'df_secondary' in locals() and isinstance(df_secondary, pd.DataFrame):
-                        if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
-                            Secondary_descriptors = (
-                                df_secondary.groupby(['Level', 'Domain'])['Descriptor']
-                                .apply(lambda x: "\n".join(x.dropna()))
-                                .to_dict()
-                            )
-                        else:
-                            st.warning("⚠️ Secondary CSV must have 'Level', 'Domain', and 'Descriptor' columns.")
+                    if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                        grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                        for (level, domain), descriptor in grouped.items():
+                            Secondary_levels.setdefault(level, {})[domain] = descriptor
+                    else:
+                        st.warning("⚠️ Secondary CSV missing required columns.")
 
 ############# PDF SECONDARY INPUT 
-                elif extension == "pdf":
-                
-                    def extract_structured_data_from_pdf(file):
-                        try:
-                            with fitz.open(stream=file.read(), filetype="pdf") as doc:
-                                full_text = "\n".join(page.get_text() for page in doc)
-
-                            # Pattern: captures Level, Domain, Descriptor (until next Level or end)
-                            pattern = r"(Level\s*\d+)[\s\n]+(Knowledge|Skills|Autonomy|Responsibility|Competence)[\s\n]+(.+?)(?=(?:Level\s*\d+)|\Z)"
-                            matches = re.findall(pattern, full_text, flags=re.DOTALL | re.IGNORECASE)
-
-                            rows = []
-                            for level_raw, domain_raw, descriptor in matches:
-                                level = level_raw.strip().title()
-                                domain = domain_raw.strip().title()
-                                desc = descriptor.strip().replace('\n', ' ')
-                                if level and domain and desc:  # skip incomplete
-                                    rows.append((level, domain, desc))
-
-                            return pd.DataFrame(rows, columns=["Level", "Domain", "Descriptor"])
-
-                        except Exception as e:
-                            st.error(f"❌ Error processing PDF: {e}")
-                            return pd.DataFrame()
-                        
-                        Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
-
-                    #TEST
-                    if Secondary_levels:
-                        st.success(f"✅ Found descriptors for {len(Secondary_levels)} levels.")
-                        st.write(Secondary_levels)
-                    else:
-                        st.warning("⚠️ Secondary PDF parsing returned an empty dictionary.")
-
-                        # Use this after file upload and calling the function above
-                        df = extract_structured_data_from_pdf(Primary_file)
-
-                        if not df.empty:
-                            st.success(f"✅ Extracted {len(df)} entries from PDF.")
-                            st.dataframe(df)
-
-                            # Convert to CSV
-                            csv_bytes = df.to_csv(index=False).encode("utf-8")
-                            # st.download_button(
-                            #     label="📥 Download Extracted Data as CSV",
-                            #     data=csv_bytes,
-                            #     file_name="extracted_descriptors.csv",
-                            #     mime="text/csv"
-                            #)
-                        else:
-                            st.warning("⚠️ No valid structured descriptors found in PDF.")
-
-                    # Secondary_text = extract_text_from_pdf(Secondary_file)
-                    # Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
-                    # st.text_area("Raw Secondary PDF Text", Secondary_text, height=300)
-                    # if 'df_secondary' in locals():
-                    #     st.write("📄 Columns in Secondary:", df_secondary.columns.tolist())
-                    #     st.dataframe(df_secondary.head())
-                    # elif Secondary_text:
-                    #     st.text_area("📄 Raw Secondary PDF Text", Secondary_text, height=300)
 
 
 
 
 ###############
-
-
+                elif Secondary_file.name.lower().endswith(".pdf"):
+                    Secondary_text = extract_text_from_pdf(Secondary_file)
+                    Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
+            except Exception as e:
+                st.error(f"❌ Could not process Secondary file: {e}")
 
                 else:
                     st.warning("Unsupported file format for Secondary artefact.")
