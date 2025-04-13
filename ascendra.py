@@ -109,6 +109,8 @@ if login_result is not None:
                     "comment": "[brief explanation of the match]"
                     }}
                                          
+                    Do not show the JSON format to the user. 
+                                         
                     Continue with the comparison to check if these levels equivalent? Highlight similarities and differences.
                                          
                     Primary Level {selected_Primary_level}:
