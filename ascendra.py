@@ -172,7 +172,7 @@ Suggest the most appropriate Secondary level match and provide a similarity scor
                                     self.set_y(-15)
                                     self.set_font("DejaVu", "I", 8)
                                     self.set_text_color(128)
-                                    self.cell(0, 10, "Powered by Ascendra | Version 1.0 – April 2025 – Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts (e.g. qualifications, curricula, microcredentials, job descriptions and many others), but results should be interpreted as advisory, not definitive. The model relies on language patterns and may not capture nuanced policy or contextual differences across frameworks. It is not a substitute for expert judgement, formal benchmarking, or regulatory endorsement. Users should validate results through human review and consult official frameworks for authoritative decisions.", 0, 0, "C")
+                                    self.cell(0, 10, "Powered by Ascendra | Version 1.0 – April 2025 – Results should be interpreted as advisory", 0, 0, "C")
 
                             def safe_multicell(pdf_obj, width, height, text):
                                 import re
