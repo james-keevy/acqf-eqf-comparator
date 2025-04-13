@@ -233,7 +233,7 @@ if login_result is not None:
         if Secondary_levels_dict and csv_path:
             # st.success(f"✅ Parsed {len(Secondary_levels_dict)} levels from PDF.")
             success_placeholder = st.empty()
-            success_placeholder.success(f"✅ Parsed {len(Secondary_levels_dict)} levels from PDF.")
+            success_placeholder.success(f"✅ Parsed {len(Secondary_levels_dict)} data from PDF.")
             # Wait for 3 seconds
             time.sleep(3)
 
