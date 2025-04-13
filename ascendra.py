@@ -72,8 +72,8 @@ def extract_text_from_pdf(file):
         return ""
 
         # File upload widgets for CSV or PDF
-        # Primary_file = st.file_uploader("Upload a primary artefact (CSV or PDF)", type=["csv", "pdf"])
-        # Secondary_file = st.file_uploader("Upload a secondary artefact (CSV or PDF)", type=["csv", "pdf"])
+        Primary_file = st.file_uploader("Upload a primary artefact (CSV or PDF)", type=["csv", "pdf"])
+        Secondary_file = st.file_uploader("Upload a secondary artefact (CSV or PDF)", type=["csv", "pdf"])
 
         Primary_text = ""
         Secondary_text = ""
