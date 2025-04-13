@@ -178,7 +178,7 @@ if login_result is not None:
                         #         ai_score = int(match.group(1))
 
                         # # DEBUG: Show extracted score
-                       if ai_score is not None:
+                        if ai_score is not None:
                             st.markdown(f"### 🧠 AI Similarity Score: **{ai_score}/100**")
                             st.info(comment)
                             st.progress(ai_score / 100.0)
