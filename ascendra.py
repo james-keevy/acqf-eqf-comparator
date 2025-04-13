@@ -46,7 +46,7 @@ try:
     df.to_csv(csv_buffer, index=False)
     csv_buffer.seek(0)
 
-    return extracted_data, csv_buffer
+    # return extracted_data, csv_buffer
 
 except Exception as e:
     raise RuntimeError(f"Error while parsing PDF: {e}")
