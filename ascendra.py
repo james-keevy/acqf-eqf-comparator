@@ -144,11 +144,8 @@ if login_result is not None:
                     Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
 
                     if 'Secondary_text' in locals():
-                    st.subheader("📄 Raw Secondary PDF Text")
-                    st.text_area("Raw Text", Secondary_text[:3000], height=300)
-
-                    #TEMP
-                    Secondary_levels = extract_descriptors_from_pdf_text_grouped(Secondary_text)
+                        st.subheader("📄 Raw Secondary PDF Text")
+                        st.text_area("Raw Text", Secondary_text[:3000], height=300)
 
                     if Secondary_levels:
                         st.success(f"✅ Found descriptors for {len(Secondary_levels)} levels.")
