@@ -97,7 +97,18 @@ if login_result is not None:
                         Primary_text = "\n".join(Primary_levels[selected_Primary_level])
                         Secondary_text = "\n".join(Secondary_levels[selected_Secondary_level])
 
+                    # Set similarity slider in place
+                    similarity_score = st.slider(
+                        "Set Similarity Score", 
+                        min_value=0, 
+                        max_value=100, 
+                        value=70, 
+                        step=1, 
+                        key="similarity_score_slider"
+                    )
+
                         prompt = f"""
+                
                 Compare the following qualification level descriptors and assess their equivalence.
 
                 Primary Level {selected_Primary_level}:
@@ -125,6 +136,10 @@ if login_result is not None:
                                 )
 
                                 result_text = response.choices[0].message.content
+
+                                if st.button("🔄 New Query"):
+                                    st.session_state.results = []
+                                    st.rerun()
 
                                 if result_text:
                                     match = re.search(r"similarity score[^\d]*(\d{1,3})", result_text, re.IGNORECASE)
