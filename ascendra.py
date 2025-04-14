@@ -57,9 +57,22 @@ if login_result is not None:
         # Input: OpenAI API key
         api_key = st.secrets["OPENAI_API_KEY"]
 
-        # File upload widgets
-        # Primary_file = st.file_uploader("Upload a primary artefact in CSV format", type="csv")
-        # Secondary_file = st.file_uploader("Upload a secondary artefact in CSV format", type="csv")
+        # File upload
+        Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
+        if Primary_file is not None:
+            try:
+                df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig")
+                # process df_primary...
+            except Exception as e:
+                st.error(f"❌ Could not read Primary file: {e}")
+        else:
+            st.info("📥 Please upload a Primary framework file to continue.")
+
+        Secondary_file = st.file_uploader("Upload Secondary Framework (CSV or PDF)", type=["csv", "pdf"])
+        if Secondary_file is not None:
+            # parse_secondary_pdf_format or CSV logic here...
+        else:
+            st.info("📥 Please upload a Secondary file.")
 
         # Helper function to extract text from PDF
         def parse_nqf_pdf_format(file):
@@ -130,7 +143,7 @@ if login_result is not None:
         Primary_text = ""
         Secondary_text = ""
 
-        # --- Process Primary File ---
+        # Process Primary File
         if Primary_file:
             try:
                 extension = Primary_file.name.lower().split(".")[-1]
@@ -222,7 +235,7 @@ if login_result is not None:
 
                 return structured, output_path
       
-        # --- Process Secondary File ---
+        # Process Secondary File 
         Secondary_levels = {}
 
         def extract_descriptors_from_pdf_text_grouped(text):
