@@ -43,6 +43,7 @@ st.sidebar.markdown(
     "<p style='text-align: center; font-size: 0.9em; color: gray;'>Smarter Framework Matching with Generative AI</p>",
     unsafe_allow_html=True
 )
+
 # Hashed password generated earlier
 hashed_passwords = ['$2b$12$2Myv8E.J5lIbWN5aThrBDOeGthVRDw4e7j38g.fDTOmiy.VvKRCZa']  
 
@@ -148,7 +149,7 @@ st.sidebar.markdown(
     </div>
     """,
     unsafe_allow_html=True
-
+)
 if login_result is not None:
     name, auth_status, username = login_result
 
