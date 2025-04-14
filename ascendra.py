@@ -216,7 +216,7 @@ if login_result is not None:
                         structured_data, csv_path = parse_nqf_pdf_format(uploaded_file)
 
                         df_secondary = pd.read_csv(csv_path)
-                        st.success(f"✅ Parsed {len(structured_data)} descriptors from PDF.")
+                        # st.success(f"✅ Parsed {len(structured_data)} descriptors from PDF.")
                         if st.checkbox("🔍 Show Secondary PDF preview", value=False):
                             st.dataframe(df_secondary.head())
 
@@ -378,8 +378,8 @@ if login_result is not None:
                     structured_data, csv_path = parse_nqf_pdf_format(uploaded_file)
 
                     if structured_data:
-                        st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
-                        st.write(structured_data)
+                        # st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
+                        # st.write(structured_data)
 
                         if csv_path:
                             with open(csv_path, "rb") as f:
