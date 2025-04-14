@@ -485,9 +485,10 @@ model of skills acquisition."""
                         st.error(f"❌ API Error: {e}")
 
         # ✅ These lines should align with the outermost block
+
         elif auth_status is False:
             st.error("Incorrect username or password")
         elif auth_status is None:
             st.warning("Please enter your credentials")
-    else:
-        st.error("Login form could not be rendered.")
+    # else:
+    #     st.error("Login form could not be rendered.")
