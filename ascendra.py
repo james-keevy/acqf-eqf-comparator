@@ -175,10 +175,10 @@ if login_result is not None:
 
         # Upload UI
 
-        Secondary_file = st.file_uploader("Upload...", type=["pdf", "csv"])
+        Secondary_file = st.file_uploader("Upload secondary artefact (CSV or PDF)", type=["pdf", "csv"])
 
         if Secondary_file is not None:
-            file_ext = Secondary_file.name.lower().split(".")[-1]
+            file_ext = Secondary_file.name.lower().split(".")[-1].lower()
 
             if file_ext == "pdf":
                 st.subheader("📄 Parsing PDF descriptors...")
