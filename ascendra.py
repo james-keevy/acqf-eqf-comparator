@@ -192,28 +192,28 @@ if login_result is not None:
 
                 elif file_ext == "pdf":
                     st.subheader("📄 Parsing PDF descriptors...")
-                    csv_io.seek(0)  # rewind to the start
-                    csv_text = csv_io.read().decode("utf-8-sig")
-                    df_secondary = pd.read_csv(io.StringIO(csv_text))
 
-                    if structured_data:
-                        st.success(f"✅ Secondary file loaded successfully from PDF ({len(structured_data)} records).")
-                        df_secondary = pd.read_csv(csv_io)
-                        if st.checkbox("🔍 Show Secondary file preview", value=False):
-                            st.dataframe(df_secondary.head())
-                    else:
-                        st.warning("⚠️ No valid descriptors found in PDF.")
+                    try:
+                        structured_data, csv_io = parse_nqf_pdf_format(Secondary_file)
 
-                else:
-                    st.error("❌ Unsupported file format. Please upload a CSV or PDF.")
+                        if structured_data and csv_io:
+                            csv_io.seek(0)
+                            csv_text = csv_io.read().decode("utf-8-sig")
+                            df_secondary = pd.read_csv(io.StringIO(csv_text))
 
-            except Exception as e:
-                st.error(f"❌ Could not process Secondary file: {e}")
+                            st.success(f"✅ Secondary file loaded successfully from PDF ({len(structured_data)} records).")
+
+                            if st.checkbox("🔍 Show Secondary file preview", value=False):
+                                st.dataframe(df_secondary.head())
+                        else:
+                            st.warning("⚠️ No valid descriptors found in PDF.")
+
+                    except Exception as e:
+                        st.error(f"❌ Could not process Secondary file: {e}")
 
         else:
             st.info("📥 Please upload a Secondary file.")
 
-        
         # Process Primary File
         if Primary_file:
             try:
