@@ -462,6 +462,34 @@ if login_result is not None:
             
             # --- Primary & Secondary UI ---
 
+            st.subheader("🧩 Artefact Type Selection")
+
+            artefact_types = [
+                "Qualification",
+                "Level descriptor",
+                "Curriculum",
+                "Job description",
+                "Performance contract",
+                "Occupational standard",
+                "Professional standard",
+                "Microcredential",
+                "Other"
+            ]
+
+            # Primary artefact type
+            st.session_state["primary_artefact_type"] = st.selectbox(
+                "Select the type of the **Primary** artefact:",
+                artefact_types,
+                key="primary_artefact_type_selectbox"
+            )
+
+            # Secondary artefact type
+            st.session_state["secondary_artefact_type"] = st.selectbox(
+                "Select the type of the **Secondary** artefact:",
+                artefact_types,
+                key="secondary_artefact_type_selectbox"
+            )
+
             if Primary_levels:
                 selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
             else:
