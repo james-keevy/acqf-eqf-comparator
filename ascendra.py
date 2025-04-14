@@ -62,7 +62,7 @@ if login_result is not None:
 
         # File upload
         Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
-        df_primary = pd.read_csv(Primary_file)
+        # df_primary = pd.read_csv(Primary_file)
         if Primary_file is not None:
             try:
                 Primary_file.seek(0)  # ✅ Safe now
