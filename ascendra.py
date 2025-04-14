@@ -61,6 +61,21 @@ if login_result is not None:
         api_key = st.secrets["OPENAI_API_KEY"]
 
         # File upload
+        st.markdown(
+            """
+            <style>
+            /* Target the file uploader by class */
+            .stFileUploader > div:first-child {
+                background-color: #f5faff;   /* 🌤 light blue background */
+                border: 2px solid #2c6ebb;   /* 🔵 blue border */
+                border-radius: 10px;
+                padding: 10px;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+
         Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
 
         if Primary_file is not None:
