@@ -192,7 +192,9 @@ if login_result is not None:
 
                 elif file_ext == "pdf":
                     st.subheader("📄 Parsing PDF descriptors...")
-                    structured_data, csv_io = parse_nqf_pdf_format(Secondary_file)
+                    csv_io.seek(0)  # rewind to the start
+                    csv_text = csv_io.read().decode("utf-8-sig")
+                    df_secondary = pd.read_csv(io.StringIO(csv_text))
 
                     if structured_data:
                         st.success(f"✅ Secondary file loaded successfully from PDF ({len(structured_data)} records).")
