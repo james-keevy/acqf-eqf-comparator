@@ -113,12 +113,13 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
         else:
             st.info("📥 Please upload a primary file to continue.")
+      
+        st.file_uploader("Upload secondary artefact (CSV or PDF formats)", type=["csv", "pdf"])
 
         # DEBUG
-        st.write("🔍 Type of Secondary_file before parsing:", type(Secondary_file))
-        structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
-        
-        st.file_uploader("Upload secondary artefact (CSV or PDF formats)", type=["csv", "pdf"])
+        if Secondary_file is not None:
+            st.write("🔍 Type of Secondary_file before parsing:", type(Secondary_file))
+            structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
 
         if Secondary_file is not None:
             def parse_nqf_pdf_format(file):
