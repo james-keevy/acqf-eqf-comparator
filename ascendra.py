@@ -11,9 +11,11 @@ import streamlit_authenticator as stauth
 import fitz  # PyMuPDF
 import io
 
-st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
+# Initialize variables
+Primary_text = ""
+Secondary_text = ""
 
-# To create a login screen for your public app (simulating private access)
+# Create a login screen for your public app (simulating private access)
 
 # Hashed password generated earlier
 hashed_passwords = ['$2b$12$2Myv8E.J5lIbWN5aThrBDOeGthVRDw4e7j38g.fDTOmiy.VvKRCZa']  
@@ -35,6 +37,8 @@ authenticator = stauth.Authenticate(
     "abcdef",           # key
     cookie_expiry_days=1
 )
+
+st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
 # 🔐 Show login widget
 login_result = authenticator.login(form_name='Login', location='main')
@@ -70,79 +74,73 @@ if login_result is not None:
 
         Secondary_file = st.file_uploader("Upload Secondary Framework (CSV or PDF)", type=["csv", "pdf"])
         if Secondary_file is not None:
-            # parse_secondary_pdf_format or CSV logic here...
+            # Helper function to extract text from PDF
+            def parse_nqf_pdf_format(file):
+                text = ""
+                try:
+                    with fitz.open(stream=file.read(), filetype="pdf") as doc:
+                        for page in doc:
+                            text += page.get_text()
+                except Exception as e:
+                    raise RuntimeError(f"Error while parsing PDF: {e}")
+
+                # Normalize spacing
+                lines = [line.strip() for line in text.splitlines() if line.strip()]
+                
+                # Setup regex patterns
+                level_pattern = re.compile(r'^NQF Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
+                domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
+                
+                current_level = None
+                current_domain = None
+                descriptor_accumulator = ""
+                data = []
+
+                for line in lines:
+                    # Detect level
+                    level_match = level_pattern.match(line)
+                    if level_match:
+                        # Save previous entry if one was open
+                        if current_level and current_domain and descriptor_accumulator:
+                            data.append((current_level, current_domain, descriptor_accumulator.strip()))
+                            descriptor_accumulator = ""
+
+                        current_level = "NQF Level " + level_match.group(1).title()
+                        continue
+
+                    # Detect domain (start of new entry)
+                    domain_match = domain_pattern.match(line)
+                    if domain_match:
+                        if current_domain and descriptor_accumulator:
+                            data.append((current_level, current_domain, descriptor_accumulator.strip()))
+                            descriptor_accumulator = ""
+
+                        current_domain = domain_match.group(2).strip()
+                        descriptor_accumulator = line.split("in respect of", 1)[-1].strip()
+                    else:
+                        # Continuation of descriptor
+                        descriptor_accumulator += " " + line.strip()
+
+                # Append final entry
+                if current_level and current_domain and descriptor_accumulator:
+                    data.append((current_level, current_domain, descriptor_accumulator.strip()))
+
+                if not data:
+                    return {}, None
+
+                # Write to CSV in memory
+                output_csv = BytesIO()
+                writer = csv.writer(output_csv)
+                writer.writerow(['Level', 'Domain', 'Descriptor'])
+                for level, domain, descriptor in data:
+                    writer.writerow([level, domain, descriptor])
+
+                output_csv.seek(0)
+
+                return data, output_csv
         else:
             st.info("📥 Please upload a Secondary file.")
-
-        # Helper function to extract text from PDF
-        def parse_nqf_pdf_format(file):
-            text = ""
-            try:
-                with fitz.open(stream=file.read(), filetype="pdf") as doc:
-                    for page in doc:
-                        text += page.get_text()
-            except Exception as e:
-                raise RuntimeError(f"Error while parsing PDF: {e}")
-
-            # Normalize spacing
-            lines = [line.strip() for line in text.splitlines() if line.strip()]
-            
-            # Setup regex patterns
-            level_pattern = re.compile(r'^NQF Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
-            domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
-            
-            current_level = None
-            current_domain = None
-            descriptor_accumulator = ""
-            data = []
-
-            for line in lines:
-                # Detect level
-                level_match = level_pattern.match(line)
-                if level_match:
-                    # Save previous entry if one was open
-                    if current_level and current_domain and descriptor_accumulator:
-                        data.append((current_level, current_domain, descriptor_accumulator.strip()))
-                        descriptor_accumulator = ""
-
-                    current_level = "NQF Level " + level_match.group(1).title()
-                    continue
-
-                # Detect domain (start of new entry)
-                domain_match = domain_pattern.match(line)
-                if domain_match:
-                    if current_domain and descriptor_accumulator:
-                        data.append((current_level, current_domain, descriptor_accumulator.strip()))
-                        descriptor_accumulator = ""
-
-                    current_domain = domain_match.group(2).strip()
-                    descriptor_accumulator = line.split("in respect of", 1)[-1].strip()
-                else:
-                    # Continuation of descriptor
-                    descriptor_accumulator += " " + line.strip()
-
-            # Append final entry
-            if current_level and current_domain and descriptor_accumulator:
-                data.append((current_level, current_domain, descriptor_accumulator.strip()))
-
-            if not data:
-                return {}, None
-
-            # Write to CSV in memory
-            output_csv = BytesIO()
-            writer = csv.writer(output_csv)
-            writer.writerow(['Level', 'Domain', 'Descriptor'])
-            for level, domain, descriptor in data:
-                writer.writerow([level, domain, descriptor])
-
-            output_csv.seek(0)
-
-            return data, output_csv
-
-        # Initialize variables
-        Primary_text = ""
-        Secondary_text = ""
-
+        
         # Process Primary File
         if Primary_file:
             try:
