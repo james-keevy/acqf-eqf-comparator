@@ -61,7 +61,7 @@ if login_result is not None:
         api_key = st.secrets["OPENAI_API_KEY"]
 
         # File upload
-               Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
+        Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
         if Primary_file is not None:
             try:
                 # Create an in-memory copy of the file
