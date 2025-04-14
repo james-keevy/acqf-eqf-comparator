@@ -21,28 +21,28 @@ Secondary_text = ""
 # Create a login screen for your public app (simulating private access)
 st.set_page_config(page_title="Comparing learning outcomes using genAI", layout="centered")
 
-# # Show logo in sidebar
-# def get_base64_image(image_path):
-#     with open(image_path, "rb") as img_file:
-#         b64_data = base64.b64encode(img_file.read()).decode()
-#     return f"data:image/png;base64,{b64_data}"
+# Show logo in sidebar
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        b64_data = base64.b64encode(img_file.read()).decode()
+    return f"data:image/png;base64,{b64_data}"
 
-# img_data = get_base64_image("ascendra_v5.png")
+img_data = get_base64_image("ascendra_v5.png")
 
-# st.sidebar.markdown(
-#     f"""
-#     <div style="text-align: center;">
-#         <img src="{img_data}" width="200">
-#     </div>
-#     """,
-#     unsafe_allow_html=True
-# )
+st.sidebar.markdown(
+    f"""
+    <div style="text-align: center;">
+        <img src="{img_data}" width="200">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-# # Optional tagline
-# st.sidebar.markdown(
-#     "<p style='text-align: center; font-size: 0.9em; color: gray;'>Smarter comparisons of learning outcomes using genAI</p>",
-#     unsafe_allow_html=True
-# )
+# Optional tagline
+st.sidebar.markdown(
+    "<p style='text-align: center; font-size: 0.9em; color: gray;'>Smarter comparisons of learning outcomes using genAI</p>",
+    unsafe_allow_html=True
+)
 
 # Hashed password generated earlier
 hashed_passwords = ['$2b$12$2Myv8E.J5lIbWN5aThrBDOeGthVRDw4e7j38g.fDTOmiy.VvKRCZa']  
