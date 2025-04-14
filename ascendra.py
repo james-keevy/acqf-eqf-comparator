@@ -545,7 +545,7 @@ if login_result is not None:
                     ]
 
                     selected_taxonomies = st.multiselect(
-                        label="Select classification frameworks to apply:",
+                        label="Select a taxonomy or classification system that can by used by Ascendra to refine the comparison process:",
                         options=taxonomy_options
                     )
 
