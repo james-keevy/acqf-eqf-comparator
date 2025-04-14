@@ -125,8 +125,6 @@ if login_result is not None:
             def parse_nqf_pdf_format(file):
                 try:
                     Secondary_file.seek(0)  # 🔄 Reset pointer to beginning
-                    structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
-                    
                     pdf_bytes = file.read()
 
                     # 🔍 Confirm the type is bytes, or raise clear error
