@@ -28,7 +28,8 @@ def get_base64_image(image_path):
     return f"data:image/png;base64,{b64_data}"
 
 img_data = get_base64_image("ascendra_v5.png")
-authenticator = stauth.Authenticate(credentials, "ascendra_app", "auth_key", cookie_expiry_days=1)
+
+# authenticator = stauth.Authenticate(credentials, "ascendra_app", "auth_key", cookie_expiry_days=1)
 
 st.sidebar.markdown(
     f"""
@@ -39,19 +40,19 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
-# Spacer to push logout down
-st.sidebar.markdown("<div style='flex:1'></div>", unsafe_allow_html=True)
-st.sidebar.markdown("<hr>", unsafe_allow_html=True)
+# # Spacer to push logout down
+# st.sidebar.markdown("<div style='flex:1'></div>", unsafe_allow_html=True)
+# st.sidebar.markdown("<hr>", unsafe_allow_html=True)
 
-# Align logout button to bottom using markdown hack
-st.sidebar.markdown(
-    """
-    <div style='position: fixed; bottom: 20px; width: 100%;'>
-    """,
-    unsafe_allow_html=True
-)
-authenticator.logout("🚪 Logout", "sidebar")
-st.sidebar.markdown("</div>", unsafe_allow_html=True)
+# # Align logout button to bottom using markdown hack
+# st.sidebar.markdown(
+#     """
+#     <div style='position: fixed; bottom: 20px; width: 100%;'>
+#     """,
+#     unsafe_allow_html=True
+# )
+# authenticator.logout("🚪 Logout", "sidebar")
+# st.sidebar.markdown("</div>", unsafe_allow_html=True)
 
 # Optional tagline
 st.sidebar.markdown(
