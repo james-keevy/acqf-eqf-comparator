@@ -16,6 +16,7 @@ import tempfile
 # Initialize variables
 Primary_text = ""
 Secondary_text = ""
+Secondary_file = st.file_uploader("Upload secondary artefact (CSV or PDF formats)", type=["csv", "pdf"])
 
 # Create a login screen for your public app (simulating private access)
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
