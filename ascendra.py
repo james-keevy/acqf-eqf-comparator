@@ -36,6 +36,36 @@ authenticator = stauth.Authenticate(
     cookie_expiry_days=1
 )
 
+#  Define the unified PDF parser
+def parse_secondary_pdf(file, method="auto"):
+    """
+    Unified handler for parsing secondary PDF files using one of two methods:
+    - 'nqf': uses parse_nqf_pdf_format
+    - 'structured': uses extract_structured_from_pdf_to_csv
+    - 'auto': tries 'nqf' first, then falls back to 'structured' if needed
+    Returns:
+        (structured_data or dict, csv_path or None)
+    """
+    try:
+        if method == "nqf":
+            return parse_nqf_pdf_format(file)
+        elif method == "structured":
+            return extract_structured_from_pdf_to_csv(file)
+        elif method == "auto":
+            try:
+                data, csv_path = parse_nqf_pdf_format(file)
+                if data:
+                    return data, csv_path
+            except Exception as e:
+                st.info("🔁 Falling back to structured PDF parser...")
+                pass
+            return extract_structured_from_pdf_to_csv(file)
+        else:
+            raise ValueError("Invalid parsing method specified.")
+    except Exception as e:
+        st.error(f"❌ PDF parsing failed: {e}")
+        return {}, None
+
 # 🔐 Show login widget
 login_result = authenticator.login(form_name='Login', location='main')
 
@@ -204,45 +234,26 @@ if login_result is not None:
                     else:
                         st.warning("⚠️ Secondary CSV missing required columns.")
 
-############# PDF SECONDARY INPUT 
-
                 elif file_ext == "pdf":
                     st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
-                    structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
+
+                    structured_data, csv_path = parse_secondary_pdf(Secondary_file, method="auto")
 
                     if structured_data:
                         st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
                         st.write(structured_data)
-                        with open(csv_path, "rb") as f:
-                            st.download_button("⬇️ Download Extracted CSV", f, file_name="nqf_levels.csv")
-                    else:
-                        st.warning("⚠️ Could not parse any level-domain-descriptor entries.")
-                        st.warning("⚠️ Secondary PDF parsing returned an empty dictionary.")
-
-
-                    # --- Inside your file handling logic ---
-                elif file_ext == "pdf":
-                    st.subheader("📄 Secondary PDF Detected")
-
-                    # Call the reusable function
-                    Secondary_levels, csv_path = extract_structured_from_pdf_to_csv(Secondary_file)
-
-                    if Secondary_levels:
-                        st.success(f"✅ Found descriptors for {len(Secondary_levels)} levels.")
-                        st.write(Secondary_levels)
 
                         if csv_path:
                             with open(csv_path, "rb") as f:
                                 st.download_button("⬇️ Download Extracted CSV", f, file_name="secondary_descriptors.csv")
                     else:
                         st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
-              
-###############
 
-            # except Exception as e:
-            #     st.error(f"❌ Could not process Secondary file: {e}")
-            # else:
-            #     st.warning("Unsupported file format for Secondary artefact.")
+                else:
+                    st.warning("Unsupported file format for Secondary artefact.")
+
+            except Exception as e:
+                st.error(f"❌ Could not process Secondary file: {e}")
 
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
