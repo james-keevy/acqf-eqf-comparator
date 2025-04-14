@@ -288,8 +288,6 @@ if login_result is not None:
                 descriptor_accumulator = ""
                 data = []
 
-                #DEBUG
-
                 word_to_num = {
                     "One": "1", "Two": "2", "Three": "3", "Four": "4", "Five": "5",
                     "Six": "6", "Seven": "7", "Eight": "8", "Nine": "9", "Ten": "10"
@@ -325,9 +323,6 @@ if login_result is not None:
                     data.append((current_level, current_domain, descriptor_accumulator.strip()))
 
                 print(f"✅ Extracted {len(data)} descriptor entries.")
-
-                #######################
-
 
                 if not data:
                     print("⚠️ No descriptors were extracted. Check if regex patterns are matching.")
@@ -388,7 +383,24 @@ if login_result is not None:
 
                         if csv_path:
                             with open(csv_path, "rb") as f:
-                                st.download_button("⬇️ Download Extracted CSV", f, file_name="secondary_descriptors.csv")
+                                # st.download_button("⬇️ Download Extracted CSV", f, file_name="secondary_descriptors.csv")
+                                # ✅ Automatically load parsed CSV into df_secondary
+                                df_secondary = pd.read_csv(csv_path)
+
+                                # ✅ Normalize level format
+                                df_secondary['Level'] = df_secondary['Level'].apply(lambda x: f"Level {int(x)}")
+
+                                # ✅ Check and group descriptors
+                                if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                                    grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                                    
+                                    for (level, domain), descriptor in grouped.items():
+                                        Secondary_levels.setdefault(level, {})[domain] = descriptor
+
+                                    st.success(f"✅ Structured {len(Secondary_levels)} secondary levels from parsed PDF.")
+                                else:
+                                    st.warning("⚠️ Extracted CSV is missing required columns.")
+
                     else:
                         st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
 
