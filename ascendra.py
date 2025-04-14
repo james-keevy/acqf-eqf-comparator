@@ -378,23 +378,6 @@ if login_result is not None:
                         # st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
                         # st.write(structured_data)
 
-                        # ✅ Load the generated CSV into df_secondary for downstream use
-                        df_secondary = pd.read_csv(csv_path)
-
-                        # ⬇️ INSERT THIS BLOCK HERE
-                        if 'df_secondary' in locals() and not df_secondary.empty:
-                            secondary_levels_list = sorted(df_secondary['Level'].dropna().unique().tolist())
-
-                            if 'selected_Secondary_level' not in st.session_state:
-                                st.session_state.selected_Secondary_level = secondary_levels_list[0] if secondary_levels_list else None
-
-                            st.session_state.selected_Secondary_level = st.selectbox(
-                                "Select Secondary Level",
-                                secondary_levels_list,
-                                index=secondary_levels_list.index(st.session_state.selected_Secondary_level)
-                if st.session_state.selected_Secondary_level in secondary_levels_list else 0
-            )
-
                         if csv_path:
                             with open(csv_path, "rb") as f:
                                 # st.download_button("⬇️ Download Extracted CSV", f, file_name="secondary_descriptors.csv")
