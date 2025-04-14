@@ -358,6 +358,14 @@ if login_result is not None:
 
                 if file_ext == "csv":
                     df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
+
+                    if 'Level' in df_secondary.columns:
+                        unique_secondary_levels = sorted(df_secondary['Level'].dropna().unique().tolist())
+                        st.session_state.selected_Secondary_level = st.selectbox(
+                            "Select Secondary Level", unique_secondary_levels, index=0
+                        )
+                    else:
+                        st.warning("⚠️ Parsed Secondary file does not contain a 'Level' column.")
                     
                     if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
                         grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
@@ -383,14 +391,6 @@ if login_result is not None:
                                 # st.download_button("⬇️ Download Extracted CSV", f, file_name="secondary_descriptors.csv")
                                 # ✅ Automatically load parsed CSV into df_secondary
                                 df_secondary = pd.read_csv(csv_path)
-
-                                if 'Level' in df_secondary.columns:
-                                    unique_secondary_levels = sorted(df_secondary['Level'].dropna().unique().tolist())
-                                    st.session_state.selected_Secondary_level = st.selectbox(
-                                        "Select Secondary Level", unique_secondary_levels, index=0
-                                    )
-                                else:
-                                    st.warning("⚠️ Parsed Secondary file does not contain a 'Level' column.")
 
                                 # ✅ Normalize level format
                                 df_secondary['Level'] = df_secondary['Level'].apply(lambda x: f"Level {int(x)}")
