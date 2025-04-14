@@ -124,6 +124,9 @@ if login_result is not None:
             if file_ext == "pdf":
                 st.subheader("📄 Parsing PDF descriptors...")
                 Secondary_file.seek(0)
+
+                #DEBUG
+                st.write("🧪 DEBUG: type of Secondary_file before parsing:", type(Secondary_file))
                 structured_data, csv_path = parse_nqf_pdf_format(Secondary_file) 
 
             def parse_nqf_pdf_format(file):
