@@ -215,7 +215,7 @@ if login_result is not None:
                 st.error(f"❌ Unexpected error while loading Secondary file: {e}")
         
         else:
-            st.info("📥 Please upload a secondary file.")
+            st.info("📥 Please upload a secondary file to continue.")
         
         # Process Primary File
         if Primary_file:
