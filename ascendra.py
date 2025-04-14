@@ -111,7 +111,7 @@ if login_result is not None:
             except Exception as e:
                 st.error(f"❌ Could not process Primary file: {e}")
         else:
-            st.info("📥 Please upload a Primary framework file to continue.")
+            st.info("📥 Please upload a primary file to continue.")
 
         Secondary_file = st.file_uploader("Upload secondary artefact (CSV or PDF formats)", type=["csv", "pdf"])
 
@@ -215,7 +215,7 @@ if login_result is not None:
                 st.error(f"❌ Unexpected error while loading Secondary file: {e}")
         
         else:
-            st.info("📥 Please upload a Secondary file.")
+            st.info("📥 Please upload a secondary file.")
         
         # Process Primary File
         if Primary_file:
