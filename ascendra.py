@@ -137,7 +137,7 @@ if login_result is not None:
                 lines = [line.strip() for line in text.splitlines() if line.strip()]
                 lines = [line for line in lines if not re.match(r'^\d+$', line.strip())]  # remove standalone page numbers
                 
-                level_pattern = re.compile(r'(?:^|\s)NQF Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
+                level_pattern = re.compile(r'(?:^|\s)Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
                 domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
 
                 current_level = None
