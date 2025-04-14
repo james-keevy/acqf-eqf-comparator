@@ -188,7 +188,7 @@ if login_result is not None:
                 #DEBUG
                 st.write("🧪 DEBUG: type of Secondary_file before parsing:", type(Secondary_file))
                 
-                structured_data, csv_path = parse_nqf_pdf_format(Secondary_file) 
+                structured_data, csv_path = parse_nqf_pdf_format(uploaded_file) 
 
             try:
                 file_ext = Secondary_file.name.split(".")[-1].lower()
@@ -367,7 +367,7 @@ if login_result is not None:
                     Secondary_file.seek(0)
 
                     # ✅ Correct parser name
-                    structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
+                    structured_data, csv_path = parse_nqf_pdf_format(uploaded_file)
 
                     if structured_data:
                         st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
