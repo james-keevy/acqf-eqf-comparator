@@ -544,10 +544,7 @@ if login_result is not None:
                         "OFO (Organising Framework for Occupations - South Africa)"
                     ]
 
-                    selected_taxonomies = st.multiselect(
-                        # label="Select a taxonomy or classification system",
-                        options=taxonomy_options
-                    )
+                    selected_taxonomies = st.multiselect(options=taxonomy_options)
 
                     st.session_state['selected_taxonomies'] = selected_taxonomies
 
