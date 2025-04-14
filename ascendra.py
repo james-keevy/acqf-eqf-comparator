@@ -211,8 +211,8 @@ if login_result is not None:
                     except Exception as e:
                         st.error(f"❌ Could not process Secondary file: {e}")
 
-        else:
-            st.info("📥 Please upload a Secondary file.")
+                    else:
+                        st.info("📥 Please upload a Secondary file.")
         
         # Process Primary File
         if Primary_file:
