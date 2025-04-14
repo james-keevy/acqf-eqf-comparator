@@ -76,6 +76,11 @@ if login_result is not None:
             unsafe_allow_html=True
         )
 
+        .stFileUploader > div:first-child:hover {
+            background-color: #e6f0ff;
+            border-color: #1a5fb4;
+        }
+
         Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
 
         if Primary_file is not None:
