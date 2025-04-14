@@ -119,6 +119,13 @@ if login_result is not None:
         Secondary_file = st.file_uploader("Upload...", type=["pdf", "csv"])
 
         if Secondary_file is not None:
+            file_ext = Secondary_file.name.lower().split(".")[-1]
+
+            if file_ext == "pdf":
+                st.subheader("📄 Parsing PDF descriptors...")
+                Secondary_file.seek(0)
+                structured_data, csv_path = parse_nqf_pdf_format(Secondary_file) 
+
             def parse_nqf_pdf_format(file):
                 try:
                     Secondary_file.seek(0)  # 🔄 Reset pointer to beginning
