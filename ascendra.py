@@ -261,23 +261,16 @@ if login_result is not None:
                 try:
                     uploaded_file.seek(0)
                     pdf_bytes = uploaded_file.read()
-
                     if isinstance(pdf_bytes, str):
                         raise TypeError("Expected bytes, got string.")
-
                     with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
                         text = "".join([page.get_text() for page in doc])
                 except Exception as e:
                     raise RuntimeError(f"Error while opening PDF: {e}")
 
-                # DEBUG: show a snippet of the raw text
-                print("🔍 TEXT SNIPPET:", text[:1000])
-
-                # Clean and break into lines
                 lines = [line.strip() for line in text.splitlines() if line.strip()]
-                lines = [line for line in lines if not re.match(r'^\d+$', line.strip())]  # remove standalone page numbers
+                lines = [line for line in lines if not re.match(r'^\d+$', line)]
 
-                # Updated regex patterns for the ZA PDF
                 level_pattern = re.compile(r'\bNQF\s+Level\s+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
                 domain_pattern = re.compile(r'^([a-jA-J])\.\s+(.*)', re.IGNORECASE)
 
@@ -294,30 +287,32 @@ if login_result is not None:
                     domain_match = domain_pattern.match(line)
 
                     if level_match:
+                        level_number = level_match.group(1).capitalize()
+                        print(f"📘 Found Level: Level {level_number}")
                         if current_level and current_domain and descriptor_accumulator:
                             data.append((current_level, current_domain, descriptor_accumulator.strip()))
                             descriptor_accumulator = ""
-                        level_number = level_match.group(1).capitalize()
                         current_level = f"Level {level_number}"
                         current_domain = None
 
                     elif domain_match:
+                        domain_text = domain_match.group(2).strip()
+                        print(f"📗 Found Domain: {domain_text}")
                         if current_level and current_domain and descriptor_accumulator:
                             data.append((current_level, current_domain, descriptor_accumulator.strip()))
                             descriptor_accumulator = ""
-                        current_domain = domain_match.group(2).strip()
+                        current_domain = domain_text
 
                     elif current_level and current_domain:
                         descriptor_accumulator += " " + line
 
-                # Final descriptor
                 if current_level and current_domain and descriptor_accumulator:
                     data.append((current_level, current_domain, descriptor_accumulator.strip()))
 
                 if not data:
+                    print("⚠️ No descriptors were extracted. Check if regex patterns are matching.")
                     raise RuntimeError("⚠️ No structured descriptors could be extracted from the PDF.")
 
-                # Write to temporary CSV
                 temp_csv = tempfile.NamedTemporaryFile(delete=False, mode='w', newline='', suffix='.csv')
                 writer = csv.writer(temp_csv)
                 writer.writerow(["Level", "Domain", "Descriptor"])
