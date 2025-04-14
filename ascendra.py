@@ -45,10 +45,6 @@ if login_result is not None:
     if auth_status:
         authenticator.logout('Logout', location='sidebar')
         st.success(f"Welcome {name}")
-    elif auth_status is False:
-        st.error("Invalid credentials")
-    elif auth_status is None:
-        st.warning("Please enter login credentials")
 
         # --- Streamlit UI ---
         st.image("ascendra_v5.png", width=300)
