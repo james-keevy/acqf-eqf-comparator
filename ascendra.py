@@ -515,33 +515,104 @@ if login_result is not None:
             
             elif Secondary_file and not Secondary_levels:
                 st.warning("⚠️ No valid Secondary descriptors found.")
+        
+            # Upload primary and secondary artefacts ---
+            Primary_file = st.file_uploader("Upload Primary Artefact", key="primary")
+            Secondary_file = st.file_uploader("Upload Secondary Artefact", key="secondary")
 
+            # Parse and store uploaded files ---
+            if Primary_file:
+                st.session_state['Primary_file'] = Primary_file
+                # Parse Primary_file here (CSV/PDF)
+
+            if Secondary_file:
+                st.session_state['Secondary_file'] = Secondary_file
+                # Parse Secondary_file here (CSV/PDF)
+
+            # Show taxonomy selector once both files are uploaded and parsed ---
+            if 'Primary_file' in st.session_state and 'Secondary_file' in st.session_state:
+                if st.session_state['Primary_file'] and st.session_state['Secondary_file']:
+                    
+                    st.markdown("### 🧠 Comparative Framework Options")
+                    st.markdown("If you would like to use a specific taxonomy or classification system as part of the comparative process, tick one or more of the boxes below:")
+
+                    taxonomy_options = [
+                        "Bloom’s taxonomy for knowledge",
+                        "Structure of the Observed Learning Outcome (SOLO) taxonomy",
+                        "Dreyfus model of skills acquisition",
+                        "ISCED (International Standard Classification of Education)",
+                        "ISCO (International Standard Classification of Occupations)",
+                        "O*NET (Occupational Information Network)",
+                        "OFO (Organising Framework for Occupations - South Africa)"
+                    ]
+
+                    selected_taxonomies = st.multiselect(
+                        label="Select classification frameworks to apply:",
+                        options=taxonomy_options
+                    )
+
+                    st.session_state['selected_taxonomies'] = selected_taxonomies
+
+                    # 🔒 Require taxonomy before running comparison
+                    if selected_taxonomies:
+                        if st.button("🔍 Run Comparison"):
+                            st.success("Proceeding with comparison...")
+                            # 🚀 Insert your GPT comparison logic here, passing selected_taxonomies
+                    else:
+                                st.warning("⚠️ Please select at least one taxonomy before continuing.")
+                                
             # Compare levels
+          
             if st.button("Compare Levels"):
                 Primary_text = "".join(Primary_levels[selected_Primary_level])
                 Secondary_text = "".join(Secondary_levels[selected_Secondary_level])
-            
-            # PROMPT GPT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+            # PROMPT GPT #1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
                 prompt = f"""
 
-                Compare the following level descriptors and assess their equivalence.
+                    Task: Conduct a structured comparison between the learning outcomes contained in two artefacts.
 
-                Primary Level {selected_Primary_level}:
-                {Primary_text}
+                    Use the following definition of a learning outcome as a point of departure: 
+                    The totality of information, knowledge, understanding, attitudes, values, skills, competencies or behaviours an individual is expected to master upon successful completion of an educational programme.
+                    
+                    Examples of artefacts you can expect include: 
 
-                Secondary Level {selected_Secondary_level}:
-                {Secondary_text}
+                    Qualifications
+                    Level descriptor
+                    Curriculum
+                    Job description
+                    Performance contract
+                    Occupational standard
+                    Professional standard
+                    Microcredentials
 
-                Compare the descriptors. Are these levels equivalent? Highlight similarities and differences. 
+                    Primary Level {selected_Primary_level}:
+                    {Primary_text}
+                    Secondary Level {selected_Secondary_level}:
+                    {Secondary_text}
 
-                Suggest the most appropriate Secondary level match.
+                    Instructions:
+                    
+                    Compare the learning outcomes using the following dimensions:
 
-                Provide a similarity score out of 100. Write this as a separate score below your response. 
+                    Knowledge: Depth, breadth, and type (factual, theoretical, procedural, etc.)
 
-                Add a visual depiction with one row of 10 circles sized double the hieght of the text. Fill the circles in red to match the score out of 100 proportionally, starting from the left. Keep the other circles unfilled.
+                    Skills: Cognitive, practical, and problem-solving abilities
 
-                Do not use a heading for the visual depiction. 
+                    Autonomy and Responsibility: Level of independence, decision-making, and responsibility in application
+
+                    Reference Bloom’s taxonomy for knowledge, the Structure of the Observed Learning Outcome (SOLO) taxonomy, and the the Dreyfus model of skills acquisition where applicable
+
+                    Assess the degree of equivalence between the levels of the two sets of learning outcomes.
+
+                    Highlight key similarities and differences in terms of learning outcomes, complexity, autonomy, and context of learning or application.
+
+                    Based on your analysis, recommend the most appropriate level from the secondary framework that best aligns with the Primary Level descriptor. Justify your recommendation clearly.
+                    
+                    Provide a similarity score out of 100. Write this as a separate score below your response. 
+                    
+                    Add a visual depiction with one row of 10 circles sized double the height of the text. Fill the circles in red to match the score out of 100 proportionally, starting from the left. Keep the other circles unfilled. Do not use a heading for the visual depiction.
 
                 """
                 with st.spinner("Asking GPT-4o..."):
@@ -550,12 +621,13 @@ if login_result is not None:
                             model="gpt-4o",
                             messages=[
 
-                            # PROMPT GPT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                            # PROMPT GPT #2 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
                                 {
                                     "role": "system",
-                                    "content": """You are an expert in qualifications frameworks and international education systems. You understand learning outcomes and domain-based comparisons. You are able to compare the learning outcomes in different artefacts (such as level descriptors, qualifications, curricula, and job descriptions). You are well versed in the application of taxonomies, such as the revised Bloom taxonomy for knowledge, the Structure of the Observed Learning Outcome (SOLO) taxonomy, and the the Dreyfus
-                                    model of skills acquisition."""
+                                    "content": """You are a senior expert in qualifications frameworks, international education systems, and workforce development policy. You have decades of experience analyzing and comparing learning outcomes across diverse artefacts and contexts. Your expertise extends beyond qualifications to include level descriptors, curricula, job descriptions, performance contracts, occupational standards, professional standards, and microcredentials. You are well-versed in regional and global frameworks such as the European Qualifications Framework (EQF), the African Continental Qualifications Framework (ACQF), the South African NQF, and others.
+                                    You operate from the following definition of a learning outcome: *'the totality of information, knowledge, understanding, attitudes, values, skills, competencies, or behaviours an individual is expected to master upon successful completion of an educational programme.'*
+                                    You apply advanced learning taxonomies—including the revised Bloom’s taxonomy, SOLO taxonomy, and the Dreyfus model of skill acquisition—to assess complexity, autonomy, responsibility, and transferability. In addition to your policy and domain expertise, you are highly experienced in the use of large language models (LLMs) to compare and align learning outcomes expressed in different artefacts. You understand how to leverage LLMs to interpret semantic nuance, identify equivalences, and generate structured, domain-based comparisons. Your role is to evaluate the alignment between artefacts, highlight key similarities and differences, and recommend the most appropriate mappings—applying both human and AI-enabled analytical judgment."""
                                 },
                                 {
                                     "role": "user",
