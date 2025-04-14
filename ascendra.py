@@ -20,6 +20,39 @@ Secondary_text = ""
 # Create a login screen for your public app (simulating private access)
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
+# ✅ INSERT HERE — Artefact type selection
+st.subheader("🧩 Artefact Type Selection")
+
+artefact_types = [
+    "Qualification",
+    "Level descriptor",
+    "Curriculum",
+    "Job description",
+    "Performance contract",
+    "Occupational standard",
+    "Professional standard",
+    "Microcredential",
+    "Other"
+]
+
+# Primary artefact type
+st.session_state["primary_artefact_type"] = st.selectbox(
+    "Select the type of the **Primary** artefact:",
+    artefact_types,
+    key="primary_artefact_type_selectbox"
+)
+
+# Secondary artefact type
+st.session_state["secondary_artefact_type"] = st.selectbox(
+    "Select the type of the **Secondary** artefact:",
+    artefact_types,
+    key="secondary_artefact_type_selectbox"
+)
+
+# --- File Upload Section ---
+Primary_file = st.file_uploader("📤 Upload Primary Artefact", type=["csv", "pdf"])
+Secondary_file = st.file_uploader("📥 Upload Secondary Artefact", type=["csv", "pdf"])
+
 # Hashed password generated earlier
 hashed_passwords = ['$2b$12$2Myv8E.J5lIbWN5aThrBDOeGthVRDw4e7j38g.fDTOmiy.VvKRCZa']  
 
@@ -461,34 +494,6 @@ if login_result is not None:
                 st.warning("⚠️ Secondary CSV must include 'Level', 'Domain', and 'Descriptor' columns.") 
             
             # --- Primary & Secondary UI ---
-
-            st.subheader("🧩 Artefact Type Selection")
-
-            artefact_types = [
-                "Qualification",
-                "Level descriptor",
-                "Curriculum",
-                "Job description",
-                "Performance contract",
-                "Occupational standard",
-                "Professional standard",
-                "Microcredential",
-                "Other"
-            ]
-
-            # Primary artefact type
-            st.session_state["primary_artefact_type"] = st.selectbox(
-                "Select the type of the **Primary** artefact:",
-                artefact_types,
-                key="primary_artefact_type_selectbox"
-            )
-
-            # Secondary artefact type
-            st.session_state["secondary_artefact_type"] = st.selectbox(
-                "Select the type of the **Secondary** artefact:",
-                artefact_types,
-                key="secondary_artefact_type_selectbox"
-            )
 
             if Primary_levels:
                 selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
