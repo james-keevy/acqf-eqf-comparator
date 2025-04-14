@@ -127,29 +127,25 @@ if login_result is not None:
 
                 #DEBUG
                 st.write("🧪 DEBUG: type of Secondary_file before parsing:", type(Secondary_file))
+                
                 structured_data, csv_path = parse_nqf_pdf_format(Secondary_file) 
 
-            def parse_nqf_pdf_format(file):
+            def parse_nqf_pdf_format(uploaded_file):
                 try:
-                    Secondary_file.seek(0)  # 🔄 Reset pointer to beginning
-                    pdf_bytes = file.read()
+                    uploaded_file.seek(0)
+                    pdf_bytes = uploaded_file.read()
 
-                    # 🔍 Confirm the type is bytes, or raise clear error
                     if isinstance(pdf_bytes, str):
-                        raise TypeError("❌ pars_pdf_format expected bytes, but got string.")
+                        raise TypeError("Expected bytes, got string.")
 
-                    # ✅ Open PDF from byte stream
                     with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
                         text = "".join([page.get_text() for page in doc])
-
                 except Exception as e:
                     raise RuntimeError(f"Error while opening PDF: {e}")
 
-                # === Your existing parsing logic ===
                 lines = [line.strip() for line in text.splitlines() if line.strip()]
-                lines = [line for line in lines if not re.match(r'^\d+$', line.strip())]  # remove standalone page numbers
-                
-                level_pattern = re.compile(r'(?:^|\s)Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
+                lines = [line for line in lines if not re.match(r'^\d+$', line)]
+                level_pattern = re.compile(r'(?:^|\s)NQF Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
                 domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
 
                 current_level = None
@@ -183,7 +179,6 @@ if login_result is not None:
                 if not data:
                     raise RuntimeError("⚠️ No structured descriptors could be extracted from the PDF.")
 
-                # ✅ Save to CSV
                 temp_csv = tempfile.NamedTemporaryFile(delete=False, mode='w', newline='', suffix='.csv')
                 writer = csv.writer(temp_csv)
                 writer.writerow(["Level", "Domain", "Descriptor"])
@@ -191,6 +186,7 @@ if login_result is not None:
                 temp_csv.close()
 
                 return data, temp_csv.name
+
 
             try:
                 file_ext = Secondary_file.name.split(".")[-1].lower()
