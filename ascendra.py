@@ -561,7 +561,7 @@ if login_result is not None:
             if 'Primary_file' in st.session_state and 'Secondary_file' in st.session_state:
                 if st.session_state['Primary_file'] and st.session_state['Secondary_file']:
                     
-                    st.markdown("Optional: If you would like to use a specific taxonomy or classification system that can by used by Ascendra to refine the comparison procesas part of the comparative process, select one from the dropdown list below")
+                    st.markdown("Optional: If you would like to use a specific taxonomy or classification system that can by used to refine the comparison procesas part of the comparative process, select one from the dropdown list below")
 
                     taxonomy_options = [
                         "Bloom’s taxonomy for knowledge",
