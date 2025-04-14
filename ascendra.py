@@ -11,6 +11,7 @@ import streamlit_authenticator as stauth
 import fitz  # PyMuPDF
 import io
 from io import BytesIO
+import tempfile
 
 # Initialize variables
 Primary_text = ""
