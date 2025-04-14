@@ -545,6 +545,7 @@ if login_result is not None:
                     ]
 
                     selected_taxonomies = st.multiselect(
+                        label="Select a taxonomy or classification system",
                         options=taxonomy_options
                     )
 
