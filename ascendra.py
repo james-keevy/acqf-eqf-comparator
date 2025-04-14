@@ -16,6 +16,7 @@ Primary_text = ""
 Secondary_text = ""
 
 # Create a login screen for your public app (simulating private access)
+st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
 # Hashed password generated earlier
 hashed_passwords = ['$2b$12$2Myv8E.J5lIbWN5aThrBDOeGthVRDw4e7j38g.fDTOmiy.VvKRCZa']  
@@ -37,8 +38,6 @@ authenticator = stauth.Authenticate(
     "abcdef",           # key
     cookie_expiry_days=1
 )
-
-st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
 # 🔐 Show login widget
 login_result = authenticator.login(form_name='Login', location='main')
