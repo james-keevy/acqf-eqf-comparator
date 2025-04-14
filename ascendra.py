@@ -182,8 +182,6 @@ if login_result is not None:
         else:
             st.info("📥 Please upload a primary file to continue.")
 
-        # Upload UI
-
         Secondary_file = st.file_uploader("Upload secondary artefact (PDF or CSV)", type=["pdf", "csv"])
 
         if Secondary_file is not None:
@@ -365,6 +363,7 @@ if login_result is not None:
                         grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
                         for (level, domain), descriptor in grouped.items():
                             Secondary_levels.setdefault(level, {})[domain] = descriptor
+                        st.success("✅ Secondary PDF loaded successfully.")
                     else:
                         st.warning("⚠️ Secondary CSV missing required columns.")
 
