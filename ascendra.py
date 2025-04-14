@@ -286,6 +286,9 @@ if login_result is not None:
                 descriptor_accumulator = ""
                 data = []
 
+                # 🐞 Debug log
+                print("🔍 Starting descriptor extraction...")
+
                 for line in lines:
                     level_match = level_pattern.search(line)
                     domain_match = domain_pattern.match(line)
