@@ -239,10 +239,10 @@ if login_result is not None:
               
 ###############
 
-            except Exception as e:
-                st.error(f"❌ Could not process Secondary file: {e}")
-            else:
-                st.warning("Unsupported file format for Secondary artefact.")
+            # except Exception as e:
+            #     st.error(f"❌ Could not process Secondary file: {e}")
+            # else:
+            #     st.warning("Unsupported file format for Secondary artefact.")
 
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
