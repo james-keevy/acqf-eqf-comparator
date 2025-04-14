@@ -119,7 +119,7 @@ if login_result is not None:
         if Secondary_file is not None:
             def parse_pdf_format(file):
                 try:
-                    file.seek(0)  # 🔄 Reset pointer to beginning
+                    Secondary_file.seek(0)  # 🔄 Reset pointer to beginning
                     pdf_bytes = file.read()
 
                     # 🔍 Confirm the type is bytes, or raise clear error
