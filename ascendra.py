@@ -345,7 +345,7 @@ if login_result is not None:
                 elif file_ext == "pdf":
                     st.subheader("📄 Parsing Level Descriptors from PDF")
 
-                    structured_data, csv_path = parse_pdf_format(Secondary_file, method="auto")
+                    structured_data, csv_path = parse_pdf_format(Secondary_file)
 
                     if structured_data:
                         st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
