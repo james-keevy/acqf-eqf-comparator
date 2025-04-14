@@ -444,7 +444,30 @@ if login_result is not None:
             else:
                 st.warning("⚠️ Primary CSV must include 'Level', 'Domain', and 'Descriptor' columns.")
 
+         Secondary_levels = {}
+
+        if 'df_secondary' in locals() and isinstance(df_secondary, pd.DataFrame):
+            if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                
+                # ✅ Normalize Level values to "Level X" format
+                df_secondary['Level'] = df_secondary['Level'].apply(lambda x: f"Level {int(x)}" if str(x).isdigit() else str(x))
+
+                # ✅ Group by Level and Domain
+                grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                for (level, domain), descriptor in grouped.items():
+                    Secondary_levels.setdefault(level, {})[domain] = descriptor
+
+                # ✅ Add Level (All Domains) entries
+                level_grouped = df_secondary.groupby('Level')['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                for level, descriptors in level_grouped.items():
+                    level_key = f"{level} (All Domains)"
+                    Secondary_levels[level_key] = {"Combined": descriptors}
+
+            else:
+                st.warning("⚠️ Secondary CSV must include 'Level', 'Domain', and 'Descriptor' columns.") 
+            
             # --- Primary & Secondary UI ---
+
             if Primary_levels:
                 selected_Primary_level = st.selectbox("Select Primary Level", sorted(Primary_levels.keys()))
             else:
@@ -452,6 +475,7 @@ if login_result is not None:
                 
             if Secondary_file and Secondary_levels:
                 selected_Secondary_level = st.selectbox("Select Secondary Level", sorted(Secondary_levels.keys()))
+            
             elif Secondary_file and not Secondary_levels:
                 st.warning("⚠️ No valid Secondary descriptors found.")
 
