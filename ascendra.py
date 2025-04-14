@@ -40,7 +40,7 @@ st.sidebar.markdown(
 
 # Optional tagline
 st.sidebar.markdown(
-    "<p style='text-align: center; font-size: 0.9em; color: gray;'>Smarter Framework Matching with Generative AI</p>",
+    "<p style='text-align: center; font-size: 0.9em; color: gray;'>Smarter comparisons of learning outcomes using genAI</p>",
     unsafe_allow_html=True
 )
 
