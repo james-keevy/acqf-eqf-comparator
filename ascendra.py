@@ -64,22 +64,24 @@ if login_result is not None:
         st.markdown(
             """
             <style>
-            /* Target the file uploader by class */
+            /* 🔷 File uploader base style */
             .stFileUploader > div:first-child {
-                background-color: #f5faff;   /* 🌤 light blue background */
-                border: 2px solid #2c6ebb;   /* 🔵 blue border */
+                background-color: #f5faff;   /* Base background */
+                border: 2px solid #2c6ebb;   /* Base border */
                 border-radius: 10px;
                 padding: 10px;
+                transition: all 0.3s ease;
+            }
+
+            /* 🔵 Hover effect */
+            .stFileUploader > div:first-child:hover {
+                background-color: #e6f0ff;   /* Lighten background on hover */
+                border-color: #1a5fb4;       /* Stronger blue on hover */
             }
             </style>
             """,
             unsafe_allow_html=True
         )
-
-        .stFileUploader > div:first-child:hover {
-            background-color: #e6f0ff;
-            border-color: #1a5fb4;
-        }
 
         Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
 
