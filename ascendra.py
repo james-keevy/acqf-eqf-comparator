@@ -66,6 +66,12 @@ def parse_nqf_pdf_format(uploaded_file):
     descriptor_accumulator = ""
     data = []
 
+    # Map level words to numbers
+    word_to_num = {
+        "One": "1", "Two": "2", "Three": "3", "Four": "4", "Five": "5",
+        "Six": "6", "Seven": "7", "Eight": "8", "Nine": "9", "Ten": "10"
+    }
+
     for line in lines:
         level_match = level_pattern.search(line)
         domain_match = domain_pattern.match(line)
@@ -74,7 +80,10 @@ def parse_nqf_pdf_format(uploaded_file):
             if current_level and current_domain and descriptor_accumulator:
                 data.append((current_level, current_domain, descriptor_accumulator.strip()))
                 descriptor_accumulator = ""
-            current_level = f"{level_match.group(1).capitalize()}"
+
+            # Convert to number using the lookup
+            level_word = level_match.group(1).capitalize()
+            current_level = word_to_num.get(level_word, level_word)  # Fallback to original if not found
             current_domain = None
 
         elif domain_match:
