@@ -195,6 +195,15 @@ if login_result is not None:
             except Exception as e:
                 st.error(f"❌ Could not process Primary file: {e}")
         else: 
+            # --- 📦 Primary File Section Box ---
+            with st.container():
+                st.markdown(
+                    """
+                    <div style="border: 1px solid #D3D3D3; border-radius: 10px; padding: 15px; background-color: #f9f9f9;">
+                    <h4 style="color: #333333;">📤 Primary File Upload</h4>
+                    """,
+                    unsafe_allow_html=True
+                )
             # Primary artefact type
             st.session_state["primary_artefact_type"] = st.selectbox(
                 "Select the type of the **Primary** artefact:",
@@ -247,6 +256,15 @@ if login_result is not None:
             except Exception as e:
                 st.error(f"❌ Unexpected error while handling Secondary file: {e}")
         else:
+            # --- 📦 Secondary File Section Box ---
+            with st.container():
+                st.markdown(
+                    """
+                    <div style="border: 1px solid #D3D3D3; border-radius: 10px; padding: 15px; background-color: #f9f9f9;">
+                    <h4 style="color: #333333;">📥 Secondary File Upload</h4>
+                    """,
+                    unsafe_allow_html=True
+                )
             # Secondary artefact type
             st.session_state["secondary_artefact_type"] = st.selectbox(
                 "Select the type of the **Secondary** artefact:",
@@ -254,30 +272,6 @@ if login_result is not None:
                 key="secondary_artefact_type_selectbox"
             )
             st.info("📥 Please upload a secondary file to continue.")
-
-        # --- 📦 Primary File Section Box ---
-        with st.container():
-            st.markdown(
-                """
-                <div style="border: 1px solid #D3D3D3; border-radius: 10px; padding: 15px; background-color: #f9f9f9;">
-                <h4 style="color: #333333;">📤 Primary File Upload</h4>
-                """,
-                unsafe_allow_html=True
-            )
-            Primary_file = st.file_uploader("Upload Primary Artefact", type=["csv", "pdf"], key="primary_upload")
-            st.markdown("</div>", unsafe_allow_html=True)
-
-        # --- 📦 Secondary File Section Box ---
-        with st.container():
-            st.markdown(
-                """
-                <div style="border: 1px solid #D3D3D3; border-radius: 10px; padding: 15px; background-color: #f9f9f9;">
-                <h4 style="color: #333333;">📥 Secondary File Upload</h4>
-                """,
-                unsafe_allow_html=True
-            )
-            Secondary_file = st.file_uploader("Upload Secondary Artefact", type=["csv", "pdf"], key="secondary_upload")
-            st.markdown("</div>", unsafe_allow_html=True)
         
         if Primary_file and Secondary_file:
             try:
