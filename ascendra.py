@@ -282,11 +282,11 @@ if login_result is not None:
 
         # Store uploaded files in st.session_state
 
-        if Primary_file is not None:
-            st.session_state['Primary_file'] = Primary_file
+        # if Primary_file is not None:
+        #     st.session_state['Primary_file'] = Primary_file
 
-        if Secondary_file is not None:
-            st.session_state['Secondary_file'] = Secondary_file
+        # if Secondary_file is not None:
+        #     st.session_state['Secondary_file'] = Secondary_file
 
         # Process Primary File
         if Primary_file:
