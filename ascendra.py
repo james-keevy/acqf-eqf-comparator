@@ -251,19 +251,22 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
 
             # ✅ Reusable function: Extract structured data and write to CSV
-            def parse_pdf_format(file):
+            def parse_nqf_pdf_format(file):
                 try:
-                    file.seek(0)  # Reset in case already read
+                    file.seek(0)  # Ensure pointer at start
                     pdf_bytes = file.read()
-                    if isinstance(pdf_bytes, str):
-                        raise TypeError("Expected bytes, got string")
 
+                    # ✅ Add this diagnostic
+                    if isinstance(pdf_bytes, str):
+                        raise TypeError("❌ File was read as a string — expected bytes.")
+                    
                     with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
                         text = "".join([page.get_text() for page in doc])
 
                 except Exception as e:
                     raise RuntimeError(f"Error while opening PDF: {e}")
 
+                # Continue with the parsing logic...
                 lines = [line.strip() for line in text.splitlines() if line.strip()]
                 level_pattern = re.compile(r'^NQF Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
                 domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
@@ -306,7 +309,7 @@ if login_result is not None:
                 temp_csv.close()
 
                 return data, temp_csv.name
-    
+
         # Process Secondary File 
         Secondary_levels = {}
 
