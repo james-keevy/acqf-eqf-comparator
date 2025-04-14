@@ -20,35 +20,6 @@ Secondary_text = ""
 # Create a login screen for your public app (simulating private access)
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
-# ✅ INSERT HERE — Artefact type selection
-st.subheader("🧩 Artefact Type Selection")
-
-artefact_types = [
-    "Qualification",
-    "Level descriptor",
-    "Curriculum",
-    "Job description",
-    "Performance contract",
-    "Occupational standard",
-    "Professional standard",
-    "Microcredential",
-    "Other"
-]
-
-# Primary artefact type
-st.session_state["primary_artefact_type"] = st.selectbox(
-    "Select the type of the **Primary** artefact:",
-    artefact_types,
-    key="primary_artefact_type_selectbox"
-)
-
-# Secondary artefact type
-st.session_state["secondary_artefact_type"] = st.selectbox(
-    "Select the type of the **Secondary** artefact:",
-    artefact_types,
-    key="secondary_artefact_type_selectbox"
-)
-
 # --- File Upload Section ---
 Primary_file = st.file_uploader("📤 Upload Primary Artefact", type=["csv", "pdf"])
 Secondary_file = st.file_uploader("📥 Upload Secondary Artefact", type=["csv", "pdf"])
@@ -162,6 +133,35 @@ if login_result is not None:
 
         # Input: OpenAI API key
         api_key = st.secrets["OPENAI_API_KEY"]
+
+        # ✅ INSERT HERE — Artefact type selection
+        st.subheader("🧩 Artefact Type Selection")
+
+        artefact_types = [
+            "Qualification",
+            "Level descriptor",
+            "Curriculum",
+            "Job description",
+            "Performance contract",
+            "Occupational standard",
+            "Professional standard",
+            "Microcredential",
+            "Other"
+        ]
+
+        # Primary artefact type
+        st.session_state["primary_artefact_type"] = st.selectbox(
+            "Select the type of the **Primary** artefact:",
+            artefact_types,
+            key="primary_artefact_type_selectbox"
+        )
+
+        # Secondary artefact type
+        st.session_state["secondary_artefact_type"] = st.selectbox(
+            "Select the type of the **Secondary** artefact:",
+            artefact_types,
+            key="secondary_artefact_type_selectbox"
+        )
 
         # File upload
         st.markdown(
