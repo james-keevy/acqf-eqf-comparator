@@ -358,19 +358,19 @@ if login_result is not None:
 
                 if file_ext == "csv":
                     df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
-
-                    if 'Level' in df_secondary.columns:
-                        unique_secondary_levels = sorted(df_secondary['Level'].dropna().unique().tolist())
-                        st.session_state.selected_Secondary_level = st.selectbox(
-                            "Select Secondary Level", unique_secondary_levels, index=0
-                        )
-                    else:
-                        st.warning("⚠️ Parsed Secondary file does not contain a 'Level' column.")
-                    
                     if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
-                        grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
-                        for (level, domain), descriptor in grouped.items():
-                            Secondary_levels.setdefault(level, {})[domain] = descriptor
+                            Secondary_levels = {}
+
+                            # Group by both Level and Domain
+                            grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                            for (level, domain), descriptor in grouped.items():
+                                Secondary_levels.setdefault(level, {})[domain] = descriptor
+
+                            # Additionally allow selecting by Level only (combine all domains under that level)
+                            level_grouped = df_secondary.groupby('Level')['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                            for level, descriptors in level_grouped.items():
+                                Secondary_levels.setdefault(f"{level} (All Domains)", {})["Combined"] = descriptors
+
                     else:
                         st.warning("⚠️ Secondary CSV missing required columns.")
 
