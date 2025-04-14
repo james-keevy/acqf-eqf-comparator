@@ -61,27 +61,25 @@ if login_result is not None:
         api_key = st.secrets["OPENAI_API_KEY"]
 
         # File upload
-        Primary_file.seek(0) 
-        df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig")
         Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
-
         if Primary_file is not None:
             try:
-                Primary_file.seek(0)
+                Primary_file.seek(0)  # ✅ Safe now
                 content = Primary_file.read().decode("utf-8-sig")
 
                 if not content.strip():
                     st.error("❌ Uploaded Primary file is empty.")
                 else:
-                    # Show preview for safety
                     st.code("\n".join(content.splitlines()[:10]), language="csv")
-                    Primary_file.seek(0)  # Rewind again for parsing
+                    Primary_file.seek(0)  # Reset again before actual parsing
                     df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig")
                     st.success("✅ Primary file loaded successfully.")
                     st.dataframe(df_primary.head())
 
             except Exception as e:
                 st.error(f"❌ Could not process Primary file: {e}")
+        else:
+            st.info("📥 Please upload a Primary framework file to continue.")
 
         Secondary_file = st.file_uploader("Upload Secondary Framework (CSV or PDF)", type=["csv", "pdf"])
         if Secondary_file is not None:
