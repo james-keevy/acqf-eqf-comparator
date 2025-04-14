@@ -83,7 +83,7 @@ if login_result is not None:
             unsafe_allow_html=True
         )
 
-        Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
+        Primary_file = st.file_uploader("Upload primary artefact (CSV format)", type=["csv"])
 
         if Primary_file is not None:
             try:
@@ -113,7 +113,7 @@ if login_result is not None:
         else:
             st.info("📥 Please upload a Primary framework file to continue.")
 
-        Secondary_file = st.file_uploader("Upload Secondary Framework (CSV or PDF)", type=["csv", "pdf"])
+        Secondary_file = st.file_uploader("Upload secondary artefact (CSV or PDF formats)", type=["csv", "pdf"])
 
         if Secondary_file is not None:
             def parse_nqf_pdf_format(file):
