@@ -62,50 +62,69 @@ if login_result is not None:
         # Secondary_file = st.file_uploader("Upload a secondary artefact in CSV format", type="csv")
 
         # Helper function to extract text from PDF
-        def extract_text_from_pdf(file):
+        def parse_nqf_pdf_format(file):
             text = ""
             try:
                 with fitz.open(stream=file.read(), filetype="pdf") as doc:
                     for page in doc:
                         text += page.get_text()
-                return text
             except Exception as e:
-                st.error(f"❌ Error reading PDF: {e}")
-                return ""
+                raise RuntimeError(f"Error while parsing PDF: {e}")
 
-        # File upload widgets
-        Primary_file = st.file_uploader("📥 Upload a *Primary* artefact (CSV or PDF)", type=["csv", "pdf"])
-        Secondary_file = st.file_uploader("📥 Upload a *Secondary* artefact (CSV or PDF)", type=["csv", "pdf"])
+            # Normalize spacing
+            lines = [line.strip() for line in text.splitlines() if line.strip()]
+            
+            # Setup regex patterns
+            level_pattern = re.compile(r'^NQF Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
+            domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
+            
+            current_level = None
+            current_domain = None
+            descriptor_accumulator = ""
+            data = []
 
-        #  Define the unified PDF parser
-        def parse_secondary_pdf(file, method="auto"):
-            """
-            Unified handler for parsing secondary PDF files using one of two methods:
-            - 'nqf': uses parse_nqf_pdf_format
-            - 'structured': uses extract_structured_from_pdf_to_csv
-            - 'auto': tries 'nqf' first, then falls back to 'structured' if needed
-            Returns:
-                (structured_data or dict, csv_path or None)
-            """
-            try:
-                if method == "nqf":
-                    return parse_nqf_pdf_format(file)
-                elif method == "structured":
-                    return extract_structured_from_pdf_to_csv(file)
-                elif method == "auto":
-                    try:
-                        data, csv_path = parse_nqf_pdf_format(file)
-                        if data:
-                            return data, csv_path
-                    except Exception as e:
-                        st.info("🔁 Falling back to structured PDF parser...")
-                        pass
-                    return extract_structured_from_pdf_to_csv(file)
+            for line in lines:
+                # Detect level
+                level_match = level_pattern.match(line)
+                if level_match:
+                    # Save previous entry if one was open
+                    if current_level and current_domain and descriptor_accumulator:
+                        data.append((current_level, current_domain, descriptor_accumulator.strip()))
+                        descriptor_accumulator = ""
+
+                    current_level = "NQF Level " + level_match.group(1).title()
+                    continue
+
+                # Detect domain (start of new entry)
+                domain_match = domain_pattern.match(line)
+                if domain_match:
+                    if current_domain and descriptor_accumulator:
+                        data.append((current_level, current_domain, descriptor_accumulator.strip()))
+                        descriptor_accumulator = ""
+
+                    current_domain = domain_match.group(2).strip()
+                    descriptor_accumulator = line.split("in respect of", 1)[-1].strip()
                 else:
-                    raise ValueError("Invalid parsing method specified.")
-            except Exception as e:
-                st.error(f"❌ PDF parsing failed: {e}")
+                    # Continuation of descriptor
+                    descriptor_accumulator += " " + line.strip()
+
+            # Append final entry
+            if current_level and current_domain and descriptor_accumulator:
+                data.append((current_level, current_domain, descriptor_accumulator.strip()))
+
+            if not data:
                 return {}, None
+
+            # Write to CSV in memory
+            output_csv = BytesIO()
+            writer = csv.writer(output_csv)
+            writer.writerow(['Level', 'Domain', 'Descriptor'])
+            for level, domain, descriptor in data:
+                writer.writerow([level, domain, descriptor])
+
+            output_csv.seek(0)
+
+            return data, output_csv
 
         # Initialize variables
         Primary_text = ""
@@ -490,5 +509,4 @@ model of skills acquisition."""
             st.error("Incorrect username or password")
         elif auth_status is None:
             st.warning("Please enter your credentials")
-    # else:
-    #     st.error("Login form could not be rendered.")
+
