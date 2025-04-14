@@ -280,7 +280,7 @@ if login_result is not None:
                 lines = [line.strip() for line in text.splitlines() if line.strip()]
                 lines = [line for line in lines if not re.match(r'^\d+$', line)]
 
-                level_pattern = re.compile(r'\bNQF\s+Level\s+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
+                level_pattern = re.compile(r'^\d{1,2}\.\s*NQF\s+Level\s+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
                 domain_pattern = re.compile(r'^([a-jA-J])\.\s+(.*)', re.IGNORECASE)
 
                 current_level = None
