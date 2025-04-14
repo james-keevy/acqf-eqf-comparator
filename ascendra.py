@@ -251,71 +251,64 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
 
             # ✅ Reusable function: Extract structured data and write to CSV
-            def parse_pdf_format(pdf_file, output_csv="nqf_descriptors.csv"):
-                level_pattern = re.compile(r"NQF Level (\w+)", re.IGNORECASE)
-                domain_pattern = re.compile(r"^[a-j]\.\s+(.*?), in respect of which", re.IGNORECASE)
+            def parse_nqf_pdf_format(file):
+                try:
+                    file.seek(0)  # Reset file pointer
+                    pdf_bytes = file.read()
+                    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+                except Exception as e:
+                    raise RuntimeError(f"Error while opening PDF: {e}")
 
-                level_number_map = {
-                    "One": "Level 1", "Two": "Level 2", "Three": "Level 3",
-                    "Four": "Level 4", "Five": "Level 5", "Six": "Level 6",
-                    "Seven": "Level 7", "Eight": "Level 8", "Nine": "Level 9",
-                    "Ten": "Level 10"
-                }
+                text = ""
+                for page in doc:
+                    text += page.get_text()
 
-                with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
-                    text = "\n".join([page.get_text() for page in doc])
+                # Normalize spacing
+                lines = [line.strip() for line in text.splitlines() if line.strip()]
 
-                lines = text.splitlines()
-                structured = {}
+                # Setup regex patterns
+                level_pattern = re.compile(r'^NQF Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
+                domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
+
                 current_level = None
                 current_domain = None
-                current_descriptor = []
+                descriptor_accumulator = ""
+                data = []
 
                 for line in lines:
-                    line = line.strip()
-
-                    # Detect level header
-                    level_match = level_pattern.search(line)
-                    if level_match:
-                        level_word = level_match.group(1).title()
-                        current_level = level_number_map.get(level_word)
-                        continue
-
-                    # Detect domain start (e.g., a. Scope of knowledge)
+                    level_match = level_pattern.match(line)
                     domain_match = domain_pattern.match(line)
-                    if domain_match and current_level:
-                        # Save previous domain if exists
-                        if current_level and current_domain and current_descriptor:
-                            descriptor_text = " ".join(current_descriptor).strip()
-                            structured.setdefault(current_level, {})[current_domain] = descriptor_text
-                            current_descriptor = []
 
-                        current_domain = domain_match.group(1).strip()
-                        # Remove domain part from line to start descriptor cleanly
-                        descriptor_start = line.split("in respect of which", 1)[-1].strip()
-                        current_descriptor = [descriptor_start] if descriptor_start else []
+                    if level_match:
+                        if current_level and current_domain and descriptor_accumulator:
+                            data.append((current_level, current_domain, descriptor_accumulator.strip()))
+                            descriptor_accumulator = ""
+                        current_level = f"Level {level_match.group(1).capitalize()}"
+                        current_domain = None
 
-                    elif current_domain and line:
-                        current_descriptor.append(line)
+                    elif domain_match:
+                        if current_level and current_domain and descriptor_accumulator:
+                            data.append((current_level, current_domain, descriptor_accumulator.strip()))
+                            descriptor_accumulator = ""
+                        current_domain = domain_match.group(2).strip()
 
-                # Save last one
-                if current_level and current_domain and current_descriptor:
-                    descriptor_text = " ".join(current_descriptor).strip()
-                    structured.setdefault(current_level, {})[current_domain] = descriptor_text
+                    elif current_level and current_domain:
+                        descriptor_accumulator += " " + line
 
-                # Write to CSV
-                rows = []
-                for level, domains in structured.items():
-                    for domain, descriptor in domains.items():
-                        rows.append([level, domain, descriptor])
+                if current_level and current_domain and descriptor_accumulator:
+                    data.append((current_level, current_domain, descriptor_accumulator.strip()))
 
-                output_path = f"/tmp/{output_csv}"
-                with open(output_path, mode="w", encoding="utf-8", newline="") as f:
-                    writer = csv.writer(f)
-                    writer.writerow(["Level", "Domain", "Descriptor"])
-                    writer.writerows(rows)
+                if not data:
+                    raise RuntimeError("⚠️ No structured descriptors could be extracted from the PDF.")
 
-                return structured, output_path
+                # Save to CSV in a temp file
+                temp_csv = tempfile.NamedTemporaryFile(delete=False, mode='w', newline='', suffix='.csv')
+                writer = csv.writer(temp_csv)
+                writer.writerow(["Level", "Domain", "Descriptor"])
+                writer.writerows(data)
+                temp_csv.close()
+
+                return data, temp_csv.name
       
         # Process Secondary File 
         Secondary_levels = {}
