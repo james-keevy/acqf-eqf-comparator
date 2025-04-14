@@ -114,6 +114,8 @@ if login_result is not None:
         else:
             st.info("📥 Please upload a primary file to continue.")
 
+        # Upload UI
+        
         Secondary_file = st.file_uploader("Upload...", type=["pdf", "csv"])
 
         #DEBUG 
