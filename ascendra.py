@@ -27,6 +27,7 @@ def get_base64_image(image_path):
         b64_data = base64.b64encode(img_file.read()).decode()
     return f"data:image/png;base64,{b64_data}"
 
+st.sidebar.markdown("🧪 Logo 1")
 img_data = get_base64_image("ascendra_v5.png")
 
 st.sidebar.markdown(
