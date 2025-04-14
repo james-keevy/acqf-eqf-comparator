@@ -85,7 +85,7 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
 
         Secondary_file = st.file_uploader("Upload Secondary Framework (CSV or PDF)", type=["csv", "pdf"])
-                if Secondary_file is not None:
+        if Secondary_file is not None:
             # Helper function to extract text from PDF
             def parse_nqf_pdf_format(file):
                 text = ""
