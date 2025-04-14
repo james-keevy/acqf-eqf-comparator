@@ -13,6 +13,7 @@ import io
 from io import BytesIO
 import tempfile
 import base64 
+import time
 
 # Initialize variables
 Primary_text = ""
@@ -29,8 +30,6 @@ def get_base64_image(image_path):
 
 img_data = get_base64_image("ascendra_v5.png")
 
-# authenticator = stauth.Authenticate(credentials, "ascendra_app", "auth_key", cookie_expiry_days=1)
-
 st.sidebar.markdown(
     f"""
     <div style="text-align: center;">
@@ -39,20 +38,6 @@ st.sidebar.markdown(
     """,
     unsafe_allow_html=True
 )
-
-# # Spacer to push logout down
-# st.sidebar.markdown("<div style='flex:1'></div>", unsafe_allow_html=True)
-# st.sidebar.markdown("<hr>", unsafe_allow_html=True)
-
-# # Align logout button to bottom using markdown hack
-# st.sidebar.markdown(
-#     """
-#     <div style='position: fixed; bottom: 20px; width: 100%;'>
-#     """,
-#     unsafe_allow_html=True
-# )
-# authenticator.logout("🚪 Logout", "sidebar")
-# st.sidebar.markdown("</div>", unsafe_allow_html=True)
 
 # Optional tagline
 st.sidebar.markdown(
@@ -608,6 +593,24 @@ if login_result is not None:
             if st.button("Compare Levels"):
                 Primary_text = "".join(Primary_levels[selected_Primary_level])
                 Secondary_text = "".join(Secondary_levels[selected_Secondary_level])
+
+            # Custom large spinner using HTML
+            with st.container():
+                spinner_html = """
+                <div style="display: flex; justify-content: center; align-items: center; height: 200px;">
+                    <div style="border: 8px solid #f3f3f3; border-top: 8px solid #3498db; border-radius: 50%; width: 80px; height: 80px; animation: spin 1s linear infinite;"></div>
+                </div>
+                <style>
+                @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+                }
+                </style>
+                """
+
+                with st.spinner("🔍 Analysing learning outcomes..."):
+                    st.markdown(spinner_html, unsafe_allow_html=True)
+                    time.sleep(3)  # Simulate work being done
 
             # PROMPT GPT #1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
