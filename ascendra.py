@@ -117,7 +117,7 @@ if login_result is not None:
         Secondary_file = st.file_uploader("Upload secondary artefact (CSV or PDF formats)", type=["csv", "pdf"])
 
         if Secondary_file is not None:
-            def parse_pdf_format(Secondary_file):
+            def parse_pdf_format(file):
                 try:
                     file.seek(0)  # 🔄 Reset pointer to beginning
                     pdf_bytes = file.read()
