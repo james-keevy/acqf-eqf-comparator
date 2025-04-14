@@ -175,26 +175,16 @@ if login_result is not None:
 
         # Upload UI
 
-        Secondary_file = st.file_uploader("Upload secondary artefact (CSV or PDF)", type=["pdf", "csv"])
-        uploaded_file = Secondary_file  # ✅ Protect original file object
+        Secondary_file = st.file_uploader("Upload secondary artefact (PDF or CSV)", type=["pdf", "csv"])
 
         if Secondary_file is not None:
-            file_ext = Secondary_file.name.lower().split(".")[-1].lower()
-
-            if file_ext == "pdf":
-                st.subheader("📄 Parsing PDF descriptors...")
-                Secondary_file.seek(0)
-
-                #DEBUG
-                st.write("🧪 DEBUG: type of Secondary_file before parsing:", type(Secondary_file))
-                
-                structured_data, csv_path = parse_nqf_pdf_format(uploaded_file) 
+            uploaded_file = Secondary_file  # ✅ Protect the original upload object
 
             try:
-                file_ext = Secondary_file.name.split(".")[-1].lower()
+                file_ext = uploaded_file.name.split(".")[-1].lower()
 
                 if file_ext == "csv":
-                    bytes_data = Secondary_file.getvalue()
+                    bytes_data = uploaded_file.getvalue()
                     content = bytes_data.decode("utf-8-sig", errors="ignore")
 
                     if not content.strip():
@@ -203,8 +193,8 @@ if login_result is not None:
                         df_secondary = pd.read_csv(io.StringIO(content), on_bad_lines="skip")
                         required_cols = {"Level", "Domain", "Descriptor"}
                         if required_cols.issubset(df_secondary.columns):
-                            st.success("✅ Secondary file loaded successfully.")
-                            if st.checkbox("🔍 Show Secondary file preview", value=False):
+                            st.success("✅ Secondary CSV loaded successfully.")
+                            if st.checkbox("🔍 Show Secondary CSV preview", value=False):
                                 st.dataframe(df_secondary.head())
                         else:
                             st.warning(f"⚠️ Missing required columns: {required_cols - set(df_secondary.columns)}")
@@ -213,27 +203,25 @@ if login_result is not None:
                     st.subheader("📄 Parsing PDF descriptors...")
 
                     try:
-                        structured_data, csv_io = parse_nqf_pdf_format(Secondary_file)
+                        uploaded_file.seek(0)  # ✅ safe: this is a BytesIO object
+                        structured_data, csv_path = parse_nqf_pdf_format(uploaded_file)
 
-                        if structured_data and csv_io:
-                            csv_text = csv_io.read().decode("utf-8-sig")
-                            df_secondary = pd.read_csv(io.StringIO(csv_text))
-
-                            st.success(f"✅ Secondary file loaded successfully from PDF ({len(structured_data)} records).")
-
-                            if st.checkbox("🔍 Show Secondary file preview", value=False):
-                                st.dataframe(df_secondary.head())
-                        else:
-                            st.warning("⚠️ No valid descriptors found in PDF.")
+                        df_secondary = pd.read_csv(csv_path)
+                        st.success(f"✅ Parsed {len(structured_data)} descriptors from PDF.")
+                        if st.checkbox("🔍 Show Secondary PDF preview", value=False):
+                            st.dataframe(df_secondary.head())
 
                     except Exception as e:
-                        st.error(f"❌ Could not process Secondary file: {e}")
-            
+                        st.error(f"❌ Could not process Secondary PDF: {e}")
+
+                else:
+                    st.error("❌ Unsupported file format. Please upload a CSV or PDF.")
+
             except Exception as e:
-                st.error(f"❌ Unexpected error while loading Secondary file: {e}")
-        
+                st.error(f"❌ Unexpected error while handling Secondary file: {e}")
         else:
             st.info("📥 Please upload a secondary file to continue.")
+
         if Primary_file and Secondary_file:
             try:
                 # Compare byte content directly
