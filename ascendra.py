@@ -62,7 +62,6 @@ if login_result is not None:
 
         # File upload
         Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
-        # df_primary = pd.read_csv(Primary_file)
         if Primary_file is not None:
             try:
                 Primary_file.seek(0)  # ✅ Safe now
@@ -77,8 +76,8 @@ if login_result is not None:
                     st.success("✅ Primary file loaded successfully.")
                     st.dataframe(df_primary.head())
 
-            except Exception as e:
-                st.error(f"❌ Could not process Primary file: {e}")
+            # except Exception as e:
+            #   st.error(f"❌ Could not process Primary file: {e}")
         else:
             st.info("📥 Please upload a Primary framework file to continue.")
 
