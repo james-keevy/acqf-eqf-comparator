@@ -251,22 +251,20 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
 
             # ✅ Reusable function: Extract structured data and write to CSV
-            def parse_nqf_pdf_format(file):
+            def parse_pdf_format(file):
                 try:
-                    file.seek(0)  # Reset file pointer
+                    file.seek(0)  # Reset in case already read
                     pdf_bytes = file.read()
-                    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+                    if isinstance(pdf_bytes, str):
+                        raise TypeError("Expected bytes, got string")
+
+                    with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
+                        text = "".join([page.get_text() for page in doc])
+
                 except Exception as e:
                     raise RuntimeError(f"Error while opening PDF: {e}")
 
-                text = ""
-                for page in doc:
-                    text += page.get_text()
-
-                # Normalize spacing
                 lines = [line.strip() for line in text.splitlines() if line.strip()]
-
-                # Setup regex patterns
                 level_pattern = re.compile(r'^NQF Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
                 domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
 
@@ -301,7 +299,6 @@ if login_result is not None:
                 if not data:
                     raise RuntimeError("⚠️ No structured descriptors could be extracted from the PDF.")
 
-                # Save to CSV in a temp file
                 temp_csv = tempfile.NamedTemporaryFile(delete=False, mode='w', newline='', suffix='.csv')
                 writer = csv.writer(temp_csv)
                 writer.writerow(["Level", "Domain", "Descriptor"])
@@ -309,7 +306,7 @@ if login_result is not None:
                 temp_csv.close()
 
                 return data, temp_csv.name
-      
+    
         # Process Secondary File 
         Secondary_levels = {}
 
