@@ -444,7 +444,7 @@ if login_result is not None:
             else:
                 st.warning("⚠️ Primary CSV must include 'Level', 'Domain', and 'Descriptor' columns.")
 
-         Secondary_levels = {}
+        Secondary_levels = {}
 
         if 'df_secondary' in locals() and isinstance(df_secondary, pd.DataFrame):
             if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
