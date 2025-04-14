@@ -119,48 +119,48 @@ if login_result is not None:
             def parse_nqf_pdf_format(file):
                 # ... (unchanged parse function)
 
-            try:
-                file_ext = Secondary_file.name.split(".")[-1].lower()
+                try:
+                    file_ext = Secondary_file.name.split(".")[-1].lower()
 
-                if file_ext == "csv":
-                    bytes_data = Secondary_file.getvalue()
-                    content = bytes_data.decode("utf-8-sig", errors="ignore")
+                    if file_ext == "csv":
+                        bytes_data = Secondary_file.getvalue()
+                        content = bytes_data.decode("utf-8-sig", errors="ignore")
 
-                    if not content.strip():
-                        st.error("❌ Uploaded Secondary CSV file is empty.")
+                        if not content.strip():
+                            st.error("❌ Uploaded Secondary CSV file is empty.")
+                        else:
+                            df_secondary = pd.read_csv(io.StringIO(content), on_bad_lines="skip")
+                            required_cols = {"Level", "Domain", "Descriptor"}
+                            if required_cols.issubset(df_secondary.columns):
+                                st.success("✅ Secondary file loaded successfully.")
+                                if st.checkbox("🔍 Show Secondary file preview", value=False):
+                                    st.dataframe(df_secondary.head())
+                            else:
+                                st.warning(f"⚠️ Missing required columns: {required_cols - set(df_secondary.columns)}")
+
+                    elif file_ext == "pdf":
+                        st.subheader("📄 Parsing PDF descriptors...")
+
+                        try:
+                            structured_data, csv_io = parse_nqf_pdf_format(Secondary_file)
+
+                            if structured_data and csv_io:
+                                csv_io.seek(0)
+                                csv_text = csv_io.read().decode("utf-8-sig")
+                                df_secondary = pd.read_csv(io.StringIO(csv_text))
+
+                                st.success(f"✅ Secondary file loaded successfully from PDF ({len(structured_data)} records).")
+
+                                if st.checkbox("🔍 Show Secondary file preview", value=False):
+                                    st.dataframe(df_secondary.head())
+                            else:
+                                st.warning("⚠️ No valid descriptors found in PDF.")
+                        except Exception as e:
+                            st.error(f"❌ Could not process Secondary file: {e}")
                     else:
-                        df_secondary = pd.read_csv(io.StringIO(content), on_bad_lines="skip")
-                        required_cols = {"Level", "Domain", "Descriptor"}
-                        if required_cols.issubset(df_secondary.columns):
-                            st.success("✅ Secondary file loaded successfully.")
-                            if st.checkbox("🔍 Show Secondary file preview", value=False):
-                                st.dataframe(df_secondary.head())
-                        else:
-                            st.warning(f"⚠️ Missing required columns: {required_cols - set(df_secondary.columns)}")
-
-                elif file_ext == "pdf":
-                    st.subheader("📄 Parsing PDF descriptors...")
-
-                    try:
-                        structured_data, csv_io = parse_nqf_pdf_format(Secondary_file)
-
-                        if structured_data and csv_io:
-                            csv_io.seek(0)
-                            csv_text = csv_io.read().decode("utf-8-sig")
-                            df_secondary = pd.read_csv(io.StringIO(csv_text))
-
-                            st.success(f"✅ Secondary file loaded successfully from PDF ({len(structured_data)} records).")
-
-                            if st.checkbox("🔍 Show Secondary file preview", value=False):
-                                st.dataframe(df_secondary.head())
-                        else:
-                            st.warning("⚠️ No valid descriptors found in PDF.")
-                    except Exception as e:
-                        st.error(f"❌ Could not process Secondary file: {e}")
-                else:
-                    st.error("❌ Unsupported file type.")
-            except Exception as e:
-                st.error(f"❌ Unexpected error: {e}")
+                        st.error("❌ Unsupported file type.")
+                except Exception as e:
+                    st.error(f"❌ Unexpected error: {e}")
         else:
             st.info("📥 Please upload a Secondary file.")
        
