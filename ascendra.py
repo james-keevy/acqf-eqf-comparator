@@ -140,16 +140,17 @@ def get_base64_image(image_path):
         b64_data = base64.b64encode(img_file.read()).decode()
     return f"data:image/png;base64,{b64_data}"
 
-# img_data = get_base64_image("ascendra_v5.png")
+# # img_data = get_base64_image("ascendra_v5.png")
 
-st.sidebar.markdown(
-    f"""
-    <div style="text-align: center;">
-        <img src="{img_data}" width="200">
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+# st.sidebar.markdown(
+#     f"""
+#     <div style="text-align: center;">
+#         <img src="{img_data}" width="200">
+#     </div>
+#     """,
+#     unsafe_allow_html=True
+# )
+
 if login_result is not None:
     name, auth_status, username = login_result
 
