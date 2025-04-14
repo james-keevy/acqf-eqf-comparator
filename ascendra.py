@@ -280,6 +280,17 @@ if login_result is not None:
             except Exception as e:
                 st.warning(f"⚠️ Could not compare files: {e}")
 
+        # Store uploaded files in st.session_state
+
+        Primary_file = st.file_uploader("Upload Primary Artefact", key="primary")
+        Secondary_file = st.file_uploader("Upload Secondary Artefact", key="secondary")
+
+        if Primary_file is not None:
+            st.session_state['Primary_file'] = Primary_file
+
+        if Secondary_file is not None:
+            st.session_state['Secondary_file'] = Secondary_file
+
         # Process Primary File
         if Primary_file:
             try:
