@@ -340,7 +340,7 @@ if login_result is not None:
                         st.warning("⚠️ Secondary CSV missing required columns.")
 
                 elif file_ext == "pdf":
-                    st.subheader("📄 Parsing NQF-style Level Descriptors from PDF")
+                    st.subheader("📄 Parsing Level Descriptors from PDF")
 
                     structured_data, csv_path = parse_secondary_pdf(Secondary_file, method="auto")
 
