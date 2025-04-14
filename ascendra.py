@@ -41,6 +41,65 @@ authenticator = stauth.Authenticate(
     cookie_expiry_days=1
 )
 
+# Parse oustide Streamlit flow 
+
+def parse_nqf_pdf_format(uploaded_file):
+    try:
+        uploaded_file.seek(0)
+        pdf_bytes = uploaded_file.read()
+
+        if isinstance(pdf_bytes, str):
+            raise TypeError("Expected bytes, got string.")
+
+        with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
+            text = "".join([page.get_text() for page in doc])
+    except Exception as e:
+        raise RuntimeError(f"Error while opening PDF: {e}")
+
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    lines = [line for line in lines if not re.match(r'^\d+$', line)]
+    level_pattern = re.compile(r'(?:^|\s)NQF Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
+    domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
+
+    current_level = None
+    current_domain = None
+    descriptor_accumulator = ""
+    data = []
+
+    for line in lines:
+        level_match = level_pattern.search(line)
+        domain_match = domain_pattern.match(line)
+
+        if level_match:
+            if current_level and current_domain and descriptor_accumulator:
+                data.append((current_level, current_domain, descriptor_accumulator.strip()))
+                descriptor_accumulator = ""
+            current_level = f"Level {level_match.group(1).capitalize()}"
+            current_domain = None
+
+        elif domain_match:
+            if current_level and current_domain and descriptor_accumulator:
+                data.append((current_level, current_domain, descriptor_accumulator.strip()))
+                descriptor_accumulator = ""
+            current_domain = domain_match.group(2).strip()
+
+        elif current_level and current_domain:
+            descriptor_accumulator += " " + line
+
+    if current_level and current_domain and descriptor_accumulator:
+        data.append((current_level, current_domain, descriptor_accumulator.strip()))
+
+    if not data:
+        raise RuntimeError("⚠️ No structured descriptors could be extracted from the PDF.")
+
+    temp_csv = tempfile.NamedTemporaryFile(delete=False, mode='w', newline='', suffix='.csv')
+    writer = csv.writer(temp_csv)
+    writer.writerow(["Level", "Domain", "Descriptor"])
+    writer.writerows(data)
+    temp_csv.close()
+
+    return data, temp_csv.name
+
 # 🔐 Show login widget
 login_result = authenticator.login(form_name='Login', location='main')
 
@@ -130,63 +189,6 @@ if login_result is not None:
                 
                 structured_data, csv_path = parse_nqf_pdf_format(Secondary_file) 
 
-            def parse_nqf_pdf_format(uploaded_file):
-                try:
-                    uploaded_file.seek(0)
-                    pdf_bytes = uploaded_file.read()
-
-                    if isinstance(pdf_bytes, str):
-                        raise TypeError("Expected bytes, got string.")
-
-                    with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
-                        text = "".join([page.get_text() for page in doc])
-                except Exception as e:
-                    raise RuntimeError(f"Error while opening PDF: {e}")
-
-                lines = [line.strip() for line in text.splitlines() if line.strip()]
-                lines = [line for line in lines if not re.match(r'^\d+$', line)]
-                level_pattern = re.compile(r'(?:^|\s)NQF Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
-                domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
-
-                current_level = None
-                current_domain = None
-                descriptor_accumulator = ""
-                data = []
-
-                for line in lines:
-                    level_match = level_pattern.search(line)
-                    domain_match = domain_pattern.match(line)
-
-                    if level_match:
-                        if current_level and current_domain and descriptor_accumulator:
-                            data.append((current_level, current_domain, descriptor_accumulator.strip()))
-                            descriptor_accumulator = ""
-                        current_level = f"Level {level_match.group(1).capitalize()}"
-                        current_domain = None
-
-                    elif domain_match:
-                        if current_level and current_domain and descriptor_accumulator:
-                            data.append((current_level, current_domain, descriptor_accumulator.strip()))
-                            descriptor_accumulator = ""
-                        current_domain = domain_match.group(2).strip()
-
-                    elif current_level and current_domain:
-                        descriptor_accumulator += " " + line
-
-                if current_level and current_domain and descriptor_accumulator:
-                    data.append((current_level, current_domain, descriptor_accumulator.strip()))
-
-                if not data:
-                    raise RuntimeError("⚠️ No structured descriptors could be extracted from the PDF.")
-
-                temp_csv = tempfile.NamedTemporaryFile(delete=False, mode='w', newline='', suffix='.csv')
-                writer = csv.writer(temp_csv)
-                writer.writerow(["Level", "Domain", "Descriptor"])
-                writer.writerows(data)
-                temp_csv.close()
-
-                return data, temp_csv.name
-
             try:
                 file_ext = Secondary_file.name.split(".")[-1].lower()
 
@@ -213,7 +215,6 @@ if login_result is not None:
                         structured_data, csv_io = parse_nqf_pdf_format(Secondary_file)
 
                         if structured_data and csv_io:
-                            csv_io.seek(0)
                             csv_text = csv_io.read().decode("utf-8-sig")
                             df_secondary = pd.read_csv(io.StringIO(csv_text))
 
