@@ -64,20 +64,30 @@ if login_result is not None:
         Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
         if Primary_file is not None:
             try:
-                Primary_file.seek(0)  # ✅ Safe now
-                content = Primary_file.read().decode("utf-8-sig")
+                Primary_file.seek(0)
+                content = Primary_file.read().decode("utf-8-sig", errors="ignore")
 
                 if not content.strip():
                     st.error("❌ Uploaded Primary file is empty.")
                 else:
+                    # Show first 10 lines as preview
                     st.code("\n".join(content.splitlines()[:10]), language="csv")
-                    Primary_file.seek(0)  # Reset again before actual parsing
-                    df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig")
-                    st.success("✅ Primary file loaded successfully.")
-                    st.dataframe(df_primary.head())
 
-            # except Exception as e:
-            #   st.error(f"❌ Could not process Primary file: {e}")
+                    # Rewind again for actual read
+                    Primary_file.seek(0)
+                    df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig", on_bad_lines="skip")
+
+                    # ✅ Check for required columns
+                    required_cols = {'Level', 'Domain', 'Descriptor'}
+                    if required_cols.issubset(df_primary.columns):
+                        st.success("✅ Primary file loaded successfully.")
+                        st.dataframe(df_primary.head())
+                    else:
+                        st.warning(f"⚠️ Missing required columns: {required_cols - set(df_primary.columns)}")
+
+            except Exception as e:
+                st.error(f"❌ Could not process Primary file: {e}")
+
         else:
             st.info("📥 Please upload a Primary framework file to continue.")
 
