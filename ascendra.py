@@ -203,7 +203,7 @@ if login_result is not None:
                     st.subheader("📄 Parsing PDF descriptors...")
 
                     try:
-                        structured_data, csv_io = parse_pdf_format(Secondary_file)
+                        structured_data, csv_io = parse_nqf_pdf_format(Secondary_file)
 
                         if structured_data and csv_io:
                             csv_io.seek(0)
@@ -417,7 +417,7 @@ if login_result is not None:
 
                 prompt = f"""
 
-                Compare the following qualification level descriptors and assess their equivalence.
+                Compare the following level descriptors and assess their equivalence.
 
                 Primary Level {selected_Primary_level}:
                 {Primary_text}
