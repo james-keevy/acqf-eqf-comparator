@@ -117,18 +117,23 @@ if login_result is not None:
 
         if Secondary_file is not None:
             def parse_pdf_format(file):
-                text = ""
                 try:
-                    with fitz.open(stream=file.read(), filetype="pdf") as doc:
-                        for page in doc:
-                            text += page.get_text()
+                    file.seek(0)  # 🔄 Reset pointer to beginning
+                    pdf_bytes = file.read()
+
+                    # 🔍 Confirm the type is bytes, or raise clear error
+                    if isinstance(pdf_bytes, str):
+                        raise TypeError("❌ pars_pdf_format expected bytes, but got string.")
+
+                    # ✅ Open PDF from byte stream
+                    with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
+                        text = "".join([page.get_text() for page in doc])
+
                 except Exception as e:
-                    raise RuntimeError(f"Error while parsing PDF: {e}")
+                    raise RuntimeError(f"Error while opening PDF: {e}")
 
-                # Normalize spacing
+                # === Your existing parsing logic ===
                 lines = [line.strip() for line in text.splitlines() if line.strip()]
-
-                # Setup regex patterns
                 level_pattern = re.compile(r'^Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
                 domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
 
@@ -139,37 +144,38 @@ if login_result is not None:
 
                 for line in lines:
                     level_match = level_pattern.match(line)
+                    domain_match = domain_pattern.match(line)
+
                     if level_match:
                         if current_level and current_domain and descriptor_accumulator:
                             data.append((current_level, current_domain, descriptor_accumulator.strip()))
                             descriptor_accumulator = ""
-                        current_level = "Level " + level_match.group(1).title()
-                        continue
+                        current_level = f"Level {level_match.group(1).capitalize()}"
+                        current_domain = None
 
-                    domain_match = domain_pattern.match(line)
-                    if domain_match:
-                        if current_domain and descriptor_accumulator:
+                    elif domain_match:
+                        if current_level and current_domain and descriptor_accumulator:
                             data.append((current_level, current_domain, descriptor_accumulator.strip()))
                             descriptor_accumulator = ""
                         current_domain = domain_match.group(2).strip()
-                        descriptor_accumulator = line.split("in respect of", 1)[-1].strip()
-                    else:
-                        descriptor_accumulator += " " + line.strip()
+
+                    elif current_level and current_domain:
+                        descriptor_accumulator += " " + line
 
                 if current_level and current_domain and descriptor_accumulator:
                     data.append((current_level, current_domain, descriptor_accumulator.strip()))
 
                 if not data:
-                    return {}, None
+                    raise RuntimeError("⚠️ No structured descriptors could be extracted from the PDF.")
 
-                output_csv = BytesIO()
-                writer = csv.writer(output_csv)
-                writer.writerow(['Level', 'Domain', 'Descriptor'])
-                for level, domain, descriptor in data:
-                    writer.writerow([level, domain, descriptor])
-                output_csv.seek(0)
+                # ✅ Save to CSV
+                temp_csv = tempfile.NamedTemporaryFile(delete=False, mode='w', newline='', suffix='.csv')
+                writer = csv.writer(temp_csv)
+                writer.writerow(["Level", "Domain", "Descriptor"])
+                writer.writerows(data)
+                temp_csv.close()
 
-                return data, output_csv
+                return data, temp_csv.name
 
             try:
                 file_ext = Secondary_file.name.split(".")[-1].lower()
@@ -349,7 +355,7 @@ if login_result is not None:
                         Secondary_file.seek(0)
 
                         # ✅ Correct parser name
-                        structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
+                        structured_data, csv_path = parse_pdf_format(Secondary_file)
 
                         if structured_data:
                             st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
