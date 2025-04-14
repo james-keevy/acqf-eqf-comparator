@@ -457,12 +457,6 @@ if login_result is not None:
                 for (level, domain), descriptor in grouped.items():
                     Secondary_levels.setdefault(level, {})[domain] = descriptor
 
-                # ✅ Add Level (All Domains) entries
-                level_grouped = df_secondary.groupby('Level')['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
-                for level, descriptors in level_grouped.items():
-                    level_key = f"{level} (All Domains)"
-                    Secondary_levels[level_key] = {"Combined": descriptors}
-
             else:
                 st.warning("⚠️ Secondary CSV must include 'Level', 'Domain', and 'Descriptor' columns.") 
             
