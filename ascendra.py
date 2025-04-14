@@ -355,7 +355,7 @@ if login_result is not None:
                     st.subheader("📄 Parsing Level Descriptors from PDF")
 
                     # ✅ Always reset file pointer before reading
-                    file.seek(0)
+                    Uploaded_file.seek(0)
 
                     # ✅ Correct parser name
                     structured_data, csv_path = parse_pdf_format(Secondary_file)
