@@ -516,19 +516,6 @@ if login_result is not None:
             elif Secondary_file and not Secondary_levels:
                 st.warning("⚠️ No valid Secondary descriptors found.")
         
-            # Upload primary and secondary artefacts ---
-            Primary_file = st.file_uploader("Upload Primary Artefact", key="primary")
-            Secondary_file = st.file_uploader("Upload Secondary Artefact", key="secondary")
-
-            # Parse and store uploaded files ---
-            if Primary_file:
-                st.session_state['Primary_file'] = Primary_file
-                # Parse Primary_file here (CSV/PDF)
-
-            if Secondary_file:
-                st.session_state['Secondary_file'] = Secondary_file
-                # Parse Secondary_file here (CSV/PDF)
-
             # # Show taxonomy selector once both files are uploaded and parsed ---
             # if 'Primary_file' in st.session_state and 'Secondary_file' in st.session_state:
             #     if st.session_state['Primary_file'] and st.session_state['Secondary_file']:
