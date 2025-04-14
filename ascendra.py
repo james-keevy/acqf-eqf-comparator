@@ -116,12 +116,12 @@ if login_result is not None:
       
         st.file_uploader("Upload secondary artefact (CSV or PDF formats)", type=["csv", "pdf"])
 
-        # DEBUG
         if Secondary_file is not None:
+            
+            # DEBUG
             st.write("🔍 Type of Secondary_file before parsing:", type(Secondary_file))
             structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
 
-        if Secondary_file is not None:
             def parse_nqf_pdf_format(file):
                 try:
                     Secondary_file.seek(0)  # 🔄 Reset pointer to beginning
