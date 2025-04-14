@@ -288,32 +288,46 @@ if login_result is not None:
                 descriptor_accumulator = ""
                 data = []
 
+                #DEBUG
+
+                word_to_num = {
+                    "One": "1", "Two": "2", "Three": "3", "Four": "4", "Five": "5",
+                    "Six": "6", "Seven": "7", "Eight": "8", "Nine": "9", "Ten": "10"
+                }
+
                 for line in lines:
                     level_match = level_pattern.search(line)
                     domain_match = domain_pattern.match(line)
 
                     if level_match:
-                        level_number = level_match.group(1).capitalize()
-                        print(f"📘 Found Level: Level {level_number}")
+                        level_word = level_match.group(1).capitalize()
+                        current_level = word_to_num.get(level_word, level_word)
+                        current_domain = None
+                        print(f"📘 Matched Level: {current_level} (from '{line}')")
+
                         if current_level and current_domain and descriptor_accumulator:
                             data.append((current_level, current_domain, descriptor_accumulator.strip()))
                             descriptor_accumulator = ""
-                        current_level = f"{level_number}"
-                        current_domain = None
 
                     elif domain_match:
-                        domain_text = domain_match.group(2).strip()
-                        print(f"📗 Found Domain: {domain_text}")
+                        current_domain = domain_match.group(2).strip()
+                        print(f"📗 Matched Domain: {current_domain} (from '{line}')")
+
                         if current_level and current_domain and descriptor_accumulator:
                             data.append((current_level, current_domain, descriptor_accumulator.strip()))
                             descriptor_accumulator = ""
-                        current_domain = domain_text
 
                     elif current_level and current_domain:
                         descriptor_accumulator += " " + line
 
+                # Final flush
                 if current_level and current_domain and descriptor_accumulator:
                     data.append((current_level, current_domain, descriptor_accumulator.strip()))
+
+                print(f"✅ Extracted {len(data)} descriptor entries.")
+
+                #######################
+
 
                 if not data:
                     print("⚠️ No descriptors were extracted. Check if regex patterns are matching.")
