@@ -20,10 +20,6 @@ Secondary_text = ""
 # Create a login screen for your public app (simulating private access)
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
-# --- File Upload Section ---
-Primary_file = st.file_uploader("📤 Upload Primary Artefact", type=["csv", "pdf"])
-Secondary_file = st.file_uploader("📥 Upload Secondary Artefact", type=["csv", "pdf"])
-
 # Hashed password generated earlier
 hashed_passwords = ['$2b$12$2Myv8E.J5lIbWN5aThrBDOeGthVRDw4e7j38g.fDTOmiy.VvKRCZa']  
 
