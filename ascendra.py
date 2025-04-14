@@ -66,30 +66,28 @@ if login_result is not None:
         if Primary_file is not None:
             try:
                 # Read the file once
-                bytes_data = Primary_file.getvalue()  # ✅ This is the safest way in Streamlit
+                bytes_data = Primary_file.getvalue()
                 content = bytes_data.decode("utf-8-sig", errors="ignore")
 
                 if not content.strip():
                     st.error("❌ Uploaded Primary file is empty.")
                 else:
-                    # Show preview
-                    st.code("\n".join(content.splitlines()[:10]), language="csv")
-
-                    # Create a clean buffer for pandas to read from
                     file_buffer = io.StringIO(content)
                     df_primary = pd.read_csv(file_buffer, on_bad_lines="skip")
 
-                    # Check for expected structure
                     required_cols = {"Level", "Domain", "Descriptor"}
                     if required_cols.issubset(df_primary.columns):
                         st.success("✅ Primary file loaded successfully.")
-                        st.dataframe(df_primary.head())
+
+                        # ✅ Preview toggle
+                        if st.checkbox("🔍 Show Primary file preview", value=False):
+                            st.dataframe(df_primary.head())
+                            
                     else:
                         st.warning(f"⚠️ Missing required columns: {required_cols - set(df_primary.columns)}")
 
             except Exception as e:
                 st.error(f"❌ Could not process Primary file: {e}")
-
         else:
             st.info("📥 Please upload a Primary framework file to continue.")
 
@@ -541,4 +539,9 @@ model of skills acquisition."""
             st.error("Incorrect username or password")
         elif auth_status is None:
             st.warning("Please enter your credentials")
+
+
+
+
+            
 
