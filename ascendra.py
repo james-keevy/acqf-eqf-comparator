@@ -209,11 +209,11 @@ if login_result is not None:
                             st.warning("⚠️ No valid descriptors found in PDF.")
 
                     except Exception as e:
-                        st.error(f"❌ Could not process Secondary file: {e}")
-
+                        st.error(f"❌ Could not process Secondary file: {e}")           
         else:
             st.info("📥 Please upload a Secondary file.")
 
+        
         # Process Primary File
         if Primary_file:
             try:
