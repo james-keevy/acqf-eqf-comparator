@@ -216,7 +216,15 @@ if login_result is not None:
         
         else:
             st.info("📥 Please upload a secondary file to continue.")
-        
+        if Primary_file and Secondary_file:
+            try:
+                # Compare byte content directly
+                if Primary_file.getvalue() == Secondary_file.getvalue():
+                    st.error("⚠️ You’ve uploaded the same file for both Primary and Secondary. Please upload two different files.")
+                    st.stop()  # 🚫 Prevents further execution
+            except Exception as e:
+                st.warning(f"⚠️ Could not compare files: {e}")
+
         # Process Primary File
         if Primary_file:
             try:
