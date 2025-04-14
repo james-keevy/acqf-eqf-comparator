@@ -358,6 +358,7 @@ if login_result is not None:
 
                 if file_ext == "csv":
                     df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
+                    
                     if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
                         grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
                         for (level, domain), descriptor in grouped.items():
@@ -416,8 +417,9 @@ if login_result is not None:
         # If all inputs are available
         if api_key and Primary_file and Secondary_file:
             client = OpenAI(api_key=api_key)
-                              
+                             
         # ✅ Build a dictionary of levels to their descriptors with "Level X" format
+        
         Primary_levels = {}
 
         if 'df_primary' in locals() and isinstance(df_primary, pd.DataFrame):
@@ -440,9 +442,9 @@ if login_result is not None:
             else:
                 st.warning("⚠️ No valid Primary descriptors found.")
                 
-            if Secondary_levels:
+            if Secondary_file and Secondary_levels:
                 selected_Secondary_level = st.selectbox("Select Secondary Level", sorted(Secondary_levels.keys()))
-            else:
+            elif Secondary_file and not Secondary_levels:
                 st.warning("⚠️ No valid Secondary descriptors found.")
 
             # Compare levels
