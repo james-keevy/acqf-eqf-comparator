@@ -19,7 +19,7 @@ Primary_text = ""
 Secondary_text = ""
 
 # Create a login screen for your public app (simulating private access)
-st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
+st.set_page_config(page_title="Comparing learning outcomes using genAI", layout="centered")
 
 # Show logo in sidebar
 def get_base64_image(image_path):
@@ -27,7 +27,6 @@ def get_base64_image(image_path):
         b64_data = base64.b64encode(img_file.read()).decode()
     return f"data:image/png;base64,{b64_data}"
 
-st.sidebar.markdown("🧪 Logo 1")
 img_data = get_base64_image("ascendra_v5.png")
 
 st.sidebar.markdown(
