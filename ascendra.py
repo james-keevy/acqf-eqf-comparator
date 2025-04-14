@@ -74,7 +74,7 @@ def parse_nqf_pdf_format(uploaded_file):
             if current_level and current_domain and descriptor_accumulator:
                 data.append((current_level, current_domain, descriptor_accumulator.strip()))
                 descriptor_accumulator = ""
-            current_level = f"Level {level_match.group(1).capitalize()}"
+            current_level = f"{level_match.group(1).capitalize()}"
             current_domain = None
 
         elif domain_match:
@@ -279,9 +279,6 @@ if login_result is not None:
                 descriptor_accumulator = ""
                 data = []
 
-                # 🐞 Debug log
-                print("🔍 Starting descriptor extraction...")
-
                 for line in lines:
                     level_match = level_pattern.search(line)
                     domain_match = domain_pattern.match(line)
@@ -292,7 +289,7 @@ if login_result is not None:
                         if current_level and current_domain and descriptor_accumulator:
                             data.append((current_level, current_domain, descriptor_accumulator.strip()))
                             descriptor_accumulator = ""
-                        current_level = f"Level {level_number}"
+                        current_level = f"{level_number}"
                         current_domain = None
 
                     elif domain_match:
