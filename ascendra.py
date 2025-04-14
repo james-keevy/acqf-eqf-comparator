@@ -517,36 +517,36 @@ if login_result is not None:
                 st.warning("⚠️ No valid Secondary descriptors found.")
         
             # # Show taxonomy selector once both files are uploaded and parsed ---
-            # if 'Primary_file' in st.session_state and 'Secondary_file' in st.session_state:
-            #     if st.session_state['Primary_file'] and st.session_state['Secondary_file']:
+            if 'Primary_file' in st.session_state and 'Secondary_file' in st.session_state:
+                if st.session_state['Primary_file'] and st.session_state['Secondary_file']:
                     
-            #         st.markdown("### 🧠 Comparative Framework Options")
-            #         st.markdown("If you would like to use a specific taxonomy or classification system as part of the comparative process, tick one or more of the boxes below:")
+                    st.markdown("### 🧠 Comparative Framework Options")
+                    st.markdown("If you would like to use a specific taxonomy or classification system as part of the comparative process, tick one or more of the boxes below:")
 
-            #         taxonomy_options = [
-            #             "Bloom’s taxonomy for knowledge",
-            #             "Structure of the Observed Learning Outcome (SOLO) taxonomy",
-            #             "Dreyfus model of skills acquisition",
-            #             "ISCED (International Standard Classification of Education)",
-            #             "ISCO (International Standard Classification of Occupations)",
-            #             "O*NET (Occupational Information Network)",
-            #             "OFO (Organising Framework for Occupations - South Africa)"
-            #         ]
+                    taxonomy_options = [
+                        "Bloom’s taxonomy for knowledge",
+                        "Structure of the Observed Learning Outcome (SOLO) taxonomy",
+                        "Dreyfus model of skills acquisition",
+                        "ISCED (International Standard Classification of Education)",
+                        "ISCO (International Standard Classification of Occupations)",
+                        "O*NET (Occupational Information Network)",
+                        "OFO (Organising Framework for Occupations - South Africa)"
+                    ]
 
-            #         selected_taxonomies = st.multiselect(
-            #             label="Select classification frameworks to apply:",
-            #             options=taxonomy_options
-            #         )
+                    selected_taxonomies = st.multiselect(
+                        label="Select classification frameworks to apply:",
+                        options=taxonomy_options
+                    )
 
-            #         st.session_state['selected_taxonomies'] = selected_taxonomies
+                    st.session_state['selected_taxonomies'] = selected_taxonomies
 
-            #         # 🔒 Require taxonomy before running comparison
-            #         if selected_taxonomies:
-            #             if st.button("🔍 Run Comparison"):
-            #                 st.success("Proceeding with comparison...")
-            #                 # 🚀 Insert your GPT comparison logic here, passing selected_taxonomies
-            #         else:
-            #                     st.warning("⚠️ Please select at least one taxonomy before continuing.")
+                    # 🔒 Require taxonomy before running comparison
+                    if selected_taxonomies:
+                        if st.button("🔍 Run Comparison"):
+                            st.success("Proceeding with comparison...")
+                            # 🚀 Insert your GPT comparison logic here, passing selected_taxonomies
+                    else:
+                                st.warning("⚠️ Please select at least one taxonomy before continuing.")
                                 
             # Compare levels
           
