@@ -384,6 +384,19 @@ if login_result is not None:
                                 # ✅ Automatically load parsed CSV into df_secondary
                                 df_secondary = pd.read_csv(csv_path)
 
+                                if 'df_secondary' in locals() and not df_secondary.empty:
+                                    secondary_levels_list = sorted(df_secondary['Level'].dropna().unique().tolist())
+
+                                    if 'selected_Secondary_level' not in st.session_state:
+                                        st.session_state.selected_Secondary_level = secondary_levels_list[0] if secondary_levels_list else None
+
+                                    st.session_state.selected_Secondary_level = st.selectbox(
+                                        "Select Secondary Level",
+                                        secondary_levels_list,
+                                        index=secondary_levels_list.index(st.session_state.selected_Secondary_level)
+                                        if st.session_state.selected_Secondary_level in secondary_levels_list else 0
+                                    )
+
                                 # ✅ Normalize level format
                                 df_secondary['Level'] = df_secondary['Level'].apply(lambda x: f"Level {int(x)}")
 
