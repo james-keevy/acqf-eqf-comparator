@@ -20,10 +20,6 @@ Secondary_text = ""
 # Create a login screen for your public app (simulating private access)
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
-# --- File Upload Section ---
-Primary_file = st.file_uploader("📤 Upload Primary Artefact", type=["csv", "pdf"])
-Secondary_file = st.file_uploader("📥 Upload Secondary Artefact", type=["csv", "pdf"])
-
 # Hashed password generated earlier
 hashed_passwords = ['$2b$12$2Myv8E.J5lIbWN5aThrBDOeGthVRDw4e7j38g.fDTOmiy.VvKRCZa']  
 
@@ -185,7 +181,7 @@ if login_result is not None:
             unsafe_allow_html=True
         )
 
-        # Primary_file = st.file_uploader("Upload primary artefact (CSV format)", type=["csv"])
+        Primary_file = st.file_uploader("Upload primary artefact (CSV format)", type=["csv"])
 
         if Primary_file is not None:
             try:
@@ -215,7 +211,7 @@ if login_result is not None:
         else:
             st.info("📥 Please upload a primary file to continue.")
 
-        # Secondary_file = st.file_uploader("Upload secondary artefact (PDF or CSV)", type=["pdf", "csv"])
+        Secondary_file = st.file_uploader("Upload secondary artefact (PDF or CSV)", type=["pdf", "csv"])
 
         if Secondary_file is not None:
             uploaded_file = Secondary_file  # ✅ Protect the original upload object
