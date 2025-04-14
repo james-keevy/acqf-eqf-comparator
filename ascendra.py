@@ -62,22 +62,25 @@ if login_result is not None:
 
         # File upload
         Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
+
         if Primary_file is not None:
             try:
-                # Create an in-memory copy of the file
-                bytes_data = Primary_file.read()
+                # Read the file once
+                bytes_data = Primary_file.getvalue()  # ✅ This is the safest way in Streamlit
                 content = bytes_data.decode("utf-8-sig", errors="ignore")
 
                 if not content.strip():
                     st.error("❌ Uploaded Primary file is empty.")
                 else:
+                    # Show preview
                     st.code("\n".join(content.splitlines()[:10]), language="csv")
 
-                    # Use BytesIO to simulate a fresh file for pandas
+                    # Create a clean buffer for pandas to read from
                     file_buffer = io.StringIO(content)
-                    df_primary = pd.read_csv(file_buffer, encoding="utf-8-sig", on_bad_lines="skip")
+                    df_primary = pd.read_csv(file_buffer, on_bad_lines="skip")
 
-                    required_cols = {'Level', 'Domain', 'Descriptor'}
+                    # Check for expected structure
+                    required_cols = {"Level", "Domain", "Descriptor"}
                     if required_cols.issubset(df_primary.columns):
                         st.success("✅ Primary file loaded successfully.")
                         st.dataframe(df_primary.head())
