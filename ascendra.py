@@ -64,19 +64,18 @@ if login_result is not None:
         st.markdown(
             """
             <style>
-            /* 🔷 File uploader base style */
-            .stFileUploader > div:first-child {
-                background-color: #f5faff;   /* Base background */
-                border: 2px solid #2c6ebb;   /* Base border */
+            /* 🎯 Target file uploader container */
+            div[data-testid="stFileUploader"] > div {
+                background-color: #f5faff !important;
+                border: 2px solid #2c6ebb !important;
                 border-radius: 10px;
                 padding: 10px;
                 transition: all 0.3s ease;
             }
 
-            /* 🔵 Hover effect */
-            .stFileUploader > div:first-child:hover {
-                background-color: #e6f0ff;   /* Lighten background on hover */
-                border-color: #1a5fb4;       /* Stronger blue on hover */
+            div[data-testid="stFileUploader"] > div:hover {
+                background-color: #e6f0ff !important;
+                border-color: #1a5fb4 !important;
             }
             </style>
             """,
