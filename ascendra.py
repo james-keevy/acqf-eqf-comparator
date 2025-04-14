@@ -282,9 +282,6 @@ if login_result is not None:
 
         # Store uploaded files in st.session_state
 
-        Primary_file = st.file_uploader("Upload Primary Artefact", key="primary")
-        Secondary_file = st.file_uploader("Upload Secondary Artefact", key="secondary")
-
         if Primary_file is not None:
             st.session_state['Primary_file'] = Primary_file
 
@@ -476,6 +473,9 @@ if login_result is not None:
         if "results" not in st.session_state:
             st.session_state.results = []
 
+        Primary_file = st.file_uploader("Upload Primary Artefact", key="primary")
+        Secondary_file = st.file_uploader("Upload Secondary Artefact", key="secondary")
+        
         # If all inputs are available
         if api_key and Primary_file and Secondary_file:
             client = OpenAI(api_key=api_key)
