@@ -36,36 +36,6 @@ authenticator = stauth.Authenticate(
     cookie_expiry_days=1
 )
 
-#  Define the unified PDF parser
-def parse_secondary_pdf(file, method="auto"):
-    """
-    Unified handler for parsing secondary PDF files using one of two methods:
-    - 'nqf': uses parse_nqf_pdf_format
-    - 'structured': uses extract_structured_from_pdf_to_csv
-    - 'auto': tries 'nqf' first, then falls back to 'structured' if needed
-    Returns:
-        (structured_data or dict, csv_path or None)
-    """
-    try:
-        if method == "nqf":
-            return parse_nqf_pdf_format(file)
-        elif method == "structured":
-            return extract_structured_from_pdf_to_csv(file)
-        elif method == "auto":
-            try:
-                data, csv_path = parse_nqf_pdf_format(file)
-                if data:
-                    return data, csv_path
-            except Exception as e:
-                st.info("🔁 Falling back to structured PDF parser...")
-                pass
-            return extract_structured_from_pdf_to_csv(file)
-        else:
-            raise ValueError("Invalid parsing method specified.")
-    except Exception as e:
-        st.error(f"❌ PDF parsing failed: {e}")
-        return {}, None
-
 # 🔐 Show login widget
 login_result = authenticator.login(form_name='Login', location='main')
 
@@ -105,6 +75,36 @@ if login_result is not None:
         # File upload widgets
         Primary_file = st.file_uploader("📥 Upload a *Primary* artefact (CSV or PDF)", type=["csv", "pdf"])
         Secondary_file = st.file_uploader("📥 Upload a *Secondary* artefact (CSV or PDF)", type=["csv", "pdf"])
+
+        #  Define the unified PDF parser
+        def parse_secondary_pdf(file, method="auto"):
+            """
+            Unified handler for parsing secondary PDF files using one of two methods:
+            - 'nqf': uses parse_nqf_pdf_format
+            - 'structured': uses extract_structured_from_pdf_to_csv
+            - 'auto': tries 'nqf' first, then falls back to 'structured' if needed
+            Returns:
+                (structured_data or dict, csv_path or None)
+            """
+            try:
+                if method == "nqf":
+                    return parse_nqf_pdf_format(file)
+                elif method == "structured":
+                    return extract_structured_from_pdf_to_csv(file)
+                elif method == "auto":
+                    try:
+                        data, csv_path = parse_nqf_pdf_format(file)
+                        if data:
+                            return data, csv_path
+                    except Exception as e:
+                        st.info("🔁 Falling back to structured PDF parser...")
+                        pass
+                    return extract_structured_from_pdf_to_csv(file)
+                else:
+                    raise ValueError("Invalid parsing method specified.")
+            except Exception as e:
+                st.error(f"❌ PDF parsing failed: {e}")
+                return {}, None
 
         # Initialize variables
         Primary_text = ""
