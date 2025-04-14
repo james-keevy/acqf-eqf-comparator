@@ -145,13 +145,6 @@ if login_result is not None:
             "Other"
         ]
 
-        # Secondary artefact type
-        st.session_state["secondary_artefact_type"] = st.selectbox(
-            "Select the type of the **Secondary** artefact:",
-            artefact_types,
-            key="secondary_artefact_type_selectbox"
-        )
-
         # File upload
         st.markdown(
             """
@@ -254,6 +247,12 @@ if login_result is not None:
             except Exception as e:
                 st.error(f"❌ Unexpected error while handling Secondary file: {e}")
         else:
+            # Secondary artefact type
+            st.session_state["secondary_artefact_type"] = st.selectbox(
+                "Select the type of the **Secondary** artefact:",
+                artefact_types,
+                key="secondary_artefact_type_selectbox"
+            )
             st.info("📥 Please upload a secondary file to continue.")
 
         if Primary_file and Secondary_file:
