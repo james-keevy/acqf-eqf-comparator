@@ -129,7 +129,7 @@ if login_result is not None:
                 lines = [line.strip() for line in text.splitlines() if line.strip()]
 
                 # Setup regex patterns
-                level_pattern = re.compile(r'^NQF Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
+                level_pattern = re.compile(r'^Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
                 domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
 
                 current_level = None
@@ -143,7 +143,7 @@ if login_result is not None:
                         if current_level and current_domain and descriptor_accumulator:
                             data.append((current_level, current_domain, descriptor_accumulator.strip()))
                             descriptor_accumulator = ""
-                        current_level = "NQF Level " + level_match.group(1).title()
+                        current_level = "Level " + level_match.group(1).title()
                         continue
 
                     domain_match = domain_pattern.match(line)
@@ -251,7 +251,7 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
 
             # ✅ Reusable function: Extract structured data and write to CSV
-            def parse_nqf_pdf_format(file):
+            def parse_pdf_format(file):
                 try:
                     file.seek(0)  # Ensure pointer at start
                     pdf_bytes = file.read()
@@ -268,7 +268,7 @@ if login_result is not None:
 
                 # Continue with the parsing logic...
                 lines = [line.strip() for line in text.splitlines() if line.strip()]
-                level_pattern = re.compile(r'^NQF Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
+                level_pattern = re.compile(r'^Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
                 domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
 
                 current_level = None
