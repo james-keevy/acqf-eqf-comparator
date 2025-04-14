@@ -210,7 +210,10 @@ if login_result is not None:
 
                     except Exception as e:
                         st.error(f"❌ Could not process Secondary file: {e}")
-
+            
+            except Exception as e:
+                st.error(f"❌ Unexpected error while loading Secondary file: {e}")
+        
         else:
             st.info("📥 Please upload a Secondary file.")
         
