@@ -166,8 +166,21 @@ if login_result is not None:
             """,
             unsafe_allow_html=True
         )
-
-        Primary_file = st.file_uploader("Upload primary artefact (CSV format)", type=["csv"])
+        # --- 📦 Primary File Section Box ---
+        with st.container():
+            st.markdown(
+                """
+                <div style="border: 1px solid #D3D3D3; border-radius: 10px; padding: 15px; background-color: #f9f9f9;">
+                <h4 style="color: #333333;">📤 Primary File Upload</h4>
+                """,
+                unsafe_allow_html=True
+            )
+        Primary_file = st.file_uploader("Upload primary artefact (CSV format)", type=["csv"])# Primary artefact type
+        st.session_state["primary_artefact_type"] = st.selectbox(
+            "Select the type of the **Primary** artefact:",
+            artefact_types,
+            key="primary_artefact_type_selectbox"
+    ) 
 
         if Primary_file is not None:
             try:
@@ -194,25 +207,25 @@ if login_result is not None:
 
             except Exception as e:
                 st.error(f"❌ Could not process Primary file: {e}")
-        else: 
-            # --- 📦 Primary File Section Box ---
-            with st.container():
-                st.markdown(
-                    """
-                    <div style="border: 1px solid #D3D3D3; border-radius: 10px; padding: 15px; background-color: #f9f9f9;">
-                    <h4 style="color: #333333;">📤 Primary File Upload</h4>
-                    """,
-                    unsafe_allow_html=True
-                )
-            # Primary artefact type
-            st.session_state["primary_artefact_type"] = st.selectbox(
-                "Select the type of the **Primary** artefact:",
-                artefact_types,
-                key="primary_artefact_type_selectbox"
-        )           
+        else:           
             st.info("📥 Please upload a primary file to continue.")
 
+        # --- 📦 Secondary File Section Box ---
+        with st.container():
+            st.markdown(
+                """
+                <div style="border: 1px solid #D3D3D3; border-radius: 10px; padding: 15px; background-color: #f9f9f9;">
+                <h4 style="color: #333333;">📥 Secondary File Upload</h4>
+                """,
+                unsafe_allow_html=True
+            )
         Secondary_file = st.file_uploader("Upload secondary artefact (PDF or CSV)", type=["pdf", "csv"])
+        # Secondary artefact type
+        st.session_state["secondary_artefact_type"] = st.selectbox(
+            "Select the type of the **Secondary** artefact:",
+            artefact_types,
+            key="secondary_artefact_type_selectbox"
+        )
 
         if Secondary_file is not None:
             uploaded_file = Secondary_file  # ✅ Protect the original upload object
@@ -256,21 +269,6 @@ if login_result is not None:
             except Exception as e:
                 st.error(f"❌ Unexpected error while handling Secondary file: {e}")
         else:
-            # --- 📦 Secondary File Section Box ---
-            with st.container():
-                st.markdown(
-                    """
-                    <div style="border: 1px solid #D3D3D3; border-radius: 10px; padding: 15px; background-color: #f9f9f9;">
-                    <h4 style="color: #333333;">📥 Secondary File Upload</h4>
-                    """,
-                    unsafe_allow_html=True
-                )
-            # Secondary artefact type
-            st.session_state["secondary_artefact_type"] = st.selectbox(
-                "Select the type of the **Secondary** artefact:",
-                artefact_types,
-                key="secondary_artefact_type_selectbox"
-            )
             st.info("📥 Please upload a secondary file to continue.")
         
         if Primary_file and Secondary_file:
