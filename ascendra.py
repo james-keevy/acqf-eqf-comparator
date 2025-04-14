@@ -187,7 +187,6 @@ if login_result is not None:
 
                 return data, temp_csv.name
 
-
             try:
                 file_ext = Secondary_file.name.split(".")[-1].lower()
 
