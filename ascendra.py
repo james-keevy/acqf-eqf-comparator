@@ -551,13 +551,13 @@ if login_result is not None:
 
                     st.session_state['selected_taxonomies'] = selected_taxonomies
 
-                    # 🔒 Require taxonomy before running comparison
-                    if selected_taxonomies:
-                        if st.button("🔍 Run Comparison"):
-                            st.success("Proceeding with comparison...")
-                            # 🚀 Insert your GPT comparison logic here, passing selected_taxonomies
-                    else:
-                                st.warning("⚠️ Please select at least one taxonomy before continuing.")
+                    # # 🔒 Require taxonomy before running comparison
+                    # if selected_taxonomies:
+                    #     if st.button("🔍 Run Comparison"):
+                    #         st.success("Proceeding with comparison...")
+                    #         # 🚀 Insert your GPT comparison logic here, passing selected_taxonomies
+                    # else:
+                    #             st.warning("⚠️ Please select at least one taxonomy before continuing.")
                                 
             # Compare levels
           
