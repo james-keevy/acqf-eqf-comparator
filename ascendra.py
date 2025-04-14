@@ -274,8 +274,8 @@ if login_result is not None:
 
                 # Continue with the parsing logic...
                 lines = [line.strip() for line in text.splitlines() if line.strip()]
-                level_pattern = re.compile(r'^Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
-                domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
+                level_pattern = re.compile(r'\bNQF\s+Level\s+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
+                domain_pattern = re.compile(r'^([a-jA-J])\.\s+(.*)', re.IGNORECASE)
 
                 current_level = None
                 current_domain = None
