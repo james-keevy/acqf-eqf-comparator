@@ -271,7 +271,7 @@ if login_result is not None:
                 lines = [line.strip() for line in text.splitlines() if line.strip()]
                 lines = [line for line in lines if not re.match(r'^\d+$', line)]
 
-                level_pattern = re.compile(r'\bNQF\s+Level\s+(1|2|3|4|5|6|7|8|9|10)', re.IGNORECASE)
+                level_pattern = re.compile(r'\bNQF\s+Level\s+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
                 domain_pattern = re.compile(r'^([a-jA-J])\.\s+(.*)', re.IGNORECASE)
 
                 current_level = None
@@ -344,20 +344,9 @@ if login_result is not None:
                 if file_ext == "csv":
                     df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
                     if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
-                        
-                        word_to_num = {
-                            "One": "1", "Two": "2", "Three": "3", "Four": "4", "Five": "5",
-                            "Six": "6", "Seven": "7", "Eight": "8", "Nine": "9", "Ten": "10"
-                        }
-
-                        Secondary_levels = {}
-
                         grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
                         for (level, domain), descriptor in grouped.items():
-                            # Assume level is like "Level One"
-                            word = level.replace("Level", "").strip().capitalize()
-                            digit = word_to_num.get(word, word)  # fallback to original if not found
-                            Secondary_levels.setdefault(digit, {})[domain] = descriptor
+                            Secondary_levels.setdefault(level, {})[domain] = descriptor
                     else:
                         st.warning("⚠️ Secondary CSV missing required columns.")
 
@@ -401,17 +390,9 @@ if login_result is not None:
             Primary_levels = {}
             if 'df_primary' in locals() and isinstance(df_primary, pd.DataFrame):
                 if all(col in df_primary.columns for col in ['Level', 'Domain', 'Descriptor']):
-                    word_to_num = {
-                            "One": "1", "Two": "2", "Three": "3", "Four": "4", "Five": "5",
-                            "Six": "6", "Seven": "7", "Eight": "8", "Nine": "9", "Ten": "10"
-                        }
-                    Secondary_levels = {}
-                    grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                    grouped = df_primary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
                     for (level, domain), descriptor in grouped.items():
-                        # Assume level is like "Level One"
-                        word = level.replace("Level", "").strip().capitalize()
-                        digit = word_to_num.get(word, word)  # fallback to original if not found
-                        Secondary_levels.setdefault(digit, {})[domain] = descriptor
+                        Primary_levels.setdefault(level, {})[domain] = descriptor
                 else:
                     st.warning("⚠️ Primary CSV must include 'Level', 'Domain', and 'Descriptor' columns.")
 
