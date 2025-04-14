@@ -401,26 +401,25 @@ if login_result is not None:
 
                 prompt = f"""
 
-Compare the following qualification level descriptors and assess their equivalence.
+                Compare the following qualification level descriptors and assess their equivalence.
 
-Primary Level {selected_Primary_level}:
-{Primary_text}
+                Primary Level {selected_Primary_level}:
+                {Primary_text}
 
-Secondary Level {selected_Secondary_level}:
-{Secondary_text}
+                Secondary Level {selected_Secondary_level}:
+                {Secondary_text}
 
-Compare the descriptors. Are these levels equivalent? Highlight similarities and differences. 
+                Compare the descriptors. Are these levels equivalent? Highlight similarities and differences. 
 
-Suggest the most appropriate Secondary level match.
+                Suggest the most appropriate Secondary level match.
 
-Provide a similarity score out of 100. Write this as a separate score below your response. 
+                Provide a similarity score out of 100. Write this as a separate score below your response. 
 
-Add a visual depiction with one row of 10 circles sized double the hieght of the text. Fill the circles in red to match the score out of 100 proportionally, starting from the left. Keep the other circles unfilled.
+                Add a visual depiction with one row of 10 circles sized double the hieght of the text. Fill the circles in red to match the score out of 100 proportionally, starting from the left. Keep the other circles unfilled.
 
-Do not use a heading for the visual depiction. 
+                Do not use a heading for the visual depiction. 
 
-"""
-
+                """
                 with st.spinner("Asking GPT-4o..."):
                     try:
                         response = client.chat.completions.create(
@@ -432,7 +431,7 @@ Do not use a heading for the visual depiction.
                                 {
                                     "role": "system",
                                     "content": """You are an expert in qualifications frameworks and international education systems. You understand learning outcomes and domain-based comparisons. You are able to compare the learning outcomes in different artefacts (such as level descriptors, qualifications, curricula, and job descriptions). You are well versed in the application of taxonomies, such as the revised Bloom taxonomy for knowledge, the Structure of the Observed Learning Outcome (SOLO) taxonomy, and the the Dreyfus
-model of skills acquisition."""
+                                    model of skills acquisition."""
                                 },
                                 {
                                     "role": "user",
@@ -524,20 +523,6 @@ model of skills acquisition."""
                             for item in Secondary_levels[selected_Secondary_level]:
                                 safe_multicell(pdf, 0, 8, f"• {item}")
                             pdf.ln(5)
-
-                            # # Similarity Score                                                  
-                            # if ai_score is not None and 0 <= ai_score <= 100:
-                            #     st.write(f"**AI Similarity Score:** {ai_score}/100")
-                            #     st.progress(ai_score / 100.0)
-
-                            #     if ai_score >= high_match_threshold:
-                            #         st.success("High Match")
-                            #     elif ai_score >= 50:
-                            #         st.warning("Moderate Match")
-                            #     else:
-                            #         st.error("Low Match")
-                            # else:
-                            #     st.error("⚠️ No valid similarity score found in the response.")
 
                             # GPT Result
                             pdf.set_font("DejaVu", "B", 12)
