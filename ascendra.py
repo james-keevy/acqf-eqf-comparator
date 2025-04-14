@@ -151,7 +151,7 @@ if login_result is not None:
         # --- Streamlit UI ---
         # st.image("ascendra_v5.png", width=300)
         st.title("Comparing learning outcomes")
-        st.caption("Ascendra v1.2 is limited to CSV and PDF files. Artefact types and taxonomies not yet activated.")
+        st.caption("Ascendra v1.3 is limited to CSV and PDF files. Artefact types and taxonomies not yet activated.")
         st.caption("Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts (e.g. qualifications, curricula, microcredentials, job descriptions and many others), but results should be interpreted as advisory, not definitive. The model relies on language patterns and may not capture nuanced policy or contextual differences across frameworks. It is not a substitute for expert judgement, formal benchmarking, or regulatory endorsement. Users should validate results through human review and consult official frameworks for authoritative decisions.")
 
         st.caption("Click 'Compare Levels' to generate an AI-based similarity score. The threshold below helps categorize the result.")
