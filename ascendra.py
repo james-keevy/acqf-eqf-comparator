@@ -16,7 +16,6 @@ import tempfile
 # Initialize variables
 Primary_text = ""
 Secondary_text = ""
-Secondary_file = st.file_uploader("Upload secondary artefact (CSV or PDF formats)", type=["csv", "pdf"])
 
 # Create a login screen for your public app (simulating private access)
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
@@ -114,15 +113,13 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
         else:
             st.info("📥 Please upload a primary file to continue.")
-      
-        st.file_uploader("Upload secondary artefact (CSV or PDF formats)", type=["csv", "pdf"])
+
+        Secondary_file = st.file_uploader("Upload secondary artefact (CSV or PDF formats)", type=["csv", "pdf"])
 
         if Secondary_file is not None:
-            
-            # DEBUG
-            st.write("🔍 Type of Secondary_file before parsing:", type(Secondary_file))
-            structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
+            st.write("✅ File type:", type(Secondary_file)) 
 
+        if Secondary_file is not None:
             def parse_nqf_pdf_format(file):
                 try:
                     Secondary_file.seek(0)  # 🔄 Reset pointer to beginning
