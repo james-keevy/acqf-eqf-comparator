@@ -61,8 +61,7 @@ if login_result is not None:
         api_key = st.secrets["OPENAI_API_KEY"]
 
         # File upload
-        
-        # Primary_file.seek(0)  # 🔁 Reset file pointer before reading again
+        Primary_file.seek(0) 
         df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig")
         Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
 
