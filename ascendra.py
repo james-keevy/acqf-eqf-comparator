@@ -344,9 +344,19 @@ if login_result is not None:
                 if file_ext == "csv":
                     df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
                     if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                        word_to_num = {
+                            "One": "1", "Two": "2", "Three": "3", "Four": "4", "Five": "5",
+                            "Six": "6", "Seven": "7", "Eight": "8", "Nine": "9", "Ten": "10"
+                        }
+
+                        Secondary_levels = {}
+
                         grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
                         for (level, domain), descriptor in grouped.items():
-                            Secondary_levels.setdefault(level, {})[domain] = descriptor
+                            # Assume level is like "Level One"
+                            word = level.replace("Level", "").strip().capitalize()
+                            digit = word_to_num.get(word, word)  # fallback to original if not found
+                            Secondary_levels.setdefault(digit, {})[domain] = descriptor
                     else:
                         st.warning("⚠️ Secondary CSV missing required columns.")
 
