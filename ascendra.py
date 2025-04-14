@@ -61,18 +61,31 @@ if login_result is not None:
         api_key = st.secrets["OPENAI_API_KEY"]
 
         # File upload
+        
+        Primary_file.seek(0)  # 🔁 Reset file pointer before reading again
+        df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig")
         Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
+
         if Primary_file is not None:
             try:
-                df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig")
-                # process df_primary...
+                Primary_file.seek(0)
+                content = Primary_file.read().decode("utf-8-sig")
+
+                if not content.strip():
+                    st.error("❌ Uploaded Primary file is empty.")
+                else:
+                    # Show preview for safety
+                    st.code("\n".join(content.splitlines()[:10]), language="csv")
+                    Primary_file.seek(0)  # Rewind again for parsing
+                    df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig")
+                    st.success("✅ Primary file loaded successfully.")
+                    st.dataframe(df_primary.head())
+
             except Exception as e:
-                st.error(f"❌ Could not read Primary file: {e}")
-        else:
-            st.info("📥 Please upload a Primary framework file to continue.")
+                st.error(f"❌ Could not process Primary file: {e}")
 
         Secondary_file = st.file_uploader("Upload Secondary Framework (CSV or PDF)", type=["csv", "pdf"])
-        if Secondary_file is not None:
+                if Secondary_file is not None:
             # Helper function to extract text from PDF
             def parse_nqf_pdf_format(file):
                 text = ""
