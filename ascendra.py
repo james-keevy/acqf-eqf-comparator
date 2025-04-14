@@ -255,6 +255,30 @@ if login_result is not None:
             )
             st.info("📥 Please upload a secondary file to continue.")
 
+        # --- 📦 Primary File Section Box ---
+        with st.container():
+            st.markdown(
+                """
+                <div style="border: 1px solid #D3D3D3; border-radius: 10px; padding: 15px; background-color: #f9f9f9;">
+                <h4 style="color: #333333;">📤 Primary File Upload</h4>
+                """,
+                unsafe_allow_html=True
+            )
+            Primary_file = st.file_uploader("Upload Primary Artefact", type=["csv", "pdf"], key="primary_upload")
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        # --- 📦 Secondary File Section Box ---
+        with st.container():
+            st.markdown(
+                """
+                <div style="border: 1px solid #D3D3D3; border-radius: 10px; padding: 15px; background-color: #f9f9f9;">
+                <h4 style="color: #333333;">📥 Secondary File Upload</h4>
+                """,
+                unsafe_allow_html=True
+            )
+            Secondary_file = st.file_uploader("Upload Secondary Artefact", type=["csv", "pdf"], key="secondary_upload")
+            st.markdown("</div>", unsafe_allow_html=True)
+        
         if Primary_file and Secondary_file:
             try:
                 # Compare byte content directly
