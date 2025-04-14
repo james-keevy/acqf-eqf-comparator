@@ -421,15 +421,22 @@ if login_result is not None:
         if api_key and Primary_file and Secondary_file:
             client = OpenAI(api_key=api_key)
                               
-            # Build a dictionary of levels to their descriptors
-            Primary_levels = {}
-            if 'df_primary' in locals() and isinstance(df_primary, pd.DataFrame):
-                if all(col in df_primary.columns for col in ['Level', 'Domain', 'Descriptor']):
-                    grouped = df_primary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
-                    for (level, domain), descriptor in grouped.items():
-                        Primary_levels.setdefault(level, {})[domain] = descriptor
-                else:
-                    st.warning("⚠️ Primary CSV must include 'Level', 'Domain', and 'Descriptor' columns.")
+        # ✅ Build a dictionary of levels to their descriptors with "Level X" format
+        Primary_levels = {}
+
+        if 'df_primary' in locals() and isinstance(df_primary, pd.DataFrame):
+            if all(col in df_primary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                
+                # ✅ Normalize Level values to "Level X" format
+                df_primary['Level'] = df_primary['Level'].apply(lambda x: f"Level {int(x)}" if str(x).isdigit() else str(x))
+                
+                # ✅ Group and build nested dictionary
+                grouped = df_primary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                for (level, domain), descriptor in grouped.items():
+                    Primary_levels.setdefault(level, {})[domain] = descriptor
+
+            else:
+                st.warning("⚠️ Primary CSV must include 'Level', 'Domain', and 'Descriptor' columns.")
 
             # --- Primary & Secondary UI ---
             if Primary_levels:
