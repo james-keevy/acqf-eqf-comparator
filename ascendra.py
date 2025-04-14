@@ -358,7 +358,7 @@ if login_result is not None:
                     Secondary_file.seek(0)
 
                     # ✅ Correct parser name
-                    structured_data, csv_path = parse_pdf_format(Secondary_file)
+                    structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
 
                     if structured_data:
                         st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
