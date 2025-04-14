@@ -12,6 +12,7 @@ import fitz  # PyMuPDF
 import io
 from io import BytesIO
 import tempfile
+import base64 
 
 # Initialize variables
 Primary_text = ""
@@ -20,6 +21,28 @@ Secondary_text = ""
 # Create a login screen for your public app (simulating private access)
 st.set_page_config(page_title="Learning Outcomes Levelling", layout="centered")
 
+# Show logo in sidebar
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        b64_data = base64.b64encode(img_file.read()).decode()
+    return f"data:image/png;base64,{b64_data}"
+
+img_data = get_base64_image("ascendra_v5.png")
+
+st.sidebar.markdown(
+    f"""
+    <div style="text-align: center;">
+        <img src="{img_data}" width="200">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# Optional tagline
+st.sidebar.markdown(
+    "<p style='text-align: center; font-size: 0.9em; color: gray;'>Smarter Framework Matching with Generative AI</p>",
+    unsafe_allow_html=True
+)
 # Hashed password generated earlier
 hashed_passwords = ['$2b$12$2Myv8E.J5lIbWN5aThrBDOeGthVRDw4e7j38g.fDTOmiy.VvKRCZa']  
 
@@ -111,6 +134,20 @@ def parse_nqf_pdf_format(uploaded_file):
 
 # 🔐 Show login widget
 login_result = authenticator.login(form_name='Login', location='main')
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        b64_data = base64.b64encode(img_file.read()).decode()
+    return f"data:image/png;base64,{b64_data}"
+
+img_data = get_base64_image("ascendra_v5.png")
+
+st.sidebar.markdown(
+    f"""
+    <div style="text-align: center;">
+        <img src="{img_data}" width="200">
+    </div>
+    """,
+    unsafe_allow_html=True
 
 if login_result is not None:
     name, auth_status, username = login_result
