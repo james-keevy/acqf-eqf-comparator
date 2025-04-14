@@ -260,7 +260,7 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
 
             # ✅ Reusable function: Extract structured data and write to CSV
-            def parse_pdf_format(uploaded_file):
+            def parse_nqf_pdf_format(uploaded_file):
                 try:
                     uploaded_file.seek(0)
                     pdf_bytes = uploaded_file.read()
