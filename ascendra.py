@@ -61,23 +61,22 @@ if login_result is not None:
         api_key = st.secrets["OPENAI_API_KEY"]
 
         # File upload
-        Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
+               Primary_file = st.file_uploader("Upload Primary Framework CSV", type=["csv"])
         if Primary_file is not None:
             try:
-                Primary_file.seek(0)
-                content = Primary_file.read().decode("utf-8-sig", errors="ignore")
+                # Create an in-memory copy of the file
+                bytes_data = Primary_file.read()
+                content = bytes_data.decode("utf-8-sig", errors="ignore")
 
                 if not content.strip():
                     st.error("❌ Uploaded Primary file is empty.")
                 else:
-                    # Show first 10 lines as preview
                     st.code("\n".join(content.splitlines()[:10]), language="csv")
 
-                    # Rewind again for actual read
-                    Primary_file.seek(0)
-                    df_primary = pd.read_csv(Primary_file, encoding="utf-8-sig", on_bad_lines="skip")
+                    # Use BytesIO to simulate a fresh file for pandas
+                    file_buffer = io.StringIO(content)
+                    df_primary = pd.read_csv(file_buffer, encoding="utf-8-sig", on_bad_lines="skip")
 
-                    # ✅ Check for required columns
                     required_cols = {'Level', 'Domain', 'Descriptor'}
                     if required_cols.issubset(df_primary.columns):
                         st.success("✅ Primary file loaded successfully.")
