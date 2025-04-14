@@ -116,7 +116,7 @@ if login_result is not None:
         Secondary_file = st.file_uploader("Upload secondary artefact (CSV or PDF formats)", type=["csv", "pdf"])
 
         if Secondary_file is not None:
-            def parse_nqf_pdf_format(file):
+            def parse_pdf_format(file):
                 text = ""
                 try:
                     with fitz.open(stream=file.read(), filetype="pdf") as doc:
@@ -194,7 +194,7 @@ if login_result is not None:
                     st.subheader("📄 Parsing PDF descriptors...")
 
                     try:
-                        structured_data, csv_io = parse_nqf_pdf_format(Secondary_file)
+                        structured_data, csv_io = parse_pdf_format(Secondary_file)
 
                         if structured_data and csv_io:
                             csv_io.seek(0)
@@ -251,7 +251,7 @@ if login_result is not None:
                 st.error(f"❌ Could not process Primary file: {e}")
 
             # ✅ Reusable function: Extract structured data and write to CSV
-            def parse_nqf_pdf_format(pdf_file, output_csv="nqf_descriptors.csv"):
+            def parse_pdf_format(pdf_file, output_csv="nqf_descriptors.csv"):
                 level_pattern = re.compile(r"NQF Level (\w+)", re.IGNORECASE)
                 domain_pattern = re.compile(r"^[a-j]\.\s+(.*?), in respect of which", re.IGNORECASE)
 
