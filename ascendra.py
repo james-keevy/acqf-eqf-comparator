@@ -207,7 +207,6 @@ if login_result is not None:
                             st.warning(f"⚠️ Missing required columns: {required_cols - set(df_secondary.columns)}")
 
                 elif file_ext == "pdf":
-                    st.subheader("📄 Parsing PDF descriptors...")
 
                     try:
                         uploaded_file.seek(0)  # ✅ safe: this is a BytesIO object
@@ -367,7 +366,6 @@ if login_result is not None:
                         st.warning("⚠️ Secondary CSV missing required columns.")
 
                 elif file_ext == "pdf":
-                    st.subheader("📄 Parsing Level Descriptors from PDF")
 
                     # ✅ Always reset file pointer before reading
                     Secondary_file.seek(0)
