@@ -329,39 +329,43 @@ if login_result is not None:
                 structured.setdefault(level, {})[domain] = desc
             return structured
 
-        if Secondary_file:
-            try:
-                file_ext = Secondary_file.name.lower().split(".")[-1]
+            if Secondary_file:
+                try:
+                    file_ext = Secondary_file.name.lower().split(".")[-1]
 
-                if file_ext == "csv":
-                    df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
-                    if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
-                        grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
-                        for (level, domain), descriptor in grouped.items():
-                            Secondary_levels.setdefault(level, {})[domain] = descriptor
+                    if file_ext == "csv":
+                        df_secondary = pd.read_csv(Secondary_file, encoding="utf-8-sig", on_bad_lines="skip")
+                        if all(col in df_secondary.columns for col in ['Level', 'Domain', 'Descriptor']):
+                            grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
+                            for (level, domain), descriptor in grouped.items():
+                                Secondary_levels.setdefault(level, {})[domain] = descriptor
+                        else:
+                            st.warning("⚠️ Secondary CSV missing required columns.")
+
+                    elif file_ext == "pdf":
+                        st.subheader("📄 Parsing Level Descriptors from PDF")
+
+                        # ✅ Always reset file pointer before reading
+                        Secondary_file.seek(0)
+
+                        # ✅ Correct parser name
+                        structured_data, csv_path = parse_nqf_pdf_format(Secondary_file)
+
+                        if structured_data:
+                            st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
+                            st.write(structured_data)
+
+                            if csv_path:
+                                with open(csv_path, "rb") as f:
+                                    st.download_button("⬇️ Download Extracted CSV", f, file_name="secondary_descriptors.csv")
+                        else:
+                            st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
+
                     else:
-                        st.warning("⚠️ Secondary CSV missing required columns.")
+                        st.warning("⚠️ Unsupported file format for Secondary artefact.")
 
-                elif file_ext == "pdf":
-                    st.subheader("📄 Parsing Level Descriptors from PDF")
-
-                    structured_data, csv_path = parse_pdf_format(Secondary_file)
-
-                    if structured_data:
-                        st.success(f"✅ Parsed {len(structured_data)} levels from PDF.")
-                        st.write(structured_data)
-
-                        if csv_path:
-                            with open(csv_path, "rb") as f:
-                                st.download_button("⬇️ Download Extracted CSV", f, file_name="secondary_descriptors.csv")
-                    else:
-                        st.warning("⚠️ PDF parsing returned no valid structured descriptors.")
-
-                else:
-                    st.warning("Unsupported file format for Secondary artefact.")
-
-            except Exception as e:
-                st.error(f"❌ Could not process Secondary file: {e}")
+                except Exception as e:
+                    st.error(f"❌ Could not process Secondary file: {e}")
 
         # Match threshold slider
         high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
