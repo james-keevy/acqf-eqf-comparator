@@ -145,13 +145,6 @@ if login_result is not None:
             "Other"
         ]
 
-        # Primary artefact type
-        st.session_state["primary_artefact_type"] = st.selectbox(
-            "Select the type of the **Primary** artefact:",
-            artefact_types,
-            key="primary_artefact_type_selectbox"
-        )
-
         # Secondary artefact type
         st.session_state["secondary_artefact_type"] = st.selectbox(
             "Select the type of the **Secondary** artefact:",
@@ -208,7 +201,13 @@ if login_result is not None:
 
             except Exception as e:
                 st.error(f"❌ Could not process Primary file: {e}")
-        else:
+        else: 
+            # Primary artefact type
+            st.session_state["primary_artefact_type"] = st.selectbox(
+                "Select the type of the **Primary** artefact:",
+                artefact_types,
+                key="primary_artefact_type_selectbox"
+        )           
             st.info("📥 Please upload a primary file to continue.")
 
         Secondary_file = st.file_uploader("Upload secondary artefact (PDF or CSV)", type=["pdf", "csv"])
