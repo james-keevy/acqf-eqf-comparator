@@ -115,13 +115,8 @@ if login_result is not None:
             st.info("📥 Please upload a primary file to continue.")
 
         # Upload UI
-        
-        Secondary_file = st.file_uploader("Upload...", type=["pdf", "csv"])
 
-        #DEBUG 
-        if Secondary_file is not None:
-            st.write("✅ File type:", type(Secondary_file)) 
-        #DEBUG
+        Secondary_file = st.file_uploader("Upload...", type=["pdf", "csv"])
 
         if Secondary_file is not None:
             def parse_nqf_pdf_format(file):
