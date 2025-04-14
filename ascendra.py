@@ -363,7 +363,6 @@ if login_result is not None:
                         grouped = df_secondary.groupby(['Level', 'Domain'])['Descriptor'].apply(lambda x: "\n".join(x.dropna()))
                         for (level, domain), descriptor in grouped.items():
                             Secondary_levels.setdefault(level, {})[domain] = descriptor
-                        st.success("✅ Secondary PDF loaded successfully.")
                     else:
                         st.warning("⚠️ Secondary CSV missing required columns.")
 
@@ -396,7 +395,7 @@ if login_result is not None:
                                     for (level, domain), descriptor in grouped.items():
                                         Secondary_levels.setdefault(level, {})[domain] = descriptor
 
-                                    st.success(f"✅ Structured {len(Secondary_levels)} secondary levels from parsed PDF.")
+                                    st.success(f"✅ Secondary PDF loaded successfully.")
                                 else:
                                     st.warning("⚠️ Extracted CSV is missing required columns.")
 
