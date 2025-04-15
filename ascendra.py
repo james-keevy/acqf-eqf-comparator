@@ -20,7 +20,7 @@ Primary_text = ""
 Secondary_text = ""
 
 # Create a login screen for your public app (simulating private access)
-st.set_page_config(page_title="Comparing learning outcomes using genAI", layout="centered")
+st.set_page_config(page_title="Benchmarking credentials using genAI", layout="centered")
 
 # Show logo in sidebar
 def get_base64_image(image_path):
