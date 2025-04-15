@@ -243,7 +243,7 @@ if login_result is not None:
             st.markdown(
                 """
                 <div style="border: 1px solid #D3D3D3; border-radius: 10px; padding: 15px; background-color: #f9f9f9;">
-                <h4 style="color: #333333;">📥 Secondary artefact</h4>
+                <h4 style="color: #333333;">Secondary artefact</h4>
                 """,
                 unsafe_allow_html=True
             )
