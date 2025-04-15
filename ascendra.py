@@ -82,7 +82,7 @@ def parse_nqf_pdf_format(uploaded_file):
         raise RuntimeError(f"Error while opening PDF: {e}")
 
     lines = [line.strip() for line in text.splitlines() if line.strip()]
-    
+
     lines = [line for line in lines if not re.match(r'^\d+$', line)]
     level_pattern = re.compile(r'(?:^|\s)NQF Level (One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten)', re.IGNORECASE)
     domain_pattern = re.compile(r'^([a-j])\.\s+(.*?)(?=, in respect of)', re.IGNORECASE)
@@ -717,7 +717,7 @@ if login_result is not None:
                             pdf.set_font("DejaVu", size=8)
 
                             # Header
-                            # pdf.image("ascendra_v5.png", x=10, y=8, w=40)
+                            pdf.image("ascendra_v5.png", x=10, y=8, w=40)
                             pdf.ln(45)
                             pdf.set_font("DejaVu", "B", 14)
                             safe_multicell(pdf, 0, 8, "Primary - Secondary Comparison Report")
