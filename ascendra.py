@@ -151,7 +151,7 @@ if login_result is not None:
         # --- Streamlit UI ---
         # st.image("ascendra_v5.png", width=300)
         st.title("Benchmarking credentials using genAI")
-        st.caption("Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts (e.g. qualifications, curricula, microcredentials, job descriptions and many others), but results should be interpreted as advisory, not definitive. The model relies on language patterns and may not capture nuanced policy or contextual differences across frameworks. It is not a substitute for expert judgement, formal benchmarking, or regulatory endorsement. Users should validate results through human review and consult official frameworks for authoritative decisions.")
+        st.caption("Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts (e.g. qualifications, curricula, microcredentials, job descriptions, CVs and many others), but results should be interpreted as advisory, not definitive. The model relies on language patterns and may not capture nuanced policy or contextual differences across frameworks. It is not a substitute for expert judgement, formal benchmarking, or regulatory endorsement. Users should validate results through human review and consult official frameworks for authoritative decisions.")
         st.caption("Ascendra v1.3 is currently limited to CSV and PDF files. Artefact types and taxonomies are not yet activated.")
         # st.caption("Click 'Compare Levels' to generate an AI-based similarity score. The threshold below helps categorize the result.")
 
@@ -170,6 +170,7 @@ if login_result is not None:
             "Occupational standard",
             "Professional standard",
             "Microcredential",
+            "CV",
             "Other"
         ]
 
@@ -604,6 +605,7 @@ if login_result is not None:
                     Occupational standard
                     Professional standard
                     Microcredentials
+                    Curriculum Vitae
 
                     Primary Level {selected_Primary_level}:
                     {Primary_text}
@@ -643,7 +645,7 @@ if login_result is not None:
 
                                 {
                                     "role": "system",
-                                    "content": """You are a senior expert in qualifications frameworks, international education systems, and workforce development policy. You have decades of experience analyzing and comparing learning outcomes across diverse artefacts and contexts. Your expertise extends beyond qualifications to include level descriptors, curricula, job descriptions, performance contracts, occupational standards, professional standards, and microcredentials. You are well-versed in regional and global frameworks such as the European Qualifications Framework (EQF), the African Continental Qualifications Framework (ACQF), the South African NQF, and others.
+                                    "content": """You are a senior expert in qualifications frameworks, international education systems, and workforce development policy. You have decades of experience analyzing and comparing learning outcomes across diverse artefacts and contexts. Your expertise extends beyond qualifications to include level descriptors, curricula, job descriptions, performance contracts, occupational standards, professional standards, CVs, and microcredentials. You are well-versed in regional and global frameworks such as the European Qualifications Framework (EQF), the African Continental Qualifications Framework (ACQF), the South African NQF, and others.
                                     You operate from the following definition of a learning outcome: *'the totality of information, knowledge, understanding, attitudes, values, skills, competencies, or behaviours an individual is expected to master upon successful completion of an educational programme.'*
                                     You apply advanced learning taxonomies—including the revised Bloom’s taxonomy, SOLO taxonomy, and the Dreyfus model of skill acquisition—to assess complexity, autonomy, responsibility, and transferability. In addition to your policy and domain expertise, you are highly experienced in the use of large language models (LLMs) to compare and align learning outcomes expressed in different artefacts. You understand how to leverage LLMs to interpret semantic nuance, identify equivalences, and generate structured, domain-based comparisons. Your role is to evaluate the alignment between artefacts, highlight key similarities and differences, and recommend the most appropriate mappings—applying both human and AI-enabled analytical judgment."""
                                 },
