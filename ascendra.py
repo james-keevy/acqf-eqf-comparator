@@ -154,7 +154,7 @@ if login_result is not None:
         st.title("Benchmarking credentials using genAI")
         st.caption("Ascendra provides AI-assisted comparisons of learning outcomes within different artefacts (e.g. qualifications, curricula, microcredentials, job descriptions, CVs and many others), but results should be interpreted as advisory, not definitive. The model relies on language patterns and may not capture nuanced policy or contextual differences across frameworks. It is not a substitute for expert judgement, formal benchmarking, or regulatory endorsement. Users should validate results through human review and consult official frameworks for authoritative decisions.")
         st.caption("Ascendra v1.3 is currently limited to CSV and PDF files. Artefact types and taxonomies are not yet activated.")
-        # st.caption("Click 'Compare Levels' to generate an AI-based similarity score. The threshold below helps categorize the result.")
+        # st.caption("Click 'Compare Levels' to generate an AI-based similarity score. The threshold below helps calibrate the result.")
 
         # Input: OpenAI API key
         api_key = st.secrets["OPENAI_API_KEY"]
@@ -497,7 +497,7 @@ if login_result is not None:
                 st.error(f"❌ Could not process Secondary file: {e}")
 
         # Match threshold slider
-        high_match_threshold = st.slider("Set threshold for High Match (%)", min_value=50, max_value=100, value=80)
+        high_match_threshold = st.slider("Set threshold for improved calibration", min_value=50, max_value=100, value=80)
 
         # Session state for results
         if "results" not in st.session_state:
