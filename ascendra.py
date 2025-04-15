@@ -205,7 +205,7 @@ if login_result is not None:
             )
         Primary_file = st.file_uploader("Upload primary artefact (CSV format)", type=["csv"])# Primary artefact type
         st.session_state["primary_artefact_type"] = st.selectbox(
-            "Select the type of the **Primary** artefact:",
+            "Select the type of the primary artefact:",
             artefact_types,
             key="primary_artefact_type_selectbox"
     ) 
@@ -250,7 +250,7 @@ if login_result is not None:
         Secondary_file = st.file_uploader("Upload secondary artefact (PDF or CSV)", type=["pdf", "csv"])
         # Secondary artefact type
         st.session_state["secondary_artefact_type"] = st.selectbox(
-            "Select the type of the **Secondary** artefact:",
+            "Select the type of the secondary artefact:",
             artefact_types,
             key="secondary_artefact_type_selectbox"
         )
