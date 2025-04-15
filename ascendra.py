@@ -159,7 +159,7 @@ if login_result is not None:
         api_key = st.secrets["OPENAI_API_KEY"]
 
         # ✅ INSERT HERE — Artefact type selection
-        st.subheader("🧩 Artefact Type Selection")
+        st.subheader("🧩 Artefact selection")
 
         artefact_types = [
             "Qualification",
